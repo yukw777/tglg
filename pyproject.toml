@@ -1,0 +1,21 @@
+[project]
+name = "real-time-vlm-benchmark"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["whisperx>=3.3.1"]
+
+[tool.uv]
+
+override-dependencies = [
+    # To get around https://github.com/m-bain/whisperX/issues/967
+    "ctranslate2>=4.5.0",
+]
+
+[dependency-groups]
+dev = [
+    "ipython>=8.32.0",
+    "mypy>=1.15.0",
+    "ruff>=0.9.6",
+]
