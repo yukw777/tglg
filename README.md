@@ -1,6 +1,7 @@
 # real-time-vlm-benchmark
 
 ## Installation
+
 ```bash
 # Install python dependencies
 uv sync
