@@ -1,4 +1,9 @@
-from typing import Any
+import json
+from copy import deepcopy
+from pathlib import Path
+from typing import Any, Callable
+
+from torch.utils.data import Dataset
 
 
 def convert_holo_assist(
@@ -74,3 +79,48 @@ def convert_holo_assist(
                 i -= 1
             anns[holo_assist_ann["video_name"]] = dialogue[: i + 1]
     return anns
+
+
+class HoloAssistDataset(Dataset):
+    def __init__(
+        self,
+        video_dir_path: str,
+        ann_file_path: str,
+        preprocessor: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
+    ) -> None:
+        super().__init__()
+        self.video_dir_path = Path(video_dir_path)
+        self.preprocessor = preprocessor
+        with open(ann_file_path) as f:
+            anns = json.load(f)
+        self.data: list[tuple[str, list[dict]]] = []
+        for video, dialogue in anns.items():
+            i = 0
+            is_eval = False
+            while i < len(dialogue):
+                if not is_eval and dialogue[i]["eval"]:
+                    is_eval = True
+                if is_eval and not dialogue[i]["eval"]:
+                    is_eval = False
+                    self.data.append((video, deepcopy(dialogue[:i])))
+                    # set eval to False for the added utterances
+                    # as they will be used as part of the context for the next data point.
+                    for utter in dialogue[:i]:
+                        utter["eval"] = False
+                i += 1
+            # take care of the stragglers
+            if is_eval:
+                self.data.append((video, deepcopy(dialogue[:i])))
+
+    def __getitem__(self, index: int) -> dict:
+        video, dialogue = self.data[index]
+        datapoint = {
+            "video": self.video_dir_path / video / "Export_py/Video_pitchshift.mp4",
+            "dialogue": dialogue,
+        }
+        if self.preprocessor is not None:
+            return self.preprocessor(datapoint)
+        return datapoint
+
+    def __len__(self) -> int:
+        return len(self.data)

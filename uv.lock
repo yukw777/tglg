@@ -2125,6 +2125,7 @@ name = "real-time-vlm-benchmark"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "torch" },
     { name = "whisperx" },
 ]
 
@@ -2138,7 +2139,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "whisperx", specifier = ">=3.3.1" }]
+requires-dist = [
+    { name = "torch", specifier = ">=2.6.0" },
+    { name = "whisperx", specifier = ">=3.3.1" },
+]
 
 [package.metadata.requires-dev]
 dev = [

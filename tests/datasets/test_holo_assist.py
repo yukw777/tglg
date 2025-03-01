@@ -1,8 +1,13 @@
+import json
+from pathlib import Path
 from typing import Any
 
 import pytest
 
-from real_time_vlm_benchmark.datasets.holo_assist import convert_holo_assist
+from real_time_vlm_benchmark.datasets.holo_assist import (
+    HoloAssistDataset,
+    convert_holo_assist,
+)
 
 
 @pytest.mark.parametrize(
@@ -277,3 +282,130 @@ def test_convert_holo_assist(
     holo_assist_anns: list[dict], expected: dict[str, list[dict[str, Any]]]
 ) -> None:
     assert convert_holo_assist(holo_assist_anns) == expected
+
+
+@pytest.mark.parametrize(
+    "original_anns,expected_items",
+    [
+        (
+            {
+                "video0": [
+                    {"role": "system", "content": "system message", "eval": False},
+                    {"role": "assistant", "content": "a0", "eval": False},
+                    {"role": "assistant", "content": "a1", "eval": False},
+                    {"role": "user", "content": "u0", "eval": False},
+                    {"role": "assistant", "content": "a2", "eval": True},
+                ]
+            },
+            [
+                {
+                    "video": Path("video_dir/video0/Export_py/Video_pitchshift.mp4"),
+                    "dialogue": [
+                        {"role": "system", "content": "system message", "eval": False},
+                        {"role": "assistant", "content": "a0", "eval": False},
+                        {"role": "assistant", "content": "a1", "eval": False},
+                        {"role": "user", "content": "u0", "eval": False},
+                        {"role": "assistant", "content": "a2", "eval": True},
+                    ],
+                }
+            ],
+        ),
+        (
+            {
+                "video0": [
+                    {"role": "system", "content": "system message", "eval": False},
+                    {"role": "assistant", "content": "a0", "eval": False},
+                    {"role": "assistant", "content": "a1", "eval": False},
+                    {"role": "user", "content": "u0", "eval": False},
+                    {"role": "assistant", "content": "a2", "eval": True},
+                    {"role": "assistant", "content": "a3", "eval": True},
+                    {"role": "assistant", "content": "a4", "eval": True},
+                    {"role": "assistant", "content": "a5", "eval": False},
+                    {"role": "assistant", "content": "a6", "eval": False},
+                    {"role": "assistant", "content": "a7", "eval": True},
+                    {"role": "assistant", "content": "a8", "eval": True},
+                ],
+                "video1": [
+                    {"role": "system", "content": "system message", "eval": False},
+                    {"role": "assistant", "content": "a0", "eval": False},
+                    {"role": "assistant", "content": "a1", "eval": False},
+                    {"role": "user", "content": "u0", "eval": False},
+                    {"role": "assistant", "content": "a2", "eval": True},
+                    {"role": "assistant", "content": "a3", "eval": True},
+                    {"role": "assistant", "content": "a4", "eval": False},
+                    {"role": "assistant", "content": "a5", "eval": False},
+                    {"role": "user", "content": "u1", "eval": False},
+                    {"role": "assistant", "content": "a6", "eval": False},
+                    {"role": "assistant", "content": "a7", "eval": True},
+                    {"role": "assistant", "content": "a8", "eval": True},
+                ],
+            },
+            [
+                {
+                    "video": Path("video_dir/video0/Export_py/Video_pitchshift.mp4"),
+                    "dialogue": [
+                        {"role": "system", "content": "system message", "eval": False},
+                        {"role": "assistant", "content": "a0", "eval": False},
+                        {"role": "assistant", "content": "a1", "eval": False},
+                        {"role": "user", "content": "u0", "eval": False},
+                        {"role": "assistant", "content": "a2", "eval": True},
+                        {"role": "assistant", "content": "a3", "eval": True},
+                        {"role": "assistant", "content": "a4", "eval": True},
+                    ],
+                },
+                {
+                    "video": Path("video_dir/video0/Export_py/Video_pitchshift.mp4"),
+                    "dialogue": [
+                        {"role": "system", "content": "system message", "eval": False},
+                        {"role": "assistant", "content": "a0", "eval": False},
+                        {"role": "assistant", "content": "a1", "eval": False},
+                        {"role": "user", "content": "u0", "eval": False},
+                        {"role": "assistant", "content": "a2", "eval": False},
+                        {"role": "assistant", "content": "a3", "eval": False},
+                        {"role": "assistant", "content": "a4", "eval": False},
+                        {"role": "assistant", "content": "a5", "eval": False},
+                        {"role": "assistant", "content": "a6", "eval": False},
+                        {"role": "assistant", "content": "a7", "eval": True},
+                        {"role": "assistant", "content": "a8", "eval": True},
+                    ],
+                },
+                {
+                    "video": Path("video_dir/video1/Export_py/Video_pitchshift.mp4"),
+                    "dialogue": [
+                        {"role": "system", "content": "system message", "eval": False},
+                        {"role": "assistant", "content": "a0", "eval": False},
+                        {"role": "assistant", "content": "a1", "eval": False},
+                        {"role": "user", "content": "u0", "eval": False},
+                        {"role": "assistant", "content": "a2", "eval": True},
+                        {"role": "assistant", "content": "a3", "eval": True},
+                    ],
+                },
+                {
+                    "video": Path("video_dir/video1/Export_py/Video_pitchshift.mp4"),
+                    "dialogue": [
+                        {"role": "system", "content": "system message", "eval": False},
+                        {"role": "assistant", "content": "a0", "eval": False},
+                        {"role": "assistant", "content": "a1", "eval": False},
+                        {"role": "user", "content": "u0", "eval": False},
+                        {"role": "assistant", "content": "a2", "eval": False},
+                        {"role": "assistant", "content": "a3", "eval": False},
+                        {"role": "assistant", "content": "a4", "eval": False},
+                        {"role": "assistant", "content": "a5", "eval": False},
+                        {"role": "user", "content": "u1", "eval": False},
+                        {"role": "assistant", "content": "a6", "eval": False},
+                        {"role": "assistant", "content": "a7", "eval": True},
+                        {"role": "assistant", "content": "a8", "eval": True},
+                    ],
+                },
+            ],
+        ),
+    ],
+)
+def test_holo_assist_dataset_init(
+    tmp_path: Path, original_anns: dict, expected_items: list[dict]
+) -> None:
+    anns_file = tmp_path / "ann.json"
+    anns_file.write_text(json.dumps(original_anns))
+
+    dataset = HoloAssistDataset("video_dir", str(anns_file))
+    assert list(iter(dataset)) == expected_items
