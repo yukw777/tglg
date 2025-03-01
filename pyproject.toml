@@ -5,7 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "decord>=0.6.0",
+    "einops>=0.8.1",
+    "flash-attn>=2.7.4.post1",
     "torch>=2.6.0",
+    "torchvision>=0.21.0",
+    "videollm-online[flash-attn]",
     "whisperx>=3.3.1",
 ]
 
@@ -15,10 +20,14 @@ build-backend = "hatchling.build"
 
 [tool.uv]
 
+no-build-isolation-package = ["flash-attn"]
 override-dependencies = [
     # To get around https://github.com/m-bain/whisperX/issues/967
     "ctranslate2>=4.5.0",
 ]
+
+[tool.uv.sources]
+videollm-online = { git = "https://github.com/yukw777/videollm-online.git", rev = "3be744ee9bda681a81c443dd7436c2f2826d0c78" }
 
 [dependency-groups]
 dev = [

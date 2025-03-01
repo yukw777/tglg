@@ -3,6 +3,8 @@
 ## Installation
 
 ```bash
+# flash-attn has to be installed separately due to some build issues
+pip install flash-attn==2.7.4.post1 --no-build-isolation
 # Install python dependencies
 uv sync
 
