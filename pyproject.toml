@@ -6,6 +6,10 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["whisperx>=3.3.1"]
 
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [tool.uv]
 
 override-dependencies = [
@@ -20,3 +24,16 @@ dev = [
     "pre-commit>=4.1.0",
     "ruff>=0.9.6",
 ]
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.ruff]
+# automatically sort imports
+lint.select = ["I"]
+
+[tool.ruff.lint.isort]
+# wandb by default creates a directory called "wandb"
+# which confuses isort, causing it to classify wandb
+# as a first-party library.
+known-third-party = ["wandb"]
