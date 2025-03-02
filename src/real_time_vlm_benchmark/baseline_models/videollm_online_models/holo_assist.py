@@ -54,10 +54,13 @@ def construct_interleaved_dialogue(
     interleaved_dialogue: list[dict] = [{"role": "system", "content": sys_msg}]
     last_frame_idx = 0
     for utterance in dialogue:
-        if utterance["role"] == "system" and use_narration:
-            interleaved_dialogue[0]["content"] += (
-                f" Here's the summary of the activity: {utterance['content']}"
-            )
+        if utterance["role"] == "system":
+            if use_narration:
+                interleaved_dialogue[0]["content"] += (
+                    f" Here's the summary of the activity: {utterance['content']}"
+                )
+            else:
+                continue
         elif not utterance["eval"]:
             # add frames [last_frame_idx, frame(utterance['start'])]
             utter_start_frame_idx = math.floor(utterance["start"] * sample_fps)
@@ -180,7 +183,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
 
         return collate
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def predict(self, batch: dict, **gen_kwargs) -> dict[str, list[dict]]:
         # NOTE: we don't support batch prediction
         assert batch["input_ids"].size(0) == 1, "Batch prediction not supported"
@@ -323,9 +326,10 @@ if __name__ == "__main__":
         for k, v in batch.items():
             if hasattr(v, "to"):
                 batch[k] = v.to("cuda")
-        pred = model.predict(
-            batch, max_new_tokens=64, do_sample=False, temperature=1.0, top_p=1.0
-        )
+        with torch.inference_mode():
+            pred = model.predict(
+                batch, max_new_tokens=64, do_sample=False, temperature=1.0, top_p=1.0
+            )
         for video, utters in pred.items():
             results[video].extend(utters)
         # break

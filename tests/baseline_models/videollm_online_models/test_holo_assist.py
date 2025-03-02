@@ -35,6 +35,7 @@ def test_sample_frames_for_dialogue(
     [
         (
             [
+                {"role": "system", "eval": False, "content": "summary", "start": 0},
                 {"role": "assistant", "eval": False, "start": 3},
                 {"role": "assistant", "eval": False, "start": 5},
                 {"role": "assistant", "eval": True, "start": 8},
@@ -57,6 +58,7 @@ def test_sample_frames_for_dialogue(
         ),
         (
             [
+                {"role": "system", "eval": False, "content": "summary", "start": 0},
                 {"role": "assistant", "eval": False, "start": 3},
                 {"role": "assistant", "eval": False, "start": 5},
                 {"role": "user", "eval": False, "start": 6},
