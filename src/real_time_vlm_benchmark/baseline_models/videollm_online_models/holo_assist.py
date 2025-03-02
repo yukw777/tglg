@@ -184,7 +184,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         return collate
 
     @torch.inference_mode()
-    def predict(self, batch: dict, **gen_kwargs) -> dict[str, list[dict]]:
+    def predict(self, batch: dict, **gen_kwargs) -> list[tuple[str, list[dict]]]:
         # NOTE: we don't support batch prediction
         assert batch["input_ids"].size(0) == 1, "Batch prediction not supported"
 
@@ -297,40 +297,4 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
                     }
                 )
 
-        return results
-
-
-if __name__ == "__main__":
-    from real_time_vlm_benchmark.datasets.holo_assist import HoloAssistDataset
-
-    model = VideoLLMOnlineHoloAssistModel(frame_token_interval_threshold=0.9)
-    # model = VideoLLMOnlineHoloAssistModel(
-    #     version="live1", frame_token_interval_threshold=0.93
-    # )
-    dataset = HoloAssistDataset(
-        "/home/peter/data/HoloAssist/video_pitch_shifted/",
-        "holo_assist_anns.json",
-        preprocessor=model.preprocess,
-    )
-    model.to("cuda")
-
-    dataloader = DataLoader(
-        dataset,
-        batch_size=1,
-        num_workers=4,
-        collate_fn=model.collate_fn,
-        pin_memory=True,
-    )
-    results = defaultdict(list)
-    for i, batch in enumerate(tqdm(dataloader, desc="Prediction")):
-        for k, v in batch.items():
-            if hasattr(v, "to"):
-                batch[k] = v.to("cuda")
-        with torch.inference_mode():
-            pred = model.predict(
-                batch, max_new_tokens=64, do_sample=False, temperature=1.0, top_p=1.0
-            )
-        for video, utters in pred.items():
-            results[video].extend(utters)
-        # break
-    print(results)
+        return list(results.items())

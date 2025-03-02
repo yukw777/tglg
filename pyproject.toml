@@ -5,12 +5,16 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "accelerate>=1.4.0",
     "decord>=0.6.0",
     "einops>=0.8.1",
     "flash-attn>=2.7.4.post1",
+    "jsonargparse>=4.37.0",
+    "pandas>=2.2.3",
     "torch>=2.6.0",
     "torchvision>=0.21.0",
     "videollm-online[flash-attn]",
+    "wandb>=0.19.7",
     "whisperx>=3.3.1",
 ]
 
