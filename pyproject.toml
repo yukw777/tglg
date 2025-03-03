@@ -11,6 +11,8 @@ dependencies = [
     "flash-attn>=2.7.4.post1",
     "jsonargparse>=4.37.0",
     "pandas>=2.2.3",
+    "scipy>=1.15.2",
+    "sentence-transformers>=3.4.1",
     "torch>=2.6.0",
     "torchvision>=0.21.0",
     "videollm-online[flash-attn]",
