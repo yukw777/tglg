@@ -3,8 +3,18 @@
 ## Installation
 
 ```bash
-# flash-attn has to be installed separately due to some build issues
-pip install flash-attn==2.7.4.post1 --no-build-isolation
+# If Slurm, ensure you have the latest CUDA and GCC loaded
+module load cuda gcc
+
+# Create a virtual env, e.g., using uv
+uv venv
+
+# flash-attn build dependencies
+uv pip install torch setuptools psutil packaging ninja
+
+# Build flash-attn
+uv pip install flash-attn --no-build-isolation
+
 # Install python dependencies
 uv sync
 
