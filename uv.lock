@@ -2565,7 +2565,6 @@ dependencies = [
     { name = "accelerate" },
     { name = "decord" },
     { name = "einops" },
-    { name = "flash-attn" },
     { name = "jsonargparse" },
     { name = "pandas" },
     { name = "scipy" },
@@ -2575,6 +2574,11 @@ dependencies = [
     { name = "videollm-online", extra = ["flash-attn"] },
     { name = "wandb" },
     { name = "whisperx" },
+]
+
+[package.optional-dependencies]
+flash-attn = [
+    { name = "flash-attn" },
 ]
 
 [package.dev-dependencies]
@@ -2591,7 +2595,7 @@ requires-dist = [
     { name = "accelerate", specifier = ">=1.4.0" },
     { name = "decord", specifier = ">=0.6.0" },
     { name = "einops", specifier = ">=0.8.1" },
-    { name = "flash-attn", specifier = ">=2.7.4.post1" },
+    { name = "flash-attn", marker = "extra == 'flash-attn'", specifier = ">=2.7.4.post1" },
     { name = "jsonargparse", specifier = ">=4.37.0" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "scipy", specifier = ">=1.15.2" },
@@ -2602,6 +2606,7 @@ requires-dist = [
     { name = "wandb", specifier = ">=0.19.7" },
     { name = "whisperx", specifier = ">=3.3.1" },
 ]
+provides-extras = ["flash-attn"]
 
 [package.metadata.requires-dev]
 dev = [
