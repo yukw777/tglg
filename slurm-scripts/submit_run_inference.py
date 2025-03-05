@@ -33,8 +33,8 @@ srun --cpus-per-task {num_dataloader_workers} uv run torchrun \\
 --rdzv-id=$RDZV_ID \\
 --rdzv-backend=c10d \\
 --rdzv-endpoint=$MASTER_NODE \\
-../scripts/run_inference.py \\"""
-    single_gpu = "uv run python ../scripts/run_inference.py \\"
+scripts/run_inference.py \\"""
+    single_gpu = "uv run python scripts/run_inference.py \\"
 
     if run_inference_args is None:
         run_inference_args = {}
