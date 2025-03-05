@@ -12,7 +12,6 @@ from decord import VideoReader
 from einops import rearrange
 from torch import nn
 from torch.nn.utils.rnn import pad_sequence
-from torch.utils.data import DataLoader
 from torchvision.transforms.v2.functional import resize
 from tqdm import tqdm
 from videollm_online.models import build_model_and_tokenizer

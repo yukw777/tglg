@@ -49,7 +49,7 @@ ignore_missing_imports = true
 
 [tool.ruff]
 # automatically sort imports
-lint.select = ["I"]
+lint.extend-select = ["I"]
 
 [tool.ruff.lint.isort]
 # wandb by default creates a directory called "wandb"
