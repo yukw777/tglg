@@ -87,6 +87,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         checkpoint: str = "chenjoya/videollm-online-8b-v1plus",
         frame_token_interval_threshold: float = 0.725,
         use_narration: bool = False,
+        show_progress: bool = True,
     ) -> None:
         super().__init__()
         args = LiveTrainingArguments(live_version=version)
@@ -97,6 +98,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
             frame_token_interval=",",
         )
         self.use_narration = use_narration
+        self.show_progress = show_progress
         self.model, self.tokenizer = build_model_and_tokenizer(
             is_training=False, set_vision_inside=True, **asdict(args)
         )
@@ -201,7 +203,9 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
 
         results: dict[str, list[dict]] = defaultdict(list)
         eval_frames = batch["eval_frames"]
-        for i in tqdm(range(eval_frames.size(0)), desc="Frames"):
+        for i in tqdm(
+            range(eval_frames.size(0)), desc="Frames", disable=not self.show_progress
+        ):
             # keep generating one token at a time until it's ready to generate,
             # i.e., the next token is not frame_token_interval
             attention_mask = torch.cat(
