@@ -1,5 +1,4 @@
 import os
-from dataclasses import asdict
 
 import pandas as pd
 import torch
@@ -32,6 +31,8 @@ def run(
     out_file_name: str | None = None,
 ) -> None:
     set_seed(random_seed)
+    if gen_config is None:
+        gen_config = {}
     if model is None:
         model = VideoLLMOnlineHoloAssistModel()
 
@@ -62,10 +63,7 @@ def run(
     results_table = pd.DataFrame(columns=["video", "start", "content"])
     for batch in tqdm(dataloader, desc="Inference"):
         with torch.inference_mode():
-            if gen_config is None:
-                preds = model.predict(batch)
-            else:
-                preds = model.predict(batch, **asdict(gen_config))
+            preds = model.predict(batch, **gen_config)
         gathered_preds = gather_object(preds)
         if (
             accelerator.gradient_state.end_of_dataloader
