@@ -1,4 +1,5 @@
 import os
+from dataclasses import asdict
 
 import pandas as pd
 import torch
@@ -8,6 +9,7 @@ from jsonargparse import auto_cli
 from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import DataLoader, Dataset, Subset
 
+from real_time_vlm_benchmark.baseline_models.utils.generation import GenerationConfig
 from real_time_vlm_benchmark.baseline_models.videollm_online_models.holo_assist import (
     VideoLLMOnlineHoloAssistModel,
 )
@@ -24,7 +26,7 @@ def run(
     num_dataloader_workers: int = 4,
     start_idx: int | None = None,
     end_idx: int | None = None,
-    gen_config: dict | None = None,
+    gen_config: GenerationConfig | None = None,
     wandb_project: str | None = None,
     random_seed: int = 42,
     out_file_name: str | None = None,
@@ -33,8 +35,6 @@ def run(
     if model is None:
         model = VideoLLMOnlineHoloAssistModel()
 
-    if gen_config is None:
-        gen_config = {}
     if wandb_project is not None:
         accelerator = Accelerator(log_with="wandb")
         accelerator.init_trackers(wandb_project)
@@ -62,7 +62,10 @@ def run(
     results_table = pd.DataFrame(columns=["video", "start", "content"])
     for batch in tqdm(dataloader, desc="Inference"):
         with torch.inference_mode():
-            preds = model.predict(batch, **gen_config)
+            if gen_config is None:
+                preds = model.predict(batch)
+            else:
+                preds = model.predict(batch, **asdict(gen_config))
         gathered_preds = gather_object(preds)
         if (
             accelerator.gradient_state.end_of_dataloader
