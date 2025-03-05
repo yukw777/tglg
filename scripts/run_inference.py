@@ -18,8 +18,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def run(
-    model: VideoLLMOnlineHoloAssistModel,
     dataset: HoloAssistDataset,
+    model: VideoLLMOnlineHoloAssistModel | None = None,
     per_device_batch_size: int = 1,
     num_dataloader_workers: int = 4,
     start_idx: int | None = None,
@@ -30,6 +30,8 @@ def run(
     out_file_name: str | None = None,
 ) -> None:
     set_seed(random_seed)
+    if model is None:
+        model = VideoLLMOnlineHoloAssistModel()
 
     if gen_config is None:
         gen_config = {}
