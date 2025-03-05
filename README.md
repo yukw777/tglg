@@ -16,6 +16,7 @@ uv pip install torch setuptools psutil packaging ninja
 uv pip install flash-attn --no-build-isolation
 
 # Install python dependencies
+# Specify --extra flash-attn if necessary
 uv sync
 
 # Workaround for https://github.com/OpenNMT/CTranslate2/issues/1826
