@@ -14,7 +14,7 @@ dependencies = [
     "sentence-transformers>=3.4.1",
     "torch>=2.6.0",
     "torchvision>=0.21.0",
-    "videollm-online[flash-attn]",
+    "videollm-online",
     "wandb>=0.19.7",
     "whisperx>=3.3.1",
 ]
