@@ -58,6 +58,7 @@ def run(
     )
 
     model = model.module if isinstance(model, DistributedDataParallel) else model
+    assert isinstance(model, VideoLLMOnlineHoloAssistModel)
     results_table = pd.DataFrame(columns=["video", "start", "content"])
     for batch in tqdm(dataloader, desc="Inference"):
         with torch.inference_mode():
