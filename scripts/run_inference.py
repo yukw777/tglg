@@ -42,7 +42,7 @@ def run(
 
     # set up wandb
     run = None
-    if any(
+    if distributed_state.is_main_process and any(
         [
             wandb_entity is not None,
             wandb_project is not None,
@@ -130,7 +130,7 @@ def run(
                     for row in reader:
                         writer.writerow(row)
 
-    if run is not None:
+    if distributed_state.is_main_process and run is not None:
         data = []
         for f in sorted(results_dir.iterdir()):
             with open(f, newline="") as in_file:
