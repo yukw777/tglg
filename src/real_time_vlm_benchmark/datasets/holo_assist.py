@@ -115,6 +115,7 @@ class HoloAssistDataset(Dataset):
     def __getitem__(self, index: int) -> dict:
         video, dialogue = self.data[index]
         datapoint = {
+            "index": index,
             "video": self.video_dir_path / video / "Export_py/Video_pitchshift.mp4",
             "dialogue": dialogue,
         }

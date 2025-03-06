@@ -1,5 +1,4 @@
 import math
-from collections import defaultdict
 from dataclasses import asdict
 from typing import Callable
 
@@ -154,6 +153,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         eval_frames = frames[num_interleaved_frames:]
 
         return {
+            "index": datapoint["index"],
             "input_ids": input_ids,
             "context_frames": context_frames,
             "eval_frames": eval_frames,
@@ -173,7 +173,9 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
                 [dp["frame_timestamps"] for dp in datapoints], batch_first=True
             )
             video = [dp["video"] for dp in datapoints]
+            idx = torch.tensor([dp["index"] for dp in datapoints])
             return {
+                "index": idx,
                 "context_frames": context_frames,
                 "eval_frames": eval_frames,
                 "frame_timestamps": frame_timestamps,
@@ -185,7 +187,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         return collate
 
     @torch.inference_mode()
-    def predict(self, batch: dict, **gen_kwargs) -> list[tuple[str, list[dict]]]:
+    def predict(self, batch: dict, **gen_kwargs) -> dict[int, list]:
         # NOTE: we don't support batch prediction
         assert batch["input_ids"].size(0) == 1, "Batch prediction not supported"
 
@@ -200,7 +202,8 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
             attention_mask=attention_mask,
         )
 
-        results: dict[str, list[dict]] = defaultdict(list)
+        index = batch["index"][0].item()
+        results: dict[int, list] = {index: []}
         eval_frames = batch["eval_frames"]
         for i in tqdm(
             range(eval_frames.size(0)), desc="Frames", disable=not self.show_progress
@@ -290,8 +293,9 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
                 response = self.tokenizer.batch_decode(
                     outputs.sequences[:, input_ids.size(1) :], skip_special_tokens=True
                 )[0].strip()
-                results[batch["video"][0]].append(
+                results[index].append(
                     {
+                        "video": batch["video"][0],
                         "role": "assistant",
                         "content": response,
                         "start": batch["frame_timestamps"][
@@ -300,4 +304,4 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
                     }
                 )
 
-        return list(results.items())
+        return results
