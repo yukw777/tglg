@@ -14,7 +14,7 @@ from torch.nn.utils.rnn import pad_sequence
 from torchvision.transforms.v2.functional import resize
 from tqdm import tqdm
 from videollm_online.models import build_model_and_tokenizer
-from videollm_online.models.arguments_live import LiveTrainingArguments, get_args_class
+from videollm_online.models.arguments_live import get_args_class
 
 
 def sample_frames_for_dialogue(
@@ -88,8 +88,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         show_progress: bool = True,
     ) -> None:
         super().__init__()
-        args = LiveTrainingArguments(live_version=version)
-        args = get_args_class(args.live_version)(
+        args = get_args_class(version)(
             resume_from_checkpoint=checkpoint,
             # live1's frame_token_interval is set to '', which doesn't quite work, so let's override it.
             # See https://github.com/showlab/videollm-online/issues/32#issuecomment-2346180840 for more details.
