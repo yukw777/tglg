@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -24,6 +25,9 @@ from real_time_vlm_benchmark.baseline_models.videollm_online_models.holo_assist 
     sample_frames_for_dialogue,
 )
 from real_time_vlm_benchmark.datasets.holo_assist import HoloAssistDataset
+
+# Workaround for https://github.com/dmlc/decord/issues/156
+os.environ["DECORD_EOF_RETRY_MAX"] = "20480"
 
 
 def run(

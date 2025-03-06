@@ -20,6 +20,9 @@ from real_time_vlm_benchmark.datasets.holo_assist import HoloAssistDataset
 # Disable Tokenizers Parallelism to Play Nice w/ PyTorch Multiprocessing DataLoaders
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+# Workaround for https://github.com/dmlc/decord/issues/156
+os.environ["DECORD_EOF_RETRY_MAX"] = "20480"
+
 
 def run(
     dataset: HoloAssistDataset,
