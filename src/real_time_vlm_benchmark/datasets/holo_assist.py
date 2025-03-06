@@ -86,10 +86,14 @@ class HoloAssistDataset(Dataset):
         self,
         video_dir_path: str,
         ann_file_path: str,
+        video_frame_dir_path: str | None = None,
         preprocessor: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
     ) -> None:
         super().__init__()
         self.video_dir_path = Path(video_dir_path)
+        self.video_frame_dir_path = (
+            Path(video_frame_dir_path) if video_frame_dir_path is not None else None
+        )
         self.preprocessor = preprocessor
         with open(ann_file_path) as f:
             anns = json.load(f)
@@ -119,6 +123,8 @@ class HoloAssistDataset(Dataset):
             "video": self.video_dir_path / video / "Export_py/Video_pitchshift.mp4",
             "dialogue": dialogue,
         }
+        if self.video_frame_dir_path is not None:
+            datapoint["video_frame"] = self.video_frame_dir_path / f"{index}.pt"
         if self.preprocessor is not None:
             return self.preprocessor(datapoint)
         return datapoint

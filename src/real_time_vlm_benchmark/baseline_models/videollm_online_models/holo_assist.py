@@ -86,6 +86,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         frame_token_interval_threshold: float = 0.725,
         use_narration: bool = False,
         show_progress: bool = True,
+        set_vision_inside: bool = False,
     ) -> None:
         super().__init__()
         args = get_args_class(version)(
@@ -96,8 +97,9 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         )
         self.use_narration = use_narration
         self.show_progress = show_progress
+        self.set_vision_inside = set_vision_inside
         self.model, self.tokenizer = build_model_and_tokenizer(
-            is_training=False, set_vision_inside=True, **asdict(args)
+            is_training=False, set_vision_inside=self.set_vision_inside, **asdict(args)
         )
         self.frame_num_tokens = self.model.config.frame_num_tokens
         self.frame_fps = args.frame_fps
@@ -126,10 +128,13 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         frame_idx = sample_frames_for_dialogue(
             start_time, end_time, vr.get_avg_fps(), self.frame_fps
         )
-        frames = vr.get_batch(frame_idx)
-        frames = rearrange(frames, "t h w c -> t c h w")
-        frames = resize(frames, [self.model.config.frame_resolution] * 2)
         frame_timestamps = frame_idx / vr.get_avg_fps()
+        if self.set_vision_inside:
+            frames = vr.get_batch(frame_idx)
+            frames = rearrange(frames, "t h w c -> t c h w")
+            frames = resize(frames, [self.model.config.frame_resolution] * 2)
+        else:
+            frames = torch.load(datapoint["video_frame"])
 
         # construct an interleaved dialogue
         dialogue = [

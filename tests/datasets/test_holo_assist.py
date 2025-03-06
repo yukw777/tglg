@@ -285,7 +285,7 @@ def test_convert_holo_assist(
 
 
 @pytest.mark.parametrize(
-    "original_anns,expected_items",
+    "original_anns,video_frame_dir_path,expected_items",
     [
         (
             {
@@ -297,6 +297,7 @@ def test_convert_holo_assist(
                     {"role": "assistant", "content": "a2", "eval": True},
                 ]
             },
+            None,
             [
                 {
                     "index": 0,
@@ -308,6 +309,32 @@ def test_convert_holo_assist(
                         {"role": "user", "content": "u0", "eval": False},
                         {"role": "assistant", "content": "a2", "eval": True},
                     ],
+                }
+            ],
+        ),
+        (
+            {
+                "video0": [
+                    {"role": "system", "content": "system message", "eval": False},
+                    {"role": "assistant", "content": "a0", "eval": False},
+                    {"role": "assistant", "content": "a1", "eval": False},
+                    {"role": "user", "content": "u0", "eval": False},
+                    {"role": "assistant", "content": "a2", "eval": True},
+                ]
+            },
+            "video_frame_dir_path",
+            [
+                {
+                    "index": 0,
+                    "video": Path("video_dir/video0/Export_py/Video_pitchshift.mp4"),
+                    "dialogue": [
+                        {"role": "system", "content": "system message", "eval": False},
+                        {"role": "assistant", "content": "a0", "eval": False},
+                        {"role": "assistant", "content": "a1", "eval": False},
+                        {"role": "user", "content": "u0", "eval": False},
+                        {"role": "assistant", "content": "a2", "eval": True},
+                    ],
+                    "video_frame": Path("video_frame_dir_path/0.pt"),
                 }
             ],
         ),
@@ -341,6 +368,7 @@ def test_convert_holo_assist(
                     {"role": "assistant", "content": "a8", "eval": True},
                 ],
             },
+            None,
             [
                 {
                     "index": 0,
@@ -407,10 +435,15 @@ def test_convert_holo_assist(
     ],
 )
 def test_holo_assist_dataset_init(
-    tmp_path: Path, original_anns: dict, expected_items: list[dict]
+    tmp_path: Path,
+    original_anns: dict,
+    video_frame_dir_path: str | None,
+    expected_items: list[dict],
 ) -> None:
     anns_file = tmp_path / "ann.json"
     anns_file.write_text(json.dumps(original_anns))
 
-    dataset = HoloAssistDataset("video_dir", str(anns_file))
+    dataset = HoloAssistDataset(
+        "video_dir", str(anns_file), video_frame_dir_path=video_frame_dir_path
+    )
     assert list(iter(dataset)) == expected_items
