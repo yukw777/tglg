@@ -284,6 +284,8 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
                     past_key_values=outputs.past_key_values,
                     attention_mask=attention_mask,
                     return_dict_in_generate=True,
+                    # Set to suppress warning
+                    pad_token_id=self.tokenizer.pad_token_id,
                     **gen_kwargs,
                 )
                 attention_mask = torch.cat(
