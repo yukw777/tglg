@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import torch
 import wandb
-from accelerate import PartialState
+from accelerate import Accelerator
 from accelerate.utils import set_seed, tqdm
 from jsonargparse import auto_cli
 from torch.utils.data import DataLoader, Subset
@@ -38,11 +38,11 @@ def run(
     set_seed(random_seed)
 
     # initialize distributed_state
-    distributed_state = PartialState()
+    accelerator = Accelerator()
 
     # set up wandb
     run = None
-    if distributed_state.is_main_process and any(
+    if accelerator.is_main_process and any(
         [
             wandb_entity is not None,
             wandb_project is not None,
@@ -59,7 +59,7 @@ def run(
     if model is None:
         model = VideoLLMOnlineHoloAssistModel()
     model.eval()
-    model.to(distributed_state.device)
+    model.to(accelerator.device)
 
     # set up the preprocessor
     dataset.preprocessor = model.preprocess
@@ -85,7 +85,7 @@ def run(
     if end_idx is not None:
         inference_indices = set(idx for idx in inference_indices if idx < end_idx)
 
-    with distributed_state.split_between_processes(
+    with accelerator.split_between_processes(
         sorted(inference_indices)
     ) as per_process_indices:
         dataloader = DataLoader(
@@ -95,17 +95,21 @@ def run(
             pin_memory=True,
             collate_fn=model.collate_fn,
         )
+        failure = torch.tensor(False, device=accelerator.device)
         for batch in tqdm(dataloader, desc="Inference"):
-            batch["context_frames"] = batch["context_frames"].to(
-                distributed_state.device
-            )
-            batch["eval_frames"] = batch["eval_frames"].to(distributed_state.device)
-            batch["input_ids"] = batch["input_ids"].to(distributed_state.device)
-            batch["attention_mask"] = batch["attention_mask"].to(
-                distributed_state.device
-            )
-            with torch.inference_mode():
-                preds = model.predict(batch, **gen_config)
+            try:
+                batch["context_frames"] = batch["context_frames"].to(accelerator.device)
+                batch["eval_frames"] = batch["eval_frames"].to(accelerator.device)
+                batch["input_ids"] = batch["input_ids"].to(accelerator.device)
+                batch["attention_mask"] = batch["attention_mask"].to(accelerator.device)
+                with torch.inference_mode():
+                    preds = model.predict(batch, **gen_config)
+            except Exception as e:
+                accelerator.print(
+                    f"[rank {accelerator.process_index}] Exception raised, skipping batch: {e}"
+                )
+                failure = torch.tensor(True, device=accelerator.device)
+                continue
             for index, utters in preds.items():
                 with open(results_dir / f"{index}.csv", "w", newline="") as csvfile:
                     writer = csv.DictWriter(csvfile, ["video", "start", "content"])
@@ -118,9 +122,9 @@ def run(
                                 "content": utter["content"],
                             }
                         )
-    distributed_state.wait_for_everyone()
+    success = (~torch.any(accelerator.gather(failure))).item()
 
-    if distributed_state.is_main_process and out_file_name is not None:
+    if success and accelerator.is_main_process and out_file_name is not None:
         with open(out_file_name, "w", newline="") as out_file:
             writer = csv.DictWriter(out_file, ["video", "start", "content"])
             writer.writeheader()
@@ -130,7 +134,7 @@ def run(
                     for row in reader:
                         writer.writerow(row)
 
-    if distributed_state.is_main_process and run is not None:
+    if success and accelerator.is_main_process and run is not None:
         data = []
         for f in sorted(results_dir.iterdir()):
             with open(f, newline="") as in_file:
@@ -141,7 +145,7 @@ def run(
         table = wandb.Table(dataframe=df)
         run.log({"inference": table})
 
-    distributed_state.destroy_process_group()
+    accelerator.end_training()
 
 
 if __name__ == "__main__":
