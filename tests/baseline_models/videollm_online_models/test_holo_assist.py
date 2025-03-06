@@ -7,12 +7,13 @@ from real_time_vlm_benchmark.baseline_models.videollm_online_models.holo_assist 
 
 
 @pytest.mark.parametrize(
-    "start_time,end_time,video_avg_fps,sample_fps,expected_idx",
+    "start_time,end_time,video_avg_fps,sample_fps,video_num_frames,expected_idx",
     [
-        (0, 5, 2, 2, list(range(0, 11, 1))),
-        (3, 8, 2, 2, list(range(6, 17, 1))),
-        (0, 5, 4, 2, list(range(0, 21, 2))),
-        (3, 8, 4, 2, list(range(12, 33, 2))),
+        (0, 5, 2, 2, 11, list(range(0, 11, 1))),
+        (3, 8, 2, 2, 17, list(range(6, 17, 1))),
+        (0, 5, 4, 2, 21, list(range(0, 21, 2))),
+        (3, 8, 4, 2, 33, list(range(12, 33, 2))),
+        (3, 8, 4.2, 2, 33, list(range(13, 30, 2)) + [32]),
     ],
 )
 def test_sample_frames_for_dialogue(
@@ -20,11 +21,12 @@ def test_sample_frames_for_dialogue(
     end_time: float,
     video_avg_fps: float,
     sample_fps: float,
+    video_num_frames: int,
     expected_idx: list[int],
 ) -> None:
     assert (
         sample_frames_for_dialogue(
-            start_time, end_time, video_avg_fps, sample_fps
+            start_time, end_time, video_avg_fps, sample_fps, video_num_frames
         ).tolist()
         == expected_idx
     )

@@ -69,7 +69,7 @@ def run(
         end_time = dialogue[-1]["end"]
         start_time = max(0, end_time - max_num_frames / frame_fps)
         frame_idx = sample_frames_for_dialogue(
-            start_time, end_time, vr.get_avg_fps(), frame_fps
+            start_time, end_time, vr.get_avg_fps(), frame_fps, len(vr)
         )
         frames = vr.get_batch(frame_idx)
         frames = rearrange(frames, "t h w c -> t c h w")

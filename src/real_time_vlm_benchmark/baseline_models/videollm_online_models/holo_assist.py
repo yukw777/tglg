@@ -18,13 +18,17 @@ from videollm_online.models.arguments_live import get_args_class
 
 
 def sample_frames_for_dialogue(
-    start_time: float, end_time: float, video_avg_fps: float, sample_fps: float
+    start_time: float,
+    end_time: float,
+    video_avg_fps: float,
+    sample_fps: float,
+    video_num_frames: int,
 ) -> torch.Tensor:
     """
     Returns the indices for frames sampled at the given fps from [start_time, end_time].
     """
     start_time_frame = math.ceil(start_time * video_avg_fps)
-    end_time_frame = math.floor(end_time * video_avg_fps)
+    end_time_frame = min(math.floor(end_time * video_avg_fps), video_num_frames - 1)
     num_frames = end_time_frame - start_time_frame + 1
     frame_interval = video_avg_fps / sample_fps
     num_frames_to_sample = math.ceil(num_frames / frame_interval)
@@ -126,7 +130,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         end_time = dialogue[-1]["end"]
         start_time = max(0, end_time - self.max_num_frames / self.frame_fps)
         frame_idx = sample_frames_for_dialogue(
-            start_time, end_time, vr.get_avg_fps(), self.frame_fps
+            start_time, end_time, vr.get_avg_fps(), self.frame_fps, len(vr)
         )
         frame_timestamps = frame_idx / vr.get_avg_fps()
         if self.set_vision_inside:
