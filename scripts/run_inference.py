@@ -38,7 +38,7 @@ def run(
 ) -> int:
     set_seed(random_seed)
 
-    # initialize distributed_state
+    # initialize accelerator
     accelerator = Accelerator()
 
     # set up wandb
