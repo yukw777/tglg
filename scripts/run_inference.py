@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -34,7 +35,7 @@ def run(
     wandb_run_name: str | None = None,
     random_seed: int = 42,
     out_file_name: str | None = None,
-) -> None:
+) -> int:
     set_seed(random_seed)
 
     # initialize distributed_state
@@ -146,7 +147,8 @@ def run(
         run.log({"inference": table})
 
     accelerator.end_training()
+    return 0 if success else 1
 
 
 if __name__ == "__main__":
-    auto_cli(run, as_positional=False)
+    sys.exit(auto_cli(run, as_positional=False))
