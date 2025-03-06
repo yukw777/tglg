@@ -73,7 +73,7 @@ def run(
         # get all the finished indices
         finished_idx = set(int(f.stem) for f in results_dir.iterdir())
     else:
-        results_dir.mkdir()
+        results_dir.mkdir(parents=True)
 
     # third, remove finished indices from inference indices
     inference_indices -= finished_idx
