@@ -31,6 +31,7 @@ def run(
     results_dir: Path,
     version: str = "live1+",
     per_device_batch_size: int = 256,
+    frame_batch_size: int | None = None,
     num_dataloader_workers: int = 4,
     start_idx: int | None = None,
     end_idx: int | None = None,
@@ -119,16 +120,24 @@ def run(
         failure = torch.tensor(False, device=accelerator.device)
         for batch in tqdm(dataloader, desc="Encode"):
             try:
-                with torch.inference_mode():
-                    batch_encoded_frames = vision_encode(
-                        vision_model, batch["frames"].to(accelerator.device)
-                    )
+                if frame_batch_size is None:
+                    batch_frames = [batch["frames"]]
+                else:
+                    batch_frames = batch["frames"].split(frame_batch_size)
+                batch_encoded_frames_list = []
+                for frames in batch_frames:
+                    with torch.inference_mode():
+                        encoded_frames = vision_encode(
+                            vision_model, frames.to(accelerator.device)
+                        )
+                        batch_encoded_frames_list.append(encoded_frames)
             except Exception as e:
                 print(
                     f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"
                 )
                 failure = torch.tensor(True, device=accelerator.device)
                 continue
+            batch_encoded_frames = torch.cat(batch_encoded_frames_list)
             for index, encoded_frames in zip(
                 batch["index"],
                 batch_encoded_frames.split(batch["num_frames"].tolist()),
