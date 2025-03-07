@@ -9,6 +9,7 @@ dependencies = [
     "decord>=0.6.0",
     "einops>=0.8.1",
     "jsonargparse>=4.37.0",
+    "lightning-sdk>=0.2.3",
     "pandas>=2.2.3",
     "scipy>=1.15.2",
     "sentence-transformers>=3.4.1",
