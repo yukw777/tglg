@@ -92,7 +92,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         checkpoint: str = "chenjoya/videollm-online-8b-v1plus",
         frame_token_interval_threshold: float = 0.725,
         use_narration: bool = False,
-        show_progress: bool = True,
+        show_progress: bool = False,
         set_vision_inside: bool = False,
     ) -> None:
         super().__init__()
