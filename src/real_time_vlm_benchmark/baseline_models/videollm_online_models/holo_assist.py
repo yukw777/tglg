@@ -38,7 +38,7 @@ def sample_frames_for_dialogue(
 
 
 def construct_interleaved_dialogue(
-    dialogue: list[dict], sample_fps: float, use_narration: bool = False
+    dialogue: list[dict], frame_timestamps: list[float], use_narration: bool = False
 ) -> tuple[list[dict], int]:
     """
     Construct an interleaved dialogue with frames and utterances, and return the number of frames taken
@@ -54,7 +54,7 @@ def construct_interleaved_dialogue(
         else "A multimodal AI assistant is helping users with some activities. Below is their conversation, interleaved with the list of video frames received by the assistant."
     )
     interleaved_dialogue: list[dict] = [{"role": "system", "content": sys_msg}]
-    last_frame_idx = 0
+    curr_frame_count = 0
     for utterance in dialogue:
         if utterance["role"] == "system":
             if use_narration:
@@ -64,22 +64,25 @@ def construct_interleaved_dialogue(
             else:
                 continue
         elif not utterance["eval"]:
-            # add frames [last_frame_idx, frame(utterance['start'])]
-            utter_start_frame_idx = math.floor(utterance["start"] * sample_fps)
-            # time_interval = utterance["start"] - last_frame_time
-            time_interval_num_frames = utter_start_frame_idx + 1 - last_frame_idx
+            i = curr_frame_count
+            while frame_timestamps[i] <= utterance["start"]:
+                i += 1
+            num_frames = i - curr_frame_count
+            if num_frames == 0:
+                # no associated video frames for this utterance, so skip
+                continue
             interleaved_dialogue.append(
                 {
                     "role": "stream",
-                    "num_frames": time_interval_num_frames,
+                    "num_frames": i - curr_frame_count,
                     "learn": False,
                 }
             )
-            last_frame_idx += time_interval_num_frames
+            curr_frame_count = i
             interleaved_dialogue.append(utterance)
         else:
             break
-    return interleaved_dialogue, last_frame_idx
+    return interleaved_dialogue, curr_frame_count
 
 
 class VideoLLMOnlineHoloAssistModel(nn.Module):
@@ -128,7 +131,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
 
         # sample frames from max(0, end time - max_num_frames/frame_fps) to the end time of the last utterance at self.frame_fps
         end_time = dialogue[-1]["end"]
-        start_time = max(0, end_time - self.max_num_frames / self.frame_fps)
+        start_time = max(0.0, end_time - self.max_num_frames / self.frame_fps)
         frame_idx = sample_frames_for_dialogue(
             start_time, end_time, vr.get_avg_fps(), self.frame_fps, len(vr)
         )
@@ -147,7 +150,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
             if utter.get("start", float("inf")) >= start_time
         ]
         interleaved_dialogue, num_interleaved_frames = construct_interleaved_dialogue(
-            dialogue, self.frame_fps, use_narration=self.use_narration
+            dialogue, frame_timestamps, use_narration=self.use_narration
         )
 
         # tokenize the interleave dialogue
