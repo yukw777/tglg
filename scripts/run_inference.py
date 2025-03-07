@@ -38,7 +38,11 @@ def run(
 ) -> int:
     set_seed(random_seed)
 
+    if model is None:
+        model = VideoLLMOnlineHoloAssistModel()
+
     # initialize accelerator
+    # NOTE: accelerator has to be initialized after model initialization
     accelerator = Accelerator()
 
     # set up wandb
@@ -57,8 +61,6 @@ def run(
     # set up model
     if gen_config is None:
         gen_config = {}
-    if model is None:
-        model = VideoLLMOnlineHoloAssistModel()
     model.eval()
     model.to(accelerator.device)
 
