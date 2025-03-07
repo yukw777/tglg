@@ -125,7 +125,11 @@ def compute_final_score(
     timing_scores: np.ndarray,
     f1_score: float,
     alpha: float = 0.5,
-) -> float:
-    return (
-        alpha * accuracy_scores.mean() + (1 - alpha) * timing_scores.mean()
-    ) * f1_score
+) -> dict[str, float]:
+    mean_acc = float(accuracy_scores.mean())
+    mean_timing = float(timing_scores.mean())
+    return {
+        "mean_acc": mean_acc,
+        "mean_timing": mean_timing,
+        "final_score": (alpha * mean_acc + (1 - alpha) * mean_timing) * f1_score,
+    }

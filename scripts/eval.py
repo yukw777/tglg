@@ -86,13 +86,12 @@ def eval(
     f1_score = compute_f1_score(
         total_matched_pairs, total_generated, total_ground_truth
     )
+    final_score = compute_final_score(
+        total_accuracy_scores, total_timing_scores, f1_score["f1"]
+    )
     return {
         "individual_eval_results": individual_eval_results,
-        "final_score": float(
-            compute_final_score(
-                total_accuracy_scores, total_timing_scores, f1_score["f1"]
-            )
-        ),
+        **final_score,
         **f1_score,
     }
 
