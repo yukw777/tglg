@@ -111,7 +111,7 @@ def preprocess_inference_results(results: pd.DataFrame) -> dict[str, list[dict]]
     preprocessed = defaultdict(list)
     for _, row in results.iterrows():
         preprocessed[row["video"]].append(
-            {"content": row["content"], "start": row["start"]}
+            {"content": row["content"], "start": float(row["start"])}
         )
     return preprocessed
 
