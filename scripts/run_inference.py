@@ -106,7 +106,7 @@ def run(
                 with torch.inference_mode():
                     preds = model.predict(batch, **gen_config)
             except Exception as e:
-                accelerator.print(
+                print(
                     f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"
                 )
                 failure = torch.tensor(True, device=accelerator.device)

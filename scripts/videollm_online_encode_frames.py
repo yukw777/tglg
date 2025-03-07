@@ -124,7 +124,7 @@ def run(
                         vision_model, batch["frames"].to(accelerator.device)
                     )
             except Exception as e:
-                accelerator.print(
+                print(
                     f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"
                 )
                 failure = torch.tensor(True, device=accelerator.device)
