@@ -80,7 +80,7 @@ def eval(
                     "gt_start": gt_utters[matched_gt]["start"],
                     "gt_end": gt_utters[matched_gt]["end"],
                     "gen_content": generated[video][matched_gen]["content"],
-                    "gt_content": gt_utters[matched_gen]["content"],
+                    "gt_content": gt_utters[matched_gt]["content"],
                 }
             )
     f1_score = compute_f1_score(
