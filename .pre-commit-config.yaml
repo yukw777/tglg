@@ -72,13 +72,7 @@ repos:
     rev: v2.4.1
     hooks:
       - id: codespell
-        args:
-          - -L rouge
-        exclude: |
-          (?x)^(
-              uv.lock|
-              pyproject.toml
-          )$
+        types_or: [python, pyi, jupyter]
         additional_dependencies:
           - tomli
 

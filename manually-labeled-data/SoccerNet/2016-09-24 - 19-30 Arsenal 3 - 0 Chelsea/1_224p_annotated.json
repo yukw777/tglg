@@ -1,0 +1,3511 @@
+{
+    "segments": [
+        {
+            "start": 0.091,
+            "end": 2.534,
+            "text": " Arsenal in red and white, Chelsea in all blue.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2.975,
+            "end": 6.199,
+            "text": "Steve McManaman, good afternoon, this one could be a bit spicy, it usually is.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 6.219,
+            "end": 8.002,
+            "text": "Yeah, evening, mate, I hope it is spicy.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 8.603,
+            "end": 10.205,
+            "text": "I hope it's lively, I hope it's aggressive.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 11.426,
+            "end": 15.272,
+            "text": "I know we get lots of goals, there's been a number of goals this afternoon, let's hope we get a few here.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 16.398,
+            "end": 21.559,
+            "text": " Well, both teams come into the match warming up by scoring four goals in the League Cup in the East Midlands in midweek.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 21.659,
+            "end": 26.1,
+            "text": "Arsenal winning 4-0 at Forest, and Chelsea coming from behind to knock out Leicester.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 26.54,
+            "end": 37.503,
+            "text": "And Chelsea have had the upper hand in recent games, they've won seven of the last ten meetings, including here last season when the third Murtasaka was sent off and Diego Costa got the winning goal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 38.363,
+            "end": 43.627,
+            "text": " Here's N'Golo Kante and Bratislav Ivanovic, who wears the captain's armband.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 44.147,
+            "end": 47.27,
+            "text": "Again today for Chelsea, John Terry missing his third straight game.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 47.79,
+            "end": 51.933,
+            "text": "He was back in training this week, but not ready in time for this one today.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 57.337,
+            "end": 61.44,
+            "text": "Both teams starting the match with ten points from their first five matches.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 62.481,
+            "end": 67.004,
+            "text": "But even though it's early in the season, they'll be acutely aware that Manchester City's win at Swansea earlier",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 67.755,
+            "end": 73.897,
+            "text": " means they are already eight points behind Pep Guardiola's team in this early Premier League table.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 78.058,
+            "end": 87.181,
+            "text": "Here's Kokelen, who's still fending off Granit Xhaka, with a starting place in Arsenal's central midfield, alongside this man, Santi Cazorla.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 89.601,
+            "end": 91.882,
+            "text": "Well, you can see how Chelsea are going to play, can't you, Glenn, straight away?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 93.379,
+            "end": 97.761,
+            "text": " Just drop back, let Arsenal have all the ball, no pressure at all, until they get to a certain area.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 97.781,
+            "end": 105.243,
+            "text": "Yeah, they're allowing them to have the ball, but straight away you see Kozola on the ball with too much time and space.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 105.264,
+            "end": 110.766,
+            "text": "He'll open you up, he'll probe and put balls in there, so I think they've got to get tomato on Kozola.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 111.946,
+            "end": 122.23,
+            "text": "First defending for Ivanovic to do on the Nacho Monreal in the first quarter here for Arsenal, which Santi Kozola has gone out to take, and that Laurent Koscielny",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 123.298,
+            "end": 126.24,
+            "text": " And Skodran and Mustafi have made their way into the Chelsea box.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 126.26,
+            "end": 149.856,
+            "text": "Here goes from Kuzula and David Luiz, who's starting his third successive match since arriving back in the club from Paris Saint-Germain with his first defending.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 150.538,
+            "end": 152.079,
+            "text": " for Chelsea.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 152.099,
+            "end": 164.204,
+            "text": "11 Arsenal changes at Forest on Tuesday, which I suppose is a sign of increased depth that seven first-teamers were included that night, including the likes of Oxlade-Chamberlain, Xhaka and Lucas Perez.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 164.924,
+            "end": 171.887,
+            "text": "Chelsea made seven changes themselves against the champions Leicester City in the EFL Cup a night later.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 172.187,
+            "end": 180.05,
+            "text": "It's interesting from the start there, there's a goal kick, a couple of goal kicks and Arsenal have pressed Chelsea really high and",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 181.979,
+            "end": 183.74,
+            "text": " The goalkeeper's just taken a kick.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 183.8,
+            "end": 185.26,
+            "text": "He's prepared to go long into Kostya.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 185.28,
+            "end": 189.622,
+            "text": "You see a lot of teams playing out from the back, even when they're pressed, and they come unstuck sometimes.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 189.982,
+            "end": 190.862,
+            "text": "Back to Bellerin.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 191.562,
+            "end": 197.224,
+            "text": "Now Alexis Sanchez, who starts off through the middle but drifts into wide positions for Arsenal.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 198.465,
+            "end": 199.085,
+            "text": "Now Ozil.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 204.767,
+            "end": 205.207,
+            "text": "Kokelan.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 207.473,
+            "end": 213.976,
+            "text": " Santi Gazzola, Chelsea back in those organised defensive positions that Steve was talking about.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 214.576,
+            "end": 219.318,
+            "text": "There's Gazzola, looking for the right angle to that fly!",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 219.338,
+            "end": 220.238,
+            "text": "Courtois with the save.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 221.519,
+            "end": 224.06,
+            "text": "And then Iwobi, tackled by Willian.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 225.087,
+            "end": 229.448,
+            "text": " Santic has all the score, both of his goals this season from the penalty spot, but he called that well.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 229.629,
+            "end": 237.031,
+            "text": "And now here's Diego Costa off and running for the first time, and he's fouled there by Lauren Koscielny, and it's going to be a free kick here to Chelsea.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 237.051,
+            "end": 242.613,
+            "text": "Yeah, a couple of things there, Fletch, Chelsea are far too deep defensively, aren't they, if they're going to allow shots like that.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 243.173,
+            "end": 245.734,
+            "text": "And you have to give Diego Costa a huge amount of credit here,",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 246.823,
+            "end": 252.669,
+            "text": " He showed so much strength, if anything he got beaten in a full race by Koscielny, but he just fobbed them off with his strength.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 253.089,
+            "end": 259.896,
+            "text": "Good shot by Cazorla, good save by Courtois, easy enough, but far too deep for Chelsea if they're gonna allow pot shots like that.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 260.196,
+            "end": 263.86,
+            "text": "Just said at the beginning of the game, Cazorla's got far too much space, and there's proof there.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 266.462,
+            "end": 271.067,
+            "text": "Luiz has gone into the box, there's the danger man, Diego Costa, 5-5 in league matches.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 272.132,
+            "end": 279.715,
+            "text": " so far for him, and Arsenal know all about not just the goal-scoring ability, but the disruptive nature of Chelsea's striker on a day like this.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 280.696,
+            "end": 283.877,
+            "text": "And Willian, their set-piece specialist over the free-kick.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 284.397,
+            "end": 286.458,
+            "text": "And he's just teased in towards Gary Cahill.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 289.019,
+            "end": 289.659,
+            "text": "Now Hazard.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 291.46,
+            "end": 291.94,
+            "text": "Here's Kante.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 291.96,
+            "end": 295.182,
+            "text": "He was closed down quickly there by Walcott.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 295.222,
+            "end": 295.762,
+            "text": "Now Willian.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 298.09,
+            "end": 305.736,
+            "text": " And also with some defending to do here for Arsenal, Willian gets the cross in towards Eden Hazard, who I think got a shout, but didn't realise exactly where Diego Costa was.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 305.836,
+            "end": 307.797,
+            "text": "And then a sloppy from Costa, and Arsenal have it back themselves.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 307.837,
+            "end": 321.267,
+            "text": "Here's Bellerin, a really nice start to the game in terms of tempo, both sides looking to get forward when they can.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 321.287,
+            "end": 326.671,
+            "text": "Santi Cazorla for Arsenal.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 330.43,
+            "end": 334.153,
+            "text": " Now Monreal.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 340.858,
+            "end": 341.919,
+            "text": "Alexis Sanchez.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 343.38,
+            "end": 345.121,
+            "text": "Hector Bellerin has stayed well forward.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 345.802,
+            "end": 347.343,
+            "text": "Now the Arsenal right, the right back.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 347.964,
+            "end": 348.704,
+            "text": "Now Iwobi.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 349.285,
+            "end": 351.286,
+            "text": "Monreal has stayed forward too, here he is.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 354.128,
+            "end": 354.789,
+            "text": "Now Coqueland.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 358.921,
+            "end": 374.387,
+            "text": " I think that's why Chelsea are so happy to sit back, they know Arsenal haven't got a lot of height, so when the ball does go wide, they look up to cross it, see Sanchez, see Oxlade-Chamberlain, see Iwobi, and think to themselves, you know what, we'll come back out again, and that probably helps Chelsea at the minute.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 375.948,
+            "end": 380.55,
+            "text": "Yeah, I think if you're playing against Arsenal at the moment without Giroud inside, you'd show them on the outside, wouldn't you?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 380.59,
+            "end": 384.892,
+            "text": "Make them go on the outside, and if they want to play across the middle of the pitch like they are, they're not going to hurt you.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 385.853,
+            "end": 389.594,
+            "text": " But I think Conte said, look, let's not concede early in this game.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 389.754,
+            "end": 391.195,
+            "text": "It's going to be played in spells.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 391.735,
+            "end": 393.215,
+            "text": "Chelsea will come out at the right time.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 395.076,
+            "end": 396.036,
+            "text": "Arsenal's form is good.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 396.076,
+            "end": 398.557,
+            "text": "They've got one defeat in their last 15 league matches.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 398.577,
+            "end": 403.039,
+            "text": "They're betting to win four league games on the trot for the first time since last October.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 403.059,
+            "end": 405.22,
+            "text": "Chelsea haven't lost here for almost six years.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 406.04,
+            "end": 412.382,
+            "text": "Cesc Fabregas scored for Arsenal that day, and Petr Cech was in goal at the other end for Chelsea.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 430.808,
+            "end": 442.034,
+            "text": " Kante beating Ozil, could be a key battle today, that one between the midfield anchor for Chelsea and the most creative influence in terms of creating chances for Arsenal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 443.054,
+            "end": 443.655,
+            "text": "Here's Hazard.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 445.516,
+            "end": 446.336,
+            "text": "Aspilicueta.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 447.056,
+            "end": 448.397,
+            "text": "Kosta waiting for a cross.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 450.618,
+            "end": 455.341,
+            "text": "And instead towards Nemanja Matic, and defended well back there for Arsenal by Koscielny.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 455.861,
+            "end": 456.461,
+            "text": "Now Willian.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 459.143,
+            "end": 459.683,
+            "text": "Ivanovic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 462.577,
+            "end": 464.319,
+            "text": " And that's straightforward for Petr Cech.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 464.799,
+            "end": 468.462,
+            "text": "I'm really looking forward to seeing this side of the pitch, apart from Petr Cech kicking it out.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 469.583,
+            "end": 472.425,
+            "text": "Azpilicueta and Hazard on to Bellerin and Walcott.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 473.006,
+            "end": 481.372,
+            "text": "We see it a lot, as Rio alluded to beforehand in the pre-match show, a lot of Chelsea's defensive errors come from Hazard, cos he doesn't work hard enough getting back into shape.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 481.573,
+            "end": 486.216,
+            "text": "You wonder whether Bellerin and Walcott are focused on that and want to attack two against one.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 486.276,
+            "end": 488.038,
+            "text": "And to Azpilicueta, likewise, the other way.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 490.08,
+            "end": 498.829,
+            "text": " You just saw a lovely little overlap from Aspen Liqueta, you know, Hazard's made a great little ball, played him in, and that's the problem sometimes, he's great defensively, but didn't have his left foot.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 499.169,
+            "end": 505.095,
+            "text": "Costa's making a great run in the box for a left-foot cross, and he comes back on his right, and it all slows back down again.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 506.016,
+            "end": 508.279,
+            "text": "Steele walk off, he can turn and have a run at Chelsea.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 509.408,
+            "end": 515.754,
+            "text": " Gary Cahill with an error from Alexis Sanchez, who's following up, and the deflection's going to bring Arsenal to the corner.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 515.774,
+            "end": 520.318,
+            "text": "You see that little episode there, look where Hazard is now, he's on the halfway line.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 521.178,
+            "end": 523.08,
+            "text": "None whatsoever about thinking defensively.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 523.1,
+            "end": 532.148,
+            "text": "I know you don't want to pick him out, but little things like that, if he doesn't work hard enough to get back, could cost him even more in big games.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 533.489,
+            "end": 536.952,
+            "text": "He's a delight going forward, but you can't carry people anymore.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 537.57,
+            "end": 539.331,
+            "text": " Here's the corner sent in from Ozil.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 540.412,
+            "end": 543.213,
+            "text": "It was towards Mustafi, away by Matic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 546.735,
+            "end": 549.277,
+            "text": "Kocelot was there quickly caught by Fabregas.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 549.317,
+            "end": 562.545,
+            "text": "The play allowed to continue and Ivanovic with a really timely clearance there for Chelsea, with Alexis Sanchez sniffing around on the edge of the six-yard box, and then Costa has gone down, and it's going to be a Chelsea free-kick.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 568.488,
+            "end": 571.57,
+            "text": " Yeah, this is Cesc on Coquelin.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 573.111,
+            "end": 573.771,
+            "text": "It's light, isn't it?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 574.052,
+            "end": 574.572,
+            "text": "It's caught him.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 575.092,
+            "end": 579.095,
+            "text": "Yeah, just leaves his foot in it, and here's Mustafi giving Costa a little bit there, just bringing him down.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 582.897,
+            "end": 586.88,
+            "text": "Howard Webber is with us, as always, today, let's have a look at that.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 586.92,
+            "end": 590.863,
+            "text": "I said it would have been a clear booking for Fabregas, but Michael Oliver's seen it clearly.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 590.923,
+            "end": 597.427,
+            "text": "And we'll bring Howard in the course as and when we can during the course of the match today.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 599.903,
+            "end": 609.405,
+            "text": " Here is Fabregas, he's back here, eight years as an Arsenal player, he joined them as a 16-year-old, and he begged his debut as a 16-year-old, he's still the youngest player to play in an Arsenal shirt.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 610.445,
+            "end": 624.888,
+            "text": "He's had to be patient, Antonio Conte told him quite clearly that he wanted him to be better when Chelsea haven't got the ball, and he's obviously seen enough from him in terms of the performance at Leicester in midweek and what he's done in training so far to get back in the side today at the expense of Oscar.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 631.962,
+            "end": 632.622,
+            "text": " Here's Matic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 634.203,
+            "end": 634.644,
+            "text": "Hazard.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 634.664,
+            "end": 637.285,
+            "text": "Diego Costa.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 637.345,
+            "end": 640.267,
+            "text": "Ivanovic forced back here to Cahill, and he's had it taken off him by Alexis Sanchez.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 640.347,
+            "end": 648.491,
+            "text": "It's a big moment here for Arsenal, and Alexis Sanchez keeps his cool.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 648.511,
+            "end": 653.154,
+            "text": "And Arsenal lead this London derby.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 661.103,
+            "end": 664.248,
+            "text": " And it's Alexis Sanchez on his 100th appearance for Arsenal with a goal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 664.268,
+            "end": 672.041,
+            "text": "Yeah, a victim of their own mistakes again, aren't they, Gary Kale, with his hand behind his head, thinking he's got all the time in the world.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 675.735,
+            "end": 680.898,
+            "text": " But Chelsea have got real good possession of midfield, end up going backwards and backwards and backwards, so negative the way they are.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 681.098,
+            "end": 682.379,
+            "text": "Danny Cahill just gets caught.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 682.399,
+            "end": 684.58,
+            "text": "It was a foul against Swansea, it wasn't today.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 684.981,
+            "end": 686.161,
+            "text": "Courtois comes and goes.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 686.462,
+            "end": 689.183,
+            "text": "Beautiful finish by Alexis Sanchez, have some of that little dink.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 689.503,
+            "end": 695.547,
+            "text": "And it's poor play from Cahill, but you've got to give credit to Sanchez as well, he's pinched his pocket, and how well has he kept this?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 695.607,
+            "end": 696.828,
+            "text": "What a beautiful finish.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 697.308,
+            "end": 700.49,
+            "text": "Waits for Courtois to go down, and look at that, just a little dink.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 700.69,
+            "end": 705.233,
+            "text": "He knew exactly what he was doing, he was given the time, actually, to do what he needed to do.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 709.188,
+            "end": 712.77,
+            "text": " Well, he can celebrate 20 years at the club for Arsene Wenger.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 712.79,
+            "end": 716.272,
+            "text": "It's the 100th appearance in an Arsenal shirt for Alexis Sanchez today.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 717.013,
+            "end": 722.736,
+            "text": "That's his 47th goal, which is a fantastic track record, a fantastic strike rate.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 725.537,
+            "end": 728.759,
+            "text": "Although I've got to point out, it's not quite the same strike rate as Ian Wright had.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 728.819,
+            "end": 730.84,
+            "text": "We were talking about it earlier before the match started.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 730.9,
+            "end": 732.641,
+            "text": "In Wright's first 100 matches, he scored 79.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 734.332,
+            "end": 735.513,
+            "text": " That's all.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 735.613,
+            "end": 738.154,
+            "text": "Struggling there, isn't he?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 738.814,
+            "end": 745.717,
+            "text": "Alexis Sanchez is such a key man though in this Arsenal side, and he kept his cool there to put them ahead by one goal to nil.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 747.038,
+            "end": 759.483,
+            "text": "And it means that Chelsea will carry on with a sequence of only keeping one clean sheet so far this season, that was in the home match against Burnley, which flies in the face of all logic when you think of Antonio Conte's side.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 759.503,
+            "end": 763.685,
+            "text": "There's Alexi Wogan.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 768.412,
+            "end": 770.853,
+            "text": " The overlapping run from Monreal opened up a bit of room.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 770.873,
+            "end": 773.633,
+            "text": "Away by Kante.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 774.534,
+            "end": 775.314,
+            "text": "Here's Coqueland.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 776.934,
+            "end": 777.655,
+            "text": "Now Kizola.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 782.436,
+            "end": 785.517,
+            "text": "Chelsea allowing Arsenal here to dictate the early temper.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 785.917,
+            "end": 788.017,
+            "text": "Santi Kizola, now Mesut Ozil.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 790.418,
+            "end": 793.479,
+            "text": "Alex Iwobi, and it's opening up again, here's Hector Bellari!",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 796.25,
+            "end": 800.432,
+            "text": " Next phase down and Arsenal make it 2-0.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 804.193,
+            "end": 805.213,
+            "text": "Fantastic Arsenal goal.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 805.233,
+            "end": 811.996,
+            "text": "I think Antonio Conte should have watched our pre-match and listened to Rio Ferdinand, because Hazard has got caught out yet again.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 812.416,
+            "end": 815.617,
+            "text": "Just ball-watching and not doing the defensive work, not doing the dirty work.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 817.502,
+            "end": 820.207,
+            "text": " They have just been caught open really, really easy.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 820.247,
+            "end": 824.595,
+            "text": "See Hazard here, bottom of the picture, as Piliqueta goes in to follow Theo Walcott.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 824.615,
+            "end": 826.338,
+            "text": "Look at Hazard, where's the danger?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 826.358,
+            "end": 827.239,
+            "text": "Uh-oh, it's too late.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 828.001,
+            "end": 828.421,
+            "text": "Too late.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 830.861,
+            "end": 832.181,
+            "text": " tap in.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 832.201,
+            "end": 833.002,
+            "text": "2-0, well deserved.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 833.142,
+            "end": 837.123,
+            "text": "That's what happens when you've got wingers that have to track full backs and they will go asleep.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 837.183,
+            "end": 839.424,
+            "text": "There'll be seconds in a game when they'll go to sleep.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 839.464,
+            "end": 843.005,
+            "text": "But when that ball shifted so quickly, it's a wonderful goal from Arsenal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 843.345,
+            "end": 845.386,
+            "text": "It's 4-5 past us really quickly.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 845.706,
+            "end": 847.887,
+            "text": "That's when offensive players get caught out.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 847.927,
+            "end": 848.607,
+            "text": "They go to sleep.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 849.682,
+            "end": 862.149,
+            "text": " That's Theo Walcott's third goal of the season, he scored his first Arsenal goal against Chelsea nine years ago, and on the day that Alexis Sanchez scored on his 100th appearance for the club, Theo Walcott scored on his 350th for Arsenal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 862.589,
+            "end": 869.153,
+            "text": "And inside 15 minutes they lead 2-0 here against the Chelsea side, Steve, who they've found it really hard to win against in recent seasons.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 869.713,
+            "end": 875.977,
+            "text": "Yeah, Glenn's right, I mentioned Chelsea's deficiencies, but you have to say Arsenal's passing was excellent, crisp, precise,",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 877.608,
+            "end": 884.311,
+            "text": " And real cutting through Chelsea's defence, comfortable as you like, he must be going crazy inside.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 884.331,
+            "end": 885.772,
+            "text": "2-0 down after 15 minutes.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 892.336,
+            "end": 893.756,
+            "text": "It's ideal now for Arsenal, isn't it?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 894.056,
+            "end": 902.121,
+            "text": "Chelsea now have got to come out and play a little bit, and they've got the pace and the know-how to break that down as well, so it's ideal now, 2-0.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 902.161,
+            "end": 906.503,
+            "text": "They can really relax and play with a lot of confidence.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 910.683,
+            "end": 911.543,
+            "text": " Away by Mustafi.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 911.683,
+            "end": 914.144,
+            "text": "It's full of credit he got his head to that one.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 914.165,
+            "end": 915.025,
+            "text": "David Luiz able to keep it in.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 915.105,
+            "end": 917.606,
+            "text": "And Wilcombe gives it away to Hazard, and Valeri was in quickly on Matic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 934.447,
+            "end": 938.009,
+            "text": " Petr \u010cech read that situation, you can see all the scores going through the bottom of the screen.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 938.029,
+            "end": 941.571,
+            "text": "The first big Saturday, really, 16 teams in action today.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 941.611,
+            "end": 944.312,
+            "text": "Big wins for Liverpool and Manchester United.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 944.352,
+            "end": 952.317,
+            "text": "Manchester City have maintained their 100% record, Spurs unbeaten as well, and Sunderland blew a 2-0 lead and lost 3-2 at home to Crystal Palace.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 952.417,
+            "end": 955.699,
+            "text": "It's been a really interesting day so far.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 955.739,
+            "end": 963.903,
+            "text": "It will be discussed tonight on Premier League Tonight from 8 o'clock with Jake and the guys on VT Sport 1HD, straight after the match here with us today.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 968.343,
+            "end": 971.586,
+            "text": " We've had 28 goals and counting as it stands.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 972.327,
+            "end": 974.989,
+            "text": "It's been a good day so far in terms of action in the Premier League.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 980.673,
+            "end": 985.777,
+            "text": "There's Nacho Monreal for Arsenal, who have grabbed this game by the scruff of the neck early on.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 987.199,
+            "end": 991.122,
+            "text": "Now Ozil, Willian's in there, and then Kante.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1013.465,
+            "end": 1014.426,
+            "text": " That's Lauren Koscielny.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1016.868,
+            "end": 1017.548,
+            "text": "Now Bellerin.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1025.035,
+            "end": 1032.12,
+            "text": "Those early statistics show the complete domination that we've seen so far from Arsenal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1032.14,
+            "end": 1037.345,
+            "text": "Kuzula to Iwobi, Arsenal finding lots and lots of space when they're looking to pick out a pass.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1038.005,
+            "end": 1038.806,
+            "text": "Kuzula again.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1040.747,
+            "end": 1041.248,
+            "text": "Now Ozil.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1048.163,
+            "end": 1050.643,
+            "text": " Cock-a-doodle-doo.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1067.864,
+            "end": 1075.689,
+            "text": " I think the problem Chelsea have got at the moment, they're dropping in like we've said, they're making a fire across that midfield, almost on the toes of their back four.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1076.209,
+            "end": 1080.212,
+            "text": "It's alright getting blue shirts back and bodies back, but they're not really pressing the ball.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1080.872,
+            "end": 1090.578,
+            "text": "Zola and Koscielny and the centre-halves have got far too much time, there's got to be a period where Chelsea have got to come out and press the ball, as they're 2-0 down as well.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1093.48,
+            "end": 1096.662,
+            "text": "And now Alexis Sanchez, and Walcott was screaming for it.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1097.753,
+            "end": 1101.635,
+            "text": " Alexis Sanchez didn't see him and Theo Walcott lets him know.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1103.436,
+            "end": 1104.837,
+            "text": "Again, they're all mistakes, Chelsea.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1105.818,
+            "end": 1106.838,
+            "text": "What are they playing at here?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1107.298,
+            "end": 1109.239,
+            "text": "Passing round the back and then they were going to clear the lines.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1109.259,
+            "end": 1114.822,
+            "text": "Alexis Sanchez should have put Walcott in, as you can see, in the end pulls a shot.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1115.903,
+            "end": 1118.024,
+            "text": "Courtois is incredibly frustrated.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1119.125,
+            "end": 1120.706,
+            "text": "See, Conte wants them to play out like this.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1123.227,
+            "end": 1124.728,
+            "text": "But eventually the goalkeeper just does that.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1127.108,
+            "end": 1128.229,
+            "text": " You may as well do that straight away.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1128.369,
+            "end": 1129.711,
+            "text": "Whenever the press, just kick the ball.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1129.931,
+            "end": 1130.652,
+            "text": "Get up the field.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1131.213,
+            "end": 1138.6,
+            "text": "The problem you've got there as well, Makarov, is that if they've done that and they're so deep in the pitch, when they knock it long like that, the game is so open.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1138.761,
+            "end": 1139.902,
+            "text": "Chelsea can't get tight.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1139.922,
+            "end": 1143.406,
+            "text": "And if the ball drops down to Arsenal, there's so much space to go and play.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1143.426,
+            "end": 1147.15,
+            "text": "And they can't get any possession further up the field in Arsenal's half.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1148.792,
+            "end": 1151.117,
+            "text": " You just do this and cause themselves problems all the time.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1151.818,
+            "end": 1152.64,
+            "text": "What a pass that is.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1152.88,
+            "end": 1158.812,
+            "text": "Savanovic has given it away this time, Wukong couldn't control it, from Chelsea's perspective it was a good job that Matic...",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1159.542,
+            "end": 1160.503,
+            "text": " withstood where he was.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1161.123,
+            "end": 1165.947,
+            "text": "And that goal, by the way, that Alexis Sanchez has scored is the first one that he's got here since April.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1166.067,
+            "end": 1170.69,
+            "text": "A lot of his goals have been away from home so far this season.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1170.77,
+            "end": 1172.211,
+            "text": "And there's a foul by Koscielny and Diego Costa.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1172.251,
+            "end": 1173.452,
+            "text": "That's clever play from Costa.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1173.512,
+            "end": 1179.636,
+            "text": "He has a little glance over his shoulder, knows Koscielny's coming, and just takes a little nudge and falls to the ground.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1181.718,
+            "end": 1187.382,
+            "text": "There's our chance there, 30-by-a-couple there.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1187.402,
+            "end": 1187.782,
+            "text": "Oh, well done.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1202.887,
+            "end": 1214.61,
+            "text": " There's Fabregas, but that's only to Nacho Monreal, it's been symptomatic, really, of Chelsea's passing in the early moments of this match, the first 20 minutes they've just not been able to keep possession.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1216.25,
+            "end": 1219.591,
+            "text": "Matic, Hazard's made a run, it's a good run as well, found by Matic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1222.351,
+            "end": 1228.813,
+            "text": "And now Costa, and then Hazard, and now Willian, and he's just opened up a little bit for Chelsea!",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1229.527,
+            "end": 1235.008,
+            "text": " And they've just beat the far post from Willian, but it's the best passage of play we've seen from Antonio Conte's team.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1236.389,
+            "end": 1251.413,
+            "text": "And with this type of team, Fletch, you might as well get it up to Diego Costa, because he is so strong and aggressive at this moment in time, he'll hold the ball up and bring other people into play, brings Matic in, brings Hazard in, slips the ball to Willian, he just pulls it past the far post, really, really close, but great play.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1252.618,
+            "end": 1260.485,
+            "text": " But when you've got Costa in this type of form, he knows he can have Koscielny today, get it up to him, be a bit more route one, there's no problem in that, play to your strengths.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1261.386,
+            "end": 1277.739,
+            "text": "Arsene Wenger said some interesting things about Diego Costa in the build-up to the match, he said since Kante's been there he's become a little bit calmer and a bit more focused, which makes him a more dangerous player, but on a day like this we know that fuse is not very long for Diego Costa.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1277.779,
+            "end": 1279.301,
+            "text": "Here's Willian.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1284.218,
+            "end": 1285.999,
+            "text": " Matic, Kostas made the run here.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1286.039,
+            "end": 1292.041,
+            "text": "Willian can cross, Hazard's in there for Chelsea, and Bellerin was standing his ground.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1292.101,
+            "end": 1293.581,
+            "text": "Has it taken off him by a walk-on?",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1293.621,
+            "end": 1297.463,
+            "text": "He's got the presence of mind at hand, Bellerin.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1297.483,
+            "end": 1298.423,
+            "text": "Kante was in there quickly.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1298.483,
+            "end": 1300.183,
+            "text": "Hazard, and Ozil trucking back this time.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1309.782,
+            "end": 1315.089,
+            "text": " You just sense that Chelsea still have enough to open Arsenal up and get Sonny Gattas going to get back in the game.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1315.149,
+            "end": 1318.032,
+            "text": "But it's, as I said at the very beginning, it's how they defend.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1318.052,
+            "end": 1319.434,
+            "text": "Cahill's already given a goal away.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1320.555,
+            "end": 1321.516,
+            "text": "Hazard goes to sleep.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1321.636,
+            "end": 1325.201,
+            "text": "It's the defensive side, for me, that's really the problem for Chelsea.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1333.469,
+            "end": 1335.792,
+            "text": " But you're right, Steve, if they're gonna press, Arsenal are gonna press.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1335.812,
+            "end": 1338.015,
+            "text": "They're putting three, maybe four players up against them.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1338.395,
+            "end": 1340.879,
+            "text": "There's nothing wrong with that ball into Kosta if it's quality.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1341.64,
+            "end": 1345.645,
+            "text": "Ivanovic played a beautiful ball into his body, into his chest and set the whole move up.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1346.906,
+            "end": 1348.048,
+            "text": "And they need to do that more and more.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1359.375,
+            "end": 1366.643,
+            "text": " As N'Golo Kante, who made the most tackles in the Premier League with Leicester last season, intercepted the most passes as well.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1368.364,
+            "end": 1374.611,
+            "text": "He's not been able to disrupt Arsenal too much in the opening 23 minutes here at the Emirates.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1394.28,
+            "end": 1394.9,
+            "text": " Here comes Hazard.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1397.422,
+            "end": 1398.503,
+            "text": "That's it to Costa.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1399.864,
+            "end": 1407.61,
+            "text": "Hazard's made a run through the middle, Aspilicueta's up and supporting as well for Chelsea, as is Willian, and they find it, and Hazard wants it and gets it!",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1407.65,
+            "end": 1418.438,
+            "text": "And it was a really important block by Lauren Koscielny for Arsenal, but just one or two signs here that Chelsea are working their way back into the match, although here come Arsenal on the counter-attack with Urza.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1424.617,
+            "end": 1425.237,
+            "text": " Oh, Wilco.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1433.361,
+            "end": 1436.682,
+            "text": "You see Willian there at the top of the picture, having a conversation with Diego Costa.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1436.702,
+            "end": 1448.227,
+            "text": "I think Diego Costa wants them to take the shot on.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1448.307,
+            "end": 1449.008,
+            "text": "Ozil.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1449.048,
+            "end": 1452.249,
+            "text": "The two chances we've seen for Chelsea have come down his side.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1453.209,
+            "end": 1454.17,
+            "text": "Down the Arsenal left.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1455.712,
+            "end": 1457.913,
+            "text": " Willian started to find a fair bit of space out there.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1459.114,
+            "end": 1459.574,
+            "text": "Here's Bellerin.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1459.594,
+            "end": 1463.316,
+            "text": "And now Sanchez.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1464.376,
+            "end": 1465.337,
+            "text": "Back to Bellerin.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1466.518,
+            "end": 1468.359,
+            "text": "And Gary Cahill in there for Chelsea.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1469.379,
+            "end": 1472.641,
+            "text": "Really real choice on the table, wasn't it, for Bellerin to take a shot at goal?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1473.001,
+            "end": 1474.982,
+            "text": "Yeah, it was brilliant play by Alexis Sanchez, wasn't it?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1475.722,
+            "end": 1481.105,
+            "text": "Surrounded by three or four shirts, little cute backheel to Bellerin, good block by Gary Cahill.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1482.226,
+            "end": 1484.667,
+            "text": "Three corners for Arsenal, very dominant display.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1485.901,
+            "end": 1487.543,
+            "text": " That looks so confident, doesn't it?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1487.603,
+            "end": 1491.569,
+            "text": "All of them looking for the ball, all of them have a picture in their mind before the ball comes.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1491.589,
+            "end": 1492.57,
+            "text": "They've got options.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1494.613,
+            "end": 1495.814,
+            "text": "There are the two centre-backs.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1496.976,
+            "end": 1499.559,
+            "text": "They've gone forward for the corner, in by Kizilla.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1500.2,
+            "end": 1503.525,
+            "text": "Mustafi was making a run towards it, Diego Costa was there for Chelsea.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1516.931,
+            "end": 1517.671,
+            "text": " Cazorla again.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1517.691,
+            "end": 1521.473,
+            "text": "A little bit deeper this time, and it was Mustafi running in once more.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1521.934,
+            "end": 1524.915,
+            "text": "David Luiz was there for Chelsea this time.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1526.296,
+            "end": 1527.036,
+            "text": "Now Sanchez.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1527.056,
+            "end": 1533.16,
+            "text": "It's over to Eden Hazard, although Monreal able to get a foot in.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1541.208,
+            "end": 1549.874,
+            "text": " That's one area of Chelsea's play that Antonio Conte is going to be looking at today, because he wasn't happy with the fact they conceded two goals against Liverpool last Friday from set-pieces.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1549.894,
+            "end": 1555.037,
+            "text": "I think he's looking for his team to be a bit more organised from those kinds of situations.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1555.958,
+            "end": 1562.423,
+            "text": "They've started quite well on that flex, there's been a couple of corners, free-kicks, and they've won the first header, which is the important thing.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1563.163,
+            "end": 1568.507,
+            "text": "Fabregas, Koscielny was there, and then Mustafi, the two centre-backs working together.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1570.655,
+            "end": 1571.775,
+            "text": " That's to Loqueta, Eden Hazard, Walcott's worked that well.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1571.795,
+            "end": 1572.075,
+            "text": "Go, go, go, go, go!",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1572.095,
+            "end": 1572.555,
+            "text": "Come on, come on, come on!",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1572.575,
+            "end": 1572.615,
+            "text": "Go!",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1572.635,
+            "end": 1572.775,
+            "text": "Come on!",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1606.243,
+            "end": 1608.324,
+            "text": " There's Matic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1608.424,
+            "end": 1609.425,
+            "text": "And now Aston Laquaita.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1611.226,
+            "end": 1612.026,
+            "text": "Emanuel Matic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1614.107,
+            "end": 1618.429,
+            "text": "Mustafi able to slide in, and then got a bit of help as well from Kizorla.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1626.553,
+            "end": 1626.933,
+            "text": "Mkete.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_01"
+        },
+        {
+            "start": 1627.033,
+            "end": 1630.135,
+            "text": "Alexis Sanchez with a foot in.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1630.535,
+            "end": 1630.975,
+            "text": "Hazard.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1632.284,
+            "end": 1642.789,
+            "text": " Cesc Fabregas, then Willian to Costa, and then back towards Willian, and two Arsenal defenders there to shut the door, and then Kokelama, the first challenge on N'Golo Kante.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1644.509,
+            "end": 1647.41,
+            "text": "Kokelama stayed down, while Arsenal bring it forward.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1650.672,
+            "end": 1651.452,
+            "text": "Sanchez.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1652.413,
+            "end": 1658.435,
+            "text": "Alexi Welby had made a good run, and he finds Sanchez, and then back to Welby!",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1658.535,
+            "end": 1660.196,
+            "text": "And Ivanovic with a little pull.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1660.908,
+            "end": 1666.171,
+            "text": " It's a free kick to Arsenal just outside the Chelsea box, and a yellow card for Bratislava Ivanovic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1667.232,
+            "end": 1668.913,
+            "text": "What brilliant play by Alex Iwobi.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1670.413,
+            "end": 1672.795,
+            "text": "Of course it's him and Sanchez, but he's the one who's running off the ball.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1672.915,
+            "end": 1674.656,
+            "text": "Lovely one-two between them here.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1675.256,
+            "end": 1677.317,
+            "text": "Great first touch brought down by Ivanovic.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1678.138,
+            "end": 1680.939,
+            "text": "I think David Luiz probably would have got there to cover.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1683.641,
+            "end": 1686.283,
+            "text": "Lovely first touch, Ivanovic just brings him down there.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1687.363,
+            "end": 1688.644,
+            "text": "Very dangerous area now.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1690.305,
+            "end": 1692.106,
+            "text": " It was a lovely play again from Arsenal, wasn't it?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1692.246,
+            "end": 1694.888,
+            "text": "Quick, decisive, one-two touch play.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1694.928,
+            "end": 1698.39,
+            "text": "You can't defend against it, but I think it's the correct decision.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1698.43,
+            "end": 1700.411,
+            "text": "Yellow card, Luiz was around him.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1701.152,
+            "end": 1702.332,
+            "text": "Here's Coquelin.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1703.793,
+            "end": 1705.655,
+            "text": "Yeah, a very forceful challenge, wasn't it, Fletch?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1705.835,
+            "end": 1706.795,
+            "text": "Between him and Kante.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1710.938,
+            "end": 1711.738,
+            "text": "Let's hope he's all right.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1711.758,
+            "end": 1712.859,
+            "text": "He doesn't look in a lot of pain.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1718.442,
+            "end": 1719.103,
+            "text": "Here's the challenge.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1722.82,
+            "end": 1724.061,
+            "text": " Blocked tackle here with Kante.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1726.162,
+            "end": 1727.063,
+            "text": "A knee shaker, wasn't it?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1727.083,
+            "end": 1729.625,
+            "text": "That was... Two honest players, though, going for the ball.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1729.805,
+            "end": 1730.545,
+            "text": "Nothing wrong with it.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1730.766,
+            "end": 1734.388,
+            "text": "I think the problem for him is that Kante was going for the shot, wasn't he?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1734.528,
+            "end": 1743.054,
+            "text": "Every sort of bit of power in his legs to go for the shot, and he was blocking it, so... It was always going to be a problem to him, but I think he's OK the way he's jugging off.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1743.254,
+            "end": 1747.797,
+            "text": "When you've got the shirt in central midfield at the moment, you don't want to give it up, do you, with Xhaka and Elneny?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1747.958,
+            "end": 1749.359,
+            "text": "Elneny not even in the squad today.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1750.466,
+            "end": 1753.927,
+            "text": " Among the substitutes, he's actually been warming up just in case.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1754.548,
+            "end": 1761.77,
+            "text": "In the meantime, there's this free kick here for Courtois to deal with, and he's spent a long time making sure he's got the Chelsea wall in the right place.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1764.131,
+            "end": 1765.352,
+            "text": "There's Alexis Sanchez.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1766.072,
+            "end": 1768.713,
+            "text": "Mesut Ozil is over it too, and Santi Gazzola.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1769.733,
+            "end": 1770.794,
+            "text": "Plenty of options here.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1771.174,
+            "end": 1774.895,
+            "text": "It is Alexis Sanchez, and the touch off the wall takes him behind for the corner.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1775.435,
+            "end": 1777.336,
+            "text": "Yeah, nice big wall by Chelsea there, wasn't it?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1777.376,
+            "end": 1779.597,
+            "text": "They weren't jumping up in the air, you can see.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1780.37,
+            "end": 1785.454,
+            "text": " They were ready for it just in case, and in the end it goes up the jump, Matic gets a nice head on it.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1790.038,
+            "end": 1794.241,
+            "text": "Francis Copenhagen back on OK for now, let's see if he can run that injury off.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1796.743,
+            "end": 1799.826,
+            "text": "In from Ozil, towards Mustafi, away by Kante.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1801.247,
+            "end": 1803.169,
+            "text": "Here's Monreal, and now Bellerin.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1805.891,
+            "end": 1807.092,
+            "text": "Mustafi stayed forward.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1808.003,
+            "end": 1809.745,
+            "text": " Kokeland's gone down again off the ball.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1810.245,
+            "end": 1811.266,
+            "text": "Yeah, he's coming off, Fletch.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1816.35,
+            "end": 1817.932,
+            "text": "Will be challenged by David Luiz.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1820.214,
+            "end": 1828.901,
+            "text": "Yeah, Kokeland, you knew as soon as he had that touch and the free kick... He gestured to the Arsenal bench to make the change.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1829.562,
+            "end": 1833.005,
+            "text": "Granit Xhaka's getting his clothes on as quickly as possible, let's hope he's warmed up.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1836.938,
+            "end": 1843.422,
+            "text": " Well, we knew all about Xhaka in terms of what he can do as a disruptive influence in central midfield, but he's got a fair old strike on him.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1843.462,
+            "end": 1848.425,
+            "text": "We saw it against Hull and we saw it again in midweek against Forrest in the EFL Cup.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1849.345,
+            "end": 1851.126,
+            "text": "And he's a like-for-like replacement.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1851.527,
+            "end": 1857.09,
+            "text": "Might ultimately be the first choice here in that position, Glenn, but he's settled down into life at Arsenal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1857.15,
+            "end": 1860.412,
+            "text": "Yeah, I think eventually, I think he's shown that he can get forward and he can be a threat.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1861.157,
+            "end": 1861.978,
+            "text": " He keeps the ball.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1862.579,
+            "end": 1866.583,
+            "text": "They've now got two players in that central midfield that really can keep the ball.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1866.603,
+            "end": 1870.888,
+            "text": "And I think today, Giselle has been one that's been on the ball constantly.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1871.869,
+            "end": 1873.791,
+            "text": "I think this lad will get on it even more, maybe.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1873.812,
+            "end": 1875.133,
+            "text": "So Chelsea have got their problems.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1876.034,
+            "end": 1877.796,
+            "text": "They've got to get tighter in that midfield, Chelsea.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1878.257,
+            "end": 1879.238,
+            "text": "Giving them too much space.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1880.848,
+            "end": 1887.738,
+            "text": " Even Arsene Wenger said in the week that he was surprised by the shooting ability of Granit Xhaka, so keep an eye out when he gets within range.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1888.239,
+            "end": 1894.627,
+            "text": "He's on for Coquelin, which is the only thing really that's gone wrong for Arsenal in the opening 32 minutes of this London derby.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1894.647,
+            "end": 1897.712,
+            "text": "They lead 2-0, and they've been good value for it.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1911.033,
+            "end": 1915.417,
+            "text": " It's not only their good football that Arsenal have been good today, they've been really good at pressing and closing down.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1915.437,
+            "end": 1920.2,
+            "text": "You know, you've got Ozil sticking on Kante and blocking them off.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1920.24,
+            "end": 1923.683,
+            "text": "The midfield are really tight on Chelsea's midfield and they've got nowhere to go.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1923.703,
+            "end": 1928.908,
+            "text": "Chelsea don't throw their full-backs really high up, like a lot of teams, and the options are not there to play out from the back.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1930.048,
+            "end": 1931.009,
+            "text": "Mata here.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1932.61,
+            "end": 1933.011,
+            "text": "Handball.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1938.477,
+            "end": 1947.841,
+            "text": " That was better pressing, wasn't it?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1947.881,
+            "end": 1953.384,
+            "text": "Aspilicueta came out there really quick, read the situation, pressed really hard, and they've won the ball back.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1957.006,
+            "end": 1966.43,
+            "text": "That was Willian.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1968.816,
+            "end": 1969.597,
+            "text": " Now Ivanovic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1973.499,
+            "end": 1973.959,
+            "text": "Kosta.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1976.341,
+            "end": 1976.761,
+            "text": "Willian.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1977.922,
+            "end": 1981.064,
+            "text": "Into Fabregas and then back wide to Willian.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1981.084,
+            "end": 1984.986,
+            "text": "He's got plenty of blue to pick out, Matic was hoping they'd run.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1985.086,
+            "end": 1986.367,
+            "text": "And Petr Cech were to meet it.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1987.428,
+            "end": 1989.609,
+            "text": "And to distribute it quickly here to Alexis Sanchez.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1989.649,
+            "end": 1995.893,
+            "text": "And there you have it, Golo Kante was in there, but fouled in the Chilean player.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 1997.955,
+            "end": 2000.898,
+            "text": " So plenty of football coming up in midweek in the Champions League.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2000.958,
+            "end": 2006.082,
+            "text": "On Tuesday night, we've got Leicester against Porto, the first game in the Champions League at the King Power Stadium.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2006.843,
+            "end": 2010.426,
+            "text": "Also that night, Tottenham made a win in Moscow against CSKA.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2011.006,
+            "end": 2023.897,
+            "text": "And then a couple of big games on Wednesday, Celtic against Manchester City, and Arsenal, who got that draw in Paris on opening night, at home against Basel, as well as every other Champions League match exclusively live on BT Sport.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2023.917,
+            "end": 2026.219,
+            "text": "A huge week of European football on the cards.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2037.965,
+            "end": 2040.707,
+            "text": " He's knocked him out, Woodcock did remarkably well for Arsenal.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2040.727,
+            "end": 2046.191,
+            "text": "In goes the delivery towards Alexis Sanchez, who in actual fact just took it away from Urza.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2047.012,
+            "end": 2051.896,
+            "text": "Now Costa can roll away from Mustafi and show his strength to keep the ball.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2051.916,
+            "end": 2058.701,
+            "text": "I think he was expecting the free-kick from Michael Oliver, who was following play, and he's disappointed not to get it.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2058.881,
+            "end": 2061.463,
+            "text": "Now Kante.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2063.144,
+            "end": 2063.504,
+            "text": "Hazard.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2066.246,
+            "end": 2066.787,
+            "text": "Fabregas.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2069.428,
+            "end": 2073.651,
+            "text": " Costa's taken up the position just outside the six-yard box of Arsenal.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2073.691,
+            "end": 2076.333,
+            "text": "It was defended comfortably, though.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2077.033,
+            "end": 2079.175,
+            "text": "And then Ivanovic with the last touch.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2082.397,
+            "end": 2087.28,
+            "text": "Yeah, I just think there was so much contact first from Mustafi, then from Schalke, then from Monreal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2087.74,
+            "end": 2089.041,
+            "text": "He expected a foul somewhere.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2090.662,
+            "end": 2093.865,
+            "text": "Well, actually, in all, individually there weren't fouls, actually.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2093.885,
+            "end": 2096.947,
+            "text": "I think he's just very frustrated cos he showed so much strength and effort.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2096.967,
+            "end": 2097.887,
+            "text": "That was good centre-forward.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2099.525,
+            "end": 2104.189,
+            "text": " I think he's been very good, Diego Costa, unfortunately he's on the back of a 2-0 deficit.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2104.409,
+            "end": 2106.471,
+            "text": "But he's been excellent, he's been the main man.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2106.611,
+            "end": 2112.817,
+            "text": "When the ball goes into him, any kids watching, he takes it offline as a centre-forward, he's brilliant, he's not going back towards his own goal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2113.277,
+            "end": 2116.14,
+            "text": "And that opens all the options, he's doing really well on that.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2116.66,
+            "end": 2123.566,
+            "text": "Then you can support that, as a midfield player you can really justify making runs, because you know your centre-forward's engaged on the ball.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2124.807,
+            "end": 2126.429,
+            "text": "It's this early in the year that worries me.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2127.235,
+            "end": 2131.056,
+            "text": " They're so slow, Chelsea, they pass it across, but they're not going anywhere.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2131.136,
+            "end": 2139.057,
+            "text": "And then in the end... But their full-backs don't push up and give the wingers problems, and it allows them to press.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2139.957,
+            "end": 2144.378,
+            "text": "Here's Bellerin, he can get goalside here, Vasco da Costa and try and tee up Mesut Ozil.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2145.258,
+            "end": 2147.339,
+            "text": "Roby was coming in from the left side as well.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2149.939,
+            "end": 2153.06,
+            "text": "Very similar to the goal we saw Theo Walcott score earlier in the half.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2153.38,
+            "end": 2155.7,
+            "text": "You see Conte's got his head in his hands at the bottom here.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2157.172,
+            "end": 2160.294,
+            "text": " If you're Arsenal, you want Kehl and Ivanovic to have the ball.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2161.075,
+            "end": 2162.997,
+            "text": "Here's Iwobi, and now Ursel.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2163.477,
+            "end": 2165.038,
+            "text": "Good feet from Alex Iwobi, wasn't it?",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2165.058,
+            "end": 2169.442,
+            "text": "Now Kozola, Monreal's made the run this time, if he can catch it.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2171.083,
+            "end": 2171.363,
+            "text": "He can't.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2171.383,
+            "end": 2177.548,
+            "text": "They've got the ability, though, and the form they're in, and from what we've seen defensively from Chelsea, to open them up like that whenever they come forward.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2178.693,
+            "end": 2180.033,
+            "text": " He's got a problem, hasn't he, Conte?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2180.474,
+            "end": 2188.336,
+            "text": "Yeah, because whenever they've got the ball defensively, they're so flat, the full-backs don't push up at all, so to get to this position now is like Gary Keogh, what shall I do?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2189.337,
+            "end": 2197.819,
+            "text": "Passes the ball, now he gives it back to him, and in the end they end up coming backwards and not doing anything, so then they clear the lines, Courtois might as well do that, ten minutes ago.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2199.32,
+            "end": 2200.16,
+            "text": "And then you squeeze up.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2200.22,
+            "end": 2201.781,
+            "text": "And then you squeeze up and help Costa.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2201.861,
+            "end": 2202.341,
+            "text": "Exactly.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2202.961,
+            "end": 2205.842,
+            "text": "The game is so open there for Arsenal to win the ball when they go long.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2207.848,
+            "end": 2216.713,
+            "text": " There's Matic, who was saying in the week that Antonio Conte has given him the licence to play a bit further up the pitch this season, to be a bit more expressive as an attacking player.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2217.694,
+            "end": 2218.895,
+            "text": "Fabregas was lucky there.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2221.356,
+            "end": 2222.156,
+            "text": "Now Ivanovic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2222.176,
+            "end": 2224.938,
+            "text": "N'Golo Kante.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2224.958,
+            "end": 2236.745,
+            "text": "That's come a quarter centred up towards Diego Costa, and away by Mustapha.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2241.847,
+            "end": 2244.968,
+            "text": " That's a better ball from David Luiz, fizzes it in, goes forwards.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2245.968,
+            "end": 2248.048,
+            "text": "Costa gets through the challenge to Kozola.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2248.888,
+            "end": 2250.709,
+            "text": "Now Willian, Ivanovic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2253.169,
+            "end": 2253.669,
+            "text": "Kante.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2255.209,
+            "end": 2255.65,
+            "text": "Matic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2258.69,
+            "end": 2259.45,
+            "text": "Now David Luiz.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2259.47,
+            "end": 2267.652,
+            "text": "He's asked to look quicker.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2268.432,
+            "end": 2268.812,
+            "text": "Matic.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2270.174,
+            "end": 2270.995,
+            "text": " Chelsea looking to open a fast one.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2271.015,
+            "end": 2271.295,
+            "text": "Eden Hazard.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2271.335,
+            "end": 2273.076,
+            "text": "Fabregas to Hazard and then given away.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2273.096,
+            "end": 2273.577,
+            "text": "Fabregas to Willian.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2300.737,
+            "end": 2305.818,
+            "text": " We've seen a lot more adventure from the full-backs of Arsenal so far, haven't we, looking to join into their attacks?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2305.838,
+            "end": 2318.561,
+            "text": "We've not seen it so far from Ivanovic or Aspid Acueta, although here's Kosta, and it was good defending again from Lauren Koscielny, and he seems to be relishing that physical battle up there with the Chelsea striker, Kosta.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2320.321,
+            "end": 2323.222,
+            "text": "That's it, a challenge there by Ersel Cohen to Chelsea.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2327.39,
+            "end": 2330.211,
+            "text": " Yeah, but at the minute he doesn't get much help at all, Diego Costa, does he?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2330.311,
+            "end": 2331.691,
+            "text": "Everything he has to do himself.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2333.171,
+            "end": 2337.232,
+            "text": "And they've run it back again here, Arsenal, and the dangerous Alexis Sanchez can bring it forward.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2337.252,
+            "end": 2340.233,
+            "text": "There's a lot of space for him, what would be down the left?",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2340.253,
+            "end": 2343.033,
+            "text": "Instead he went towards Walcott on this side.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2349.395,
+            "end": 2350.635,
+            "text": "And that's it, Costa.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2354.804,
+            "end": 2363.186,
+            "text": " Just see how easy it was for Chelsea to get out that time, because they didn't give any chance for Arsenal to get set and get pressing up against Blue Shirts.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2363.866,
+            "end": 2368.148,
+            "text": "Koscielny was there again defensively, and that's a lovely turn from Ozil to get away from Kante, and it's 2-on-2 here.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2368.208,
+            "end": 2384.092,
+            "text": "David Luiz and Gary Cahill, Alexis Sanchez is onside, and Mesut Ozil can walk on to it, didn't strike it cleanly, but it doesn't matter, because that's the third goal inside the first half for Arsenal, who are taking Chelsea apart here.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2388.522,
+            "end": 2391.664,
+            "text": " I have no idea how Chelsea are setting up at all here.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2391.865,
+            "end": 2397.869,
+            "text": "Because they're not moving forwards, and when they defend, nobody's getting back to help out.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2398.409,
+            "end": 2401.512,
+            "text": "This was a simple play from one half of the pitch to the other.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2403.35,
+            "end": 2406.414,
+            "text": " Mesut Ozil turns Kante really, really comfortably.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2406.594,
+            "end": 2410.339,
+            "text": "This is a great shot, turns Kante, look at Ivanovic, look at Azpilicueta.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2411.141,
+            "end": 2413.223,
+            "text": "They're not bothered about getting back, are they?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2413.243,
+            "end": 2416.868,
+            "text": "And then it's two-on-two, movement, onside, clear as you like.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2417.169,
+            "end": 2417.809,
+            "text": "Where's Ozil?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2418.13,
+            "end": 2419.812,
+            "text": "Well, nobody's picking him up for the one-two.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2420.753,
+            "end": 2423.335,
+            "text": " Gets a bit fortunate, banging into the goal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2423.895,
+            "end": 2428.379,
+            "text": "But when you're breaking forward at pace and nobody's picking you up, you'll get your fortune.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2428.399,
+            "end": 2432.181,
+            "text": "3-0, absolutely walking the park this 40 minutes of this game.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2432.321,
+            "end": 2438.245,
+            "text": "That's the danger as well, when they went 2-0 up, you just sensed that they could just let Chelsea come on to them and hit them on the break.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2438.325,
+            "end": 2440.407,
+            "text": "It's a bit good fortune there, it doesn't catch it right.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2441.106,
+            "end": 2449.712,
+            "text": " But it's a great ball from Sanchez, but for me, Kante, if you're the holding player, you don't commit, you buy time so your team can get back, that's his job.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2450.032,
+            "end": 2459.298,
+            "text": "It's all right you saying, Kante said to him, go and play a little bit more, but that's his job, to stop that ball, don't commit, he goes the wrong side, and they break, Arsenal break too easily.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2459.318,
+            "end": 2465.342,
+            "text": "And, Glenn, when you commit, I'm sorry, but you bring them down, if he takes you on, you bring them down, it's as simple as that.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2465.682,
+            "end": 2467.864,
+            "text": "And then when Erzil plays the one-two,",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2469.098,
+            "end": 2474.28,
+            "text": " With Sanchez, the gap between Urgell and Gary Cahill at the far post must have been about 10 yards.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2474.64,
+            "end": 2478.121,
+            "text": "It's 2-on-2, just pick your man up and follow the ball, follow the man.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2479.982,
+            "end": 2482.522,
+            "text": "I must say, I like Gary Cahill, I really do.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2482.622,
+            "end": 2487.004,
+            "text": "Today his mind's not there, he's made a really big mistake for the goal, he made another mistake over there.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2487.804,
+            "end": 2490.105,
+            "text": "And again, his concentration wasn't there, was it?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2492.735,
+            "end": 2496.736,
+            "text": " Matic was being hustled there by Theo Walcott, Arsenal get the free kick.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2496.756,
+            "end": 2502.617,
+            "text": "The big problem, of course, for Chelsea last season was conceding goals in the Premier League, 53 last season.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2503.557,
+            "end": 2516.4,
+            "text": "I think the expectation was when Antonio Conte arrives, an Italian with a defensive mentality and the track record at Juventus, and with the Italian national team, that he would get the problem sorted, but it's taking a little bit longer than people expected.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2516.46,
+            "end": 2521.841,
+            "text": "I know it is only early, and you have to say that, David Luiz has come in, but today when they've got the ball,",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2522.558,
+            "end": 2535.342,
+            "text": " Ivanovic and Aspilicueta are not pushing on at all, so they're quite defensive-minded, yet, for some reason, when they are defending, when Arsenal are breaking forward, nobody's picking anybody up.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2535.502,
+            "end": 2538.603,
+            "text": "Here's Willian, operating in a more central position this time.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2539.263,
+            "end": 2540.763,
+            "text": "Fabregas and Costa have made the run.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2541.743,
+            "end": 2544.824,
+            "text": "Perhaps a better read, they've moved in from the right-back position to make the tackle.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2544.844,
+            "end": 2550.366,
+            "text": "And then Liverpool finish the game for Mesut Ozil, playing with so much confidence here, Arsenal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2551.901,
+            "end": 2555.824,
+            "text": " The last thing you want to do when you come to the Emirates is get Arsenal into this kind of mood.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2555.844,
+            "end": 2558.447,
+            "text": "Yeah, well, now Chelsea have to chase the game, certainly John Deane.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2558.467,
+            "end": 2566.053,
+            "text": "And listen to this, they haven't heard this in a long, long time against Chelsea, have they, the Arsenal fans?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2566.073,
+            "end": 2568.155,
+            "text": "It's back to the days of righty and the boys.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2571.598,
+            "end": 2574.2,
+            "text": "Here's Monreal.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2574.22,
+            "end": 2577.243,
+            "text": "It's going to be brought back for an earlier indiscretion, it's going to be an Arsenal free-kick.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2579.023,
+            "end": 2583.386,
+            "text": " It's clever play and it's good play because it's in the middle third and it's in the Chelsea third.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2583.466,
+            "end": 2589.729,
+            "text": "It's not like across the back, anyone can do it there, but they're just enticing Chelsea to come out and press them and play around them.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2590.43,
+            "end": 2592.251,
+            "text": "This is the confidence, look, don't look at the eyes.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2592.271,
+            "end": 2598.594,
+            "text": "Yeah, it's a bucket now, waiting to have it released on Alexis Sanchez.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2598.654,
+            "end": 2605.638,
+            "text": "Of course, there's no John Terry back there, he's missed the last three matches, and the one thing he is, Glenn, is a calming voice and an organiser.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2606.755,
+            "end": 2617.139,
+            "text": " Well, I said at the top of the game that it was how Chelsea were going to defend, whether they were going to get anything out of this game, and without John Settery, my word, they look all over the place, they really do.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2617.159,
+            "end": 2619.1,
+            "text": "No, he never bocked David Luiz there.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2620.421,
+            "end": 2625.363,
+            "text": "Michael Oliver just... Michael Oliver just giving the talking to, the 3-0 down, I think he was fortunate.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2631.663,
+            "end": 2634.785,
+            "text": " As Iwobi has made some lovely runs, hasn't he, in this first half?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2635.565,
+            "end": 2637.046,
+            "text": "Sorry, sorry, is it, Fletch?",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2637.906,
+            "end": 2644.129,
+            "text": "Walcott, with a better touch, would have had an option in the right, in Ozil, and through the middle and back away.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2644.429,
+            "end": 2647.991,
+            "text": "And Xhaka's running from Costa.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2648.031,
+            "end": 2650.492,
+            "text": "Here's Ozil, Alexis Sanchez waits in the box, Iwobi's in there too.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2655.815,
+            "end": 2660.657,
+            "text": "Full here for Alexis Sanchez, it was Fabregas who was back there with desperate defending.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2661.573,
+            "end": 2661.937,
+            "text": " Chelsea.",
+            "is_pbp": true,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2687.82,
+            "end": 2698.141,
+            "text": " As Kante, it was a really difficult 45 minutes at Stamford Bridge last Friday against Liverpool and it's been equally tough here in the first half for Chelsea against Arsenal.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        },
+        {
+            "start": 2698.542,
+            "end": 2700.048,
+            "text": "There's going to be two additional minutes here.",
+            "is_pbp": false,
+            "speaker": "SPEAKER_00"
+        }
+    ]
+}

@@ -24,9 +24,7 @@ dependencies = [
 
 [project.optional-dependencies]
 flash-attn = ["flash-attn>=2.7.4.post1"]
-jupyter = [
-    "jupyterlab>=4.3.5",
-]
+jupyter = ["jupyterlab>=4.3.5"]
 
 [build-system]
 requires = ["hatchling"]
