@@ -52,6 +52,7 @@ dev = [
 
 [tool.mypy]
 ignore_missing_imports = true
+exclude = ['\.venv', 'venv']
 
 [tool.ruff]
 # automatically sort imports
