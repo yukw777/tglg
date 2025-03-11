@@ -122,7 +122,7 @@ def main(
     inference_run_name_regex: str,
     eval_project: str,
     eval_entity: str | None = None,
-    sent_sim_model_name: str = "all-MiniLM-L6-v2",
+    sent_sim_model_name: str = "all-mpnet-base-v2",
 ) -> None:
     sent_sim_model = SentenceTransformer(sent_sim_model_name)
     ground_truth = read_ground_truth(ground_truth_file)
