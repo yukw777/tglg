@@ -176,3 +176,6 @@ cython_debug/
 # WandB
 wandb/
 artifacts/
+
+# PyTorch Lightning
+lightning_logs/
