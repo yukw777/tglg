@@ -200,6 +200,12 @@ class PBPCommentaryDataModule(L.LightningDataModule):
             with open(self.predict_transcript_file) as f:
                 data = json.load(f)
 
+            # Remove words for now, and add a speaker label if it doesn't exist.
+            for seg in data["segments"]:
+                del seg["words"]
+                if "speaker" not in seg:
+                    seg["speaker"] = "UNK"
+
             # encode sentences
             sent_emb_model = SentenceTransformer(self.sent_emb_model_name)
             sents = [seg["text"] for seg in data["segments"]]
