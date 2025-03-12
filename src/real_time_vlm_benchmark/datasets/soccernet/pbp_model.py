@@ -16,8 +16,8 @@ LABEL_TO_ID = {v: i for i, v in enumerate(LABELS)}
 class PBPCommentaryBiLSTMClassifier(L.LightningModule):
     def __init__(
         self,
-        input_dim: int,
-        hidden_dim: int = 128,
+        input_dim: int = 768,
+        hidden_dim: int = 256,
         num_layers: int = 2,
         dropout: float = 0.3,
     ) -> None:
@@ -104,7 +104,7 @@ class PBPCommentaryBiLSTMClassifier(L.LightningModule):
         return segments
 
     def configure_optimizers(self) -> torch.optim.Optimizer:
-        return torch.optim.Adam(self.parameters())
+        return torch.optim.Adam(self.parameters(), lr=2e-4)
 
 
 def construct_sent_seq(
@@ -127,11 +127,11 @@ def construct_sent_seq(
 class PBPCommentaryDataModule(L.LightningDataModule):
     def __init__(
         self,
-        seq_len: int,
+        seq_len: int = 15,
         train_val_test_ratio: tuple[float, float, float] = (0.7, 0.15, 0.15),
         sent_emb_model_name: str = "all-mpnet-base-v2",
         seed: int = 42,
-        train_batch_size: int = 8,
+        train_batch_size: int = 32,
         val_batch_size: int = 128,
         test_batch_size: int = 128,
         predict_batch_size: int = 128,

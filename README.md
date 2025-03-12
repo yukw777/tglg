@@ -30,9 +30,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/.venv/lib/python3.10/site-
 ```bash
 # fit
 python scripts/pbp_classifier.py fit \
---model.input_dim 768 \
 --data.labeled_transcript manually-labeled-data \
---data.seq_len 5
 --trainer.log_every_n_steps 5 \
 --trainer.callbacks+=EarlyStopping \
 --trainer.callbacks.monitor val_loss \
@@ -47,7 +45,7 @@ python scripts/pbp_classifier.py test \
 # predict
 python scripts/pbp_classifier.py predict \
 --config path/to/fit/config.yaml \
---ckpt_path path/to/fit/checkpoints/epoch=2-step=132.ckpt \
+--ckpt_path path/to/fit/checkpoints/checkpoint.ckpt \
 --data.predict_transcript_file file-to-predict.json \
 --trainer.callbacks+=PBPPredWriter \
 --trainer.callbacks.output_file prediction.json
