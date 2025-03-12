@@ -104,7 +104,7 @@ class PBPCommentaryBiLSTMClassifier(L.LightningModule):
         return segments
 
     def configure_optimizers(self) -> torch.optim.Optimizer:
-        return torch.optim.Adam(self.parameters(), lr=2e-4)
+        return torch.optim.AdamW(self.parameters(), lr=1e-4)
 
 
 def construct_sent_seq(
