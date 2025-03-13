@@ -23,6 +23,15 @@ uv sync
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/.venv/lib/python3.10/site-packages/nvidia/cudnn/lib/
 ```
 
+## HoloAssist Real-Time Annotation Generation
+
+```bash
+python scripts/gen_anns_holo_assist.py \
+--holo_assist_video_dir /path/to/HoloAssist/video_pitch_shifted/ \
+--holo_assist_anns_file /path/to/HoloAssist/data-annotation-trainval-v1_1.json \
+--output_file /path/to/HoloAssist/real-time-eval-annotation.json
+```
+
 ## Play-by-Play Commentary Prediction
 
 ### Train
