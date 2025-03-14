@@ -19,6 +19,7 @@ dependencies = [
     "torch>=2.6.0",
     "torchvision>=0.21.0",
     "tqdm>=4.67.1",
+    "types-pyyaml>=6.0.12.20241230",
     "videollm-online",
     "wandb>=0.19.7",
     "whisperx>=3.3.1",

@@ -200,9 +200,13 @@ class PBPCommentaryDataModule(L.LightningDataModule):
             with open(self.predict_transcript_file) as f:
                 data = json.load(f)
 
+            if len(data["segments"]) == 0:
+                raise ValueError("No segments")
+
             # Remove words for now, and add a speaker label if it doesn't exist.
             for seg in data["segments"]:
-                del seg["words"]
+                if "words" in seg:
+                    del seg["words"]
                 if "speaker" not in seg:
                     seg["speaker"] = "UNK"
 
