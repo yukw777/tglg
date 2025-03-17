@@ -32,9 +32,17 @@ python scripts/gen_anns_holo_assist.py \
 --output_file /path/to/HoloAssist/real-time-eval-annotation.json
 ```
 
-## Play-by-Play Commentary Prediction
+## SoccerNet Real-Time Annotation Generation
 
-### Train
+### Transcribe Commentaries
+
+```bash
+python scripts/soccernet_transcribe.py \
+--soccernet_dir path/to/SoccerNet \
+--output_dir path/to/SoccerNet-transcribed/
+```
+
+### Play-by-Play Commentary Prediction
 
 ```bash
 # fit
@@ -51,11 +59,26 @@ python scripts/pbp_classifier.py test \
 --config path/to/fit/config.yaml \
 --ckpt_path path/to/fit/checkpoints/checkpoint.ckpt
 
-# predict
+# predict one
 python scripts/pbp_classifier.py predict \
 --config path/to/fit/config.yaml \
 --ckpt_path path/to/fit/checkpoints/checkpoint.ckpt \
 --data.predict_transcript_file file-to-predict.json \
 --trainer.callbacks+=PBPPredWriter \
 --trainer.callbacks.output_file prediction.json
+
+# bulk predict
+python scripts/soccernet_annotate_pbp.py \
+--pbp_classifier_config_path path/to/fit/config.yaml \
+--pbp_classifier_ckpt_path path/to/fit/checkpoints/epoch=9-step=1020.ckpt \
+--transcription_dir path/to/SoccerNet-transcribed \
+--output_dir path/to/SoccerNet-pbp
+```
+
+### Generate Real-Time Annotations
+
+```bash
+python scripts/gen_anns_soccernet.py \
+--pbp_annotated_dir path/to/SoccerNet-pbp \
+--output_file path/to/SoccerNet/real-time-eval-annotation.json
 ```
