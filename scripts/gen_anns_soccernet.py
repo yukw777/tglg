@@ -12,7 +12,8 @@ def main(pbp_annotated_dir: str, output_file: str) -> None:
         with open(pbp_annotated_path) as f:
             pbp_annotated = json.load(f)
         utters = convert_pbp_annotated(pbp_annotated)
-        if len(utters) == 0:
+        if len(utters) <= 20:
+            # This most likely means the matches weren't actually commentated.
             continue
         anns[
             "/".join(
