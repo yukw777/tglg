@@ -1,9 +1,10 @@
 import json
-from copy import deepcopy
 from pathlib import Path
 from typing import Any, Callable
 
 from torch.utils.data import Dataset
+
+from real_time_vlm_benchmark.datasets.utils import convert_real_time_anns_to_datapoint
 
 
 def convert_holo_assist(
@@ -97,24 +98,7 @@ class HoloAssistDataset(Dataset):
         self.preprocessor = preprocessor
         with open(ann_file_path) as f:
             anns = json.load(f)
-        self.data: list[tuple[str, list[dict]]] = []
-        for video, dialogue in anns.items():
-            i = 0
-            is_eval = False
-            while i < len(dialogue):
-                if not is_eval and dialogue[i]["eval"]:
-                    is_eval = True
-                if is_eval and not dialogue[i]["eval"]:
-                    is_eval = False
-                    self.data.append((video, deepcopy(dialogue[:i])))
-                    # set eval to False for the added utterances
-                    # as they will be used as part of the context for the next data point.
-                    for utter in dialogue[:i]:
-                        utter["eval"] = False
-                i += 1
-            # take care of the stragglers
-            if is_eval:
-                self.data.append((video, deepcopy(dialogue[:i])))
+        self.data = convert_real_time_anns_to_datapoint(anns)
 
     def __getitem__(self, index: int) -> dict:
         video, dialogue = self.data[index]
