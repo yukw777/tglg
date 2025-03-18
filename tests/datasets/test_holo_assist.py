@@ -301,7 +301,10 @@ def test_convert_holo_assist(
             [
                 {
                     "index": 0,
-                    "video": Path("video_dir/video0/Export_py/Video_pitchshift.mp4"),
+                    "video_id": "video0",
+                    "video_path": Path(
+                        "video_dir/video0/Export_py/Video_pitchshift.mp4"
+                    ),
                     "dialogue": [
                         {"role": "system", "content": "system message", "eval": False},
                         {"role": "assistant", "content": "a0", "eval": False},
@@ -326,7 +329,10 @@ def test_convert_holo_assist(
             [
                 {
                     "index": 0,
-                    "video": Path("video_dir/video0/Export_py/Video_pitchshift.mp4"),
+                    "video_id": "video0",
+                    "video_path": Path(
+                        "video_dir/video0/Export_py/Video_pitchshift.mp4"
+                    ),
                     "dialogue": [
                         {"role": "system", "content": "system message", "eval": False},
                         {"role": "assistant", "content": "a0", "eval": False},
@@ -334,7 +340,7 @@ def test_convert_holo_assist(
                         {"role": "user", "content": "u0", "eval": False},
                         {"role": "assistant", "content": "a2", "eval": True},
                     ],
-                    "video_frame": Path("video_frame_dir_path/0.pt"),
+                    "encoded_frames_dir": Path("video_frame_dir_path/video0"),
                 }
             ],
         ),
@@ -372,7 +378,10 @@ def test_convert_holo_assist(
             [
                 {
                     "index": 0,
-                    "video": Path("video_dir/video0/Export_py/Video_pitchshift.mp4"),
+                    "video_id": "video0",
+                    "video_path": Path(
+                        "video_dir/video0/Export_py/Video_pitchshift.mp4"
+                    ),
                     "dialogue": [
                         {"role": "system", "content": "system message", "eval": False},
                         {"role": "assistant", "content": "a0", "eval": False},
@@ -385,7 +394,10 @@ def test_convert_holo_assist(
                 },
                 {
                     "index": 1,
-                    "video": Path("video_dir/video0/Export_py/Video_pitchshift.mp4"),
+                    "video_id": "video0",
+                    "video_path": Path(
+                        "video_dir/video0/Export_py/Video_pitchshift.mp4"
+                    ),
                     "dialogue": [
                         {"role": "system", "content": "system message", "eval": False},
                         {"role": "assistant", "content": "a0", "eval": False},
@@ -402,7 +414,10 @@ def test_convert_holo_assist(
                 },
                 {
                     "index": 2,
-                    "video": Path("video_dir/video1/Export_py/Video_pitchshift.mp4"),
+                    "video_id": "video1",
+                    "video_path": Path(
+                        "video_dir/video1/Export_py/Video_pitchshift.mp4"
+                    ),
                     "dialogue": [
                         {"role": "system", "content": "system message", "eval": False},
                         {"role": "assistant", "content": "a0", "eval": False},
@@ -414,7 +429,10 @@ def test_convert_holo_assist(
                 },
                 {
                     "index": 3,
-                    "video": Path("video_dir/video1/Export_py/Video_pitchshift.mp4"),
+                    "video_id": "video1",
+                    "video_path": Path(
+                        "video_dir/video1/Export_py/Video_pitchshift.mp4"
+                    ),
                     "dialogue": [
                         {"role": "system", "content": "system message", "eval": False},
                         {"role": "assistant", "content": "a0", "eval": False},

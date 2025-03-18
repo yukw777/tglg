@@ -33,20 +33,20 @@ def eval(
     total_start_scores = np.array([])
     total_stop_scores = np.array([])
     total_overlap_scores = np.array([])
-    for video, gt_utters in ground_truth.items():
+    for video_id, gt_utters in ground_truth.items():
         total_ground_truth.extend(gt_utters)
-        total_generated.extend(generated[video])
+        total_generated.extend(generated[video_id])
 
-        sim_mat = compute_similarity_matrix(model, generated[video], gt_utters)
-        matched_pairs = align_utterances(generated[video], gt_utters, sim_mat)
+        sim_mat = compute_similarity_matrix(model, generated[video_id], gt_utters)
+        matched_pairs = align_utterances(generated[video_id], gt_utters, sim_mat)
         total_matched_pairs.extend(matched_pairs)
 
         accuracy_scores = compute_accuracy_scores(
-            matched_pairs, generated[video], gt_utters, sim_mat
+            matched_pairs, generated[video_id], gt_utters, sim_mat
         )
         total_accuracy_scores = np.concat([total_accuracy_scores, accuracy_scores])
         timing_scores = compute_timing_scores(
-            matched_pairs, generated[video], gt_utters
+            matched_pairs, generated[video_id], gt_utters
         )
         total_timing_scores = np.concat(
             [total_timing_scores, timing_scores["timing_scores"]]
@@ -70,16 +70,16 @@ def eval(
         ):
             individual_eval_results.append(
                 {
-                    "video": video,
+                    "video_id": video_id,
                     "accuracy": float(acc),
                     "timing": float(timing),
                     "start": float(start),
                     "stop": float(stop),
                     "overlap": float(overlap),
-                    "gen_start": generated[video][matched_gen]["start"],
+                    "gen_start": generated[video_id][matched_gen]["start"],
                     "gt_start": gt_utters[matched_gt]["start"],
                     "gt_end": gt_utters[matched_gt]["end"],
-                    "gen_content": generated[video][matched_gen]["content"],
+                    "gen_content": generated[video_id][matched_gen]["content"],
                     "gt_content": gt_utters[matched_gt]["content"],
                 }
             )
@@ -100,8 +100,8 @@ def read_ground_truth(ground_truth_file: str) -> dict[str, list[dict]]:
     with open(ground_truth_file) as f:
         raw_gt = json.load(f)
     preprocessed = {}
-    for video, utterances in raw_gt.items():
-        preprocessed[video] = [utter for utter in utterances if utter["eval"]]
+    for video_id, utterances in raw_gt.items():
+        preprocessed[video_id] = [utter for utter in utterances if utter["eval"]]
 
     return preprocessed
 
@@ -109,7 +109,7 @@ def read_ground_truth(ground_truth_file: str) -> dict[str, list[dict]]:
 def preprocess_inference_results(results: pd.DataFrame) -> dict[str, list[dict]]:
     preprocessed = defaultdict(list)
     for _, row in results.iterrows():
-        preprocessed[row["video"]].append(
+        preprocessed[row["video_id"]].append(
             {"content": row["content"], "start": float(row["start"])}
         )
     return preprocessed

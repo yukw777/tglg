@@ -115,12 +115,12 @@ def run(
                 continue
             for index, utters in preds.items():
                 with open(results_dir / f"{index}.csv", "w", newline="") as csvfile:
-                    writer = csv.DictWriter(csvfile, ["video", "start", "content"])
+                    writer = csv.DictWriter(csvfile, ["video_id", "start", "content"])
                     writer.writeheader()
                     for utter in utters:
                         writer.writerow(
                             {
-                                "video": utter["video"],
+                                "video_id": utter["video_id"],
                                 "start": utter["start"],
                                 "content": utter["content"],
                             }
@@ -129,7 +129,7 @@ def run(
 
     if success and accelerator.is_main_process and out_file_name is not None:
         with open(out_file_name, "w", newline="") as out_file:
-            writer = csv.DictWriter(out_file, ["video", "start", "content"])
+            writer = csv.DictWriter(out_file, ["video_id", "start", "content"])
             writer.writeheader()
             for f in sorted(results_dir.iterdir()):
                 with open(f, newline="") as in_file:

@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 
 import torch
+import torch.multiprocessing as mp
 
 # decord must be imported after torch
 # https://github.com/dmlc/decord/issues/293
@@ -9,29 +10,54 @@ import decord  # isort: skip
 from dataclasses import asdict
 
 from accelerate import Accelerator
-from accelerate.utils import set_seed, tqdm
+from accelerate.utils import broadcast_object_list, set_seed
 from decord import VideoReader
 from einops import rearrange
 from jsonargparse import auto_cli
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import (
+    DataLoader,
+    Dataset,
+    Subset,
+)
 from torchvision.transforms.v2.functional import resize
+from tqdm import tqdm
 from transformers import AutoModel
 from videollm_online.models.arguments_live import get_args_class
 from videollm_online.models.configuration_live import LiveConfigMixin
 from videollm_online.models.vision_live import build_live_vision
 
-from real_time_vlm_benchmark.baseline_models.videollm_online_models.holo_assist import (
-    sample_frames_for_dialogue,
-)
-from real_time_vlm_benchmark.datasets.holo_assist import HoloAssistDataset
+from real_time_vlm_benchmark.baseline_models.utils.sample import QueueSampler
+from real_time_vlm_benchmark.datasets.utils import convert_to_frame_dataset
+
+
+class FrameDataset(Dataset):
+    def __init__(self, data: list[dict], frame_resolution: int) -> None:
+        super().__init__()
+        self.data = data
+        self.frame_resolution = frame_resolution
+
+    def __getitem__(self, index: int) -> dict:
+        datapoint = self.data[index]
+        vr = VideoReader(str(datapoint["video_path"]))
+        frames = vr.get_batch(datapoint["frame_idx"])
+        frames = rearrange(frames, "t h w c -> t c h w")
+        frames = resize(frames, [self.frame_resolution] * 2)
+        return {
+            "video_id": datapoint["video_id"],
+            "frame_idx": datapoint["frame_idx"],
+            "frames": frames,
+        }
+
+    def __len__(self) -> int:
+        return len(self.data)
 
 
 def run(
-    dataset: HoloAssistDataset,
+    dataset: Dataset,
     results_dir: Path,
     version: str = "live1+",
-    per_device_batch_size: int = 256,
-    frame_batch_size: int | None = None,
+    per_device_num_frame: int = 512,
+    per_device_num_video: int = 2,
     num_dataloader_workers: int = 4,
     start_idx: int | None = None,
     end_idx: int | None = None,
@@ -49,103 +75,111 @@ def run(
         vision_config.vision_pretrained, torch_dtype=getattr(torch, torch_dtype)
     ).vision_model
 
+    if start_idx is None:
+        start_idx = 0
+    if end_idx is None:
+        end_idx = len(dataset)  # type: ignore
+
+    frame_data = convert_to_frame_dataset(
+        Subset(dataset, list(range(start_idx, end_idx))),
+        args.frame_fps,
+        max_num_frames=args.max_num_frames,
+    )
+
+    # filter out finished frame indices
+    filtered_frame_data = []
+    for i in range(len(frame_data)):
+        datapoint = frame_data[i]
+        frame_id_set = set(datapoint["frame_idx"].tolist())
+        finished_id_set: set[int] = set()
+        frames_dir = results_dir / datapoint["video_id"]
+        frames_dir.mkdir(parents=True, exist_ok=True)
+        for f in (frames_dir).iterdir():
+            finished_id_set.add(int(f.stem))
+        frame_idx = torch.tensor(sorted(frame_id_set - finished_id_set))
+        if frame_idx.size(0) == 0:
+            continue
+        filtered_frame_data.append(
+            {
+                "video_id": datapoint["video_id"],
+                "video_path": datapoint["video_path"],
+                "frame_idx": frame_idx,
+            }
+        )
+
     # initialize accelerator
     # NOTE: accelerator has to be initialized after model initialization
     accelerator = Accelerator()
+
+    # set up the queue
+    queue = None
+    if accelerator.is_main_process:
+        manager = mp.Manager()
+        queue = manager.Queue()
+        for i in range(len(filtered_frame_data)):
+            queue.put(i)
+    obj_list = broadcast_object_list([queue])
+    queue = obj_list[0]
+    assert queue is not None
+
+    frame_dataset = FrameDataset(filtered_frame_data, args.frame_resolution)
+
+    # set up the model
     vision_model.eval()
     vision_model.to(accelerator.device)
 
     # set up the preprocessor
     decord.bridge.set_bridge("torch")
 
-    frame_resolution = args.frame_resolution
-    max_num_frames = args.max_num_frames
-    frame_fps = args.frame_fps
-
-    def preprocess(datapoint: dict) -> dict[str, torch.Tensor]:
-        vr = VideoReader(str(datapoint["video"]))
-        dialogue = datapoint["dialogue"]
-
-        # sample frames from max(0, end time - max_num_frames/frame_fps) to the end time of the last utterance at self.frame_fps
-        end_time = dialogue[-1]["end"]
-        start_time = max(0, end_time - max_num_frames / frame_fps)
-        frame_idx = sample_frames_for_dialogue(
-            start_time, end_time, vr.get_avg_fps(), frame_fps, len(vr)
-        )
-        frames = vr.get_batch(frame_idx)
-        frames = rearrange(frames, "t h w c -> t c h w")
-        frames = resize(frames, [frame_resolution] * 2)
-        return {"index": torch.tensor(datapoint["index"]), "frames": frames}
-
-    dataset.preprocessor = preprocess
-    # set up data by figuring out indices to run inference on
-    # first, get all the indices
-    inference_indices = set(range(len(dataset)))
-
-    # second, check results_dir for finished indices
-    finished_idx: set[int] = set()
-    if results_dir.exists():
-        # get all the finished indices
-        finished_idx = set(int(f.stem) for f in results_dir.iterdir())
-    else:
-        results_dir.mkdir(parents=True)
-
-    # third, remove finished indices from inference indices
-    inference_indices -= finished_idx
-
-    # finally, take care of start_idx and end_idx
-    # [start_idx, end_idx)
-    if start_idx is not None:
-        inference_indices = set(idx for idx in inference_indices if idx >= start_idx)
-    if end_idx is not None:
-        inference_indices = set(idx for idx in inference_indices if idx < end_idx)
-
-    def collate(datapoints: list[dict[str, torch.Tensor]]) -> dict[str, torch.Tensor]:
+    # set up the dataloader
+    def collate(datapoints: list[dict]) -> dict:
         return {
-            "index": torch.stack([dp["index"] for dp in datapoints]),
+            "video_id": [dp["video_id"] for dp in datapoints],
+            "frame_idx": [dp["frame_idx"].tolist() for dp in datapoints],
             "frames": torch.cat([dp["frames"] for dp in datapoints]),
-            "num_frames": torch.tensor([dp["frames"].size(0) for dp in datapoints]),
         }
 
-    with accelerator.split_between_processes(
-        sorted(inference_indices)
-    ) as per_process_indices:
-        dataloader = DataLoader(
-            Subset(dataset, per_process_indices),
-            batch_size=per_device_batch_size,
-            num_workers=num_dataloader_workers,
-            pin_memory=True,
-            collate_fn=collate,
-        )
-        failure = torch.tensor(False, device=accelerator.device)
-        for batch in tqdm(dataloader, desc="Encode"):
-            try:
-                if frame_batch_size is None:
-                    batch_frames = [batch["frames"]]
-                else:
-                    batch_frames = batch["frames"].split(frame_batch_size)
-                batch_encoded_frames_list = []
+    dataloader = DataLoader(
+        frame_dataset,
+        batch_size=per_device_num_video,
+        num_workers=num_dataloader_workers,
+        pin_memory=True,
+        collate_fn=collate,
+        sampler=QueueSampler(queue),
+    )
+    failure = torch.tensor(False, device=accelerator.device)
+    # NOTE: We have to use the vanilla tqdm, not the wrapper from Accelerate,
+    # as we're not synchronizing in the main process. Using the wrapper causes
+    # the loop to exit early if multiple dataloader workers are used.
+    for batch in tqdm(dataloader, desc="Encode"):
+        try:
+            batch_frames = batch["frames"].split(per_device_num_frame)
+            batch_encoded_frames_list = []
+            with torch.inference_mode():
                 for frames in batch_frames:
-                    with torch.inference_mode():
-                        encoded_frames = vision_encode(
-                            vision_model, frames.to(accelerator.device)
-                        )
-                        batch_encoded_frames_list.append(encoded_frames)
-            except Exception as e:
-                print(
-                    f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"
-                )
-                failure = torch.tensor(True, device=accelerator.device)
-                continue
-            batch_encoded_frames = torch.cat(batch_encoded_frames_list)
-            for index, encoded_frames in zip(
-                batch["index"],
-                batch_encoded_frames.split(batch["num_frames"].tolist()),
-                strict=True,
-            ):
+                    encoded_frames = vision_encode(
+                        vision_model, frames.to(accelerator.device)
+                    )
+                    batch_encoded_frames_list.append(encoded_frames)
+        except Exception as e:
+            print(
+                f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"
+            )
+            failure = torch.tensor(True, device=accelerator.device)
+            continue
+        batch_encoded_frames = torch.cat(batch_encoded_frames_list)
+        for video_id, frame_idx, encoded_frames in zip(
+            batch["video_id"],
+            batch["frame_idx"],
+            batch_encoded_frames.split(
+                [len(frame_idx) for frame_idx in batch["frame_idx"]]
+            ),
+            strict=True,
+        ):
+            for frame_id, encoded_frame in zip(frame_idx, encoded_frames, strict=True):
                 torch.save(
-                    encoded_frames.to(torch.device("cpu"), getattr(torch, torch_dtype)),
-                    results_dir / f"{index.item()}.pt",
+                    encoded_frame.to(torch.device("cpu"), getattr(torch, torch_dtype)),
+                    results_dir / video_id / f"{frame_id}.pt",
                 )
     success = (~torch.any(accelerator.gather(failure))).item()
     accelerator.end_training()

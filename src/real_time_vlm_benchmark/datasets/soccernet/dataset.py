@@ -28,14 +28,15 @@ class SoccerNetDataset(Dataset):
             self.video_paths[f"{video_path.parts[-2]}/{video_path.stem}"] = video_path
 
     def __getitem__(self, index: int) -> dict:
-        video, dialogue = self.data[index]
+        video_id, dialogue = self.data[index]
         datapoint = {
             "index": index,
-            "video": self.video_paths[video],
+            "video_id": video_id,
+            "video_path": self.video_paths[video_id],
             "dialogue": dialogue,
         }
         if self.video_frame_dir_path is not None:
-            datapoint["video_frame"] = self.video_frame_dir_path / f"{index}.pt"
+            datapoint["encoded_frames_dir"] = self.video_frame_dir_path / video_id
         if self.preprocessor is not None:
             return self.preprocessor(datapoint)
         return datapoint

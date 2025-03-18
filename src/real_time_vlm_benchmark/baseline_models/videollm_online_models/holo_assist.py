@@ -1,4 +1,3 @@
-import math
 from dataclasses import asdict
 from typing import Callable
 
@@ -16,25 +15,9 @@ from tqdm import tqdm
 from videollm_online.models import build_model_and_tokenizer
 from videollm_online.models.arguments_live import get_args_class
 
-
-def sample_frames_for_dialogue(
-    start_time: float,
-    end_time: float,
-    video_avg_fps: float,
-    sample_fps: float,
-    video_num_frames: int,
-) -> torch.Tensor:
-    """
-    Returns the indices for frames sampled at the given fps from [start_time, end_time].
-    """
-    start_time_frame = math.ceil(start_time * video_avg_fps)
-    end_time_frame = min(math.floor(end_time * video_avg_fps), video_num_frames - 1)
-    num_frames = end_time_frame - start_time_frame + 1
-    frame_interval = video_avg_fps / sample_fps
-    num_frames_to_sample = math.ceil(num_frames / frame_interval)
-    return torch.linspace(start_time_frame, end_time_frame, num_frames_to_sample).to(
-        torch.int
-    )
+from real_time_vlm_benchmark.baseline_models.utils.sample import (
+    sample_frames_for_dialogue,
+)
 
 
 def construct_interleaved_dialogue(
@@ -126,14 +109,15 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
 
     def preprocess(self, datapoint: dict) -> dict[str, torch.Tensor]:
         decord.bridge.set_bridge("torch")
-        vr = VideoReader(str(datapoint["video"]))
+        vr = VideoReader(str(datapoint["video_path"]))
         dialogue = datapoint["dialogue"]
 
-        # sample frames from max(0, end time - max_num_frames/frame_fps) to the end time of the last utterance at self.frame_fps
-        end_time = dialogue[-1]["end"]
-        start_time = max(0.0, end_time - self.max_num_frames / self.frame_fps)
-        frame_idx = sample_frames_for_dialogue(
-            start_time, end_time, vr.get_avg_fps(), self.frame_fps, len(vr)
+        frame_idx, start_time, _ = sample_frames_for_dialogue(
+            dialogue,
+            vr.get_avg_fps(),
+            self.frame_fps,
+            len(vr),
+            max_num_frames=self.max_num_frames,
         )
         frame_timestamps = frame_idx / vr.get_avg_fps()
         if self.set_vision_inside:
@@ -141,7 +125,11 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
             frames = rearrange(frames, "t h w c -> t c h w")
             frames = resize(frames, [self.model.config.frame_resolution] * 2)
         else:
-            frames = torch.load(datapoint["video_frame"])
+            encoded_frames = [
+                torch.load(datapoint["encoded_frames_dir"] / f"{frame_id}.pt")
+                for frame_id in frame_idx.tolist()
+            ]
+            frames = torch.stack(encoded_frames)
 
         # construct an interleaved dialogue
         dialogue = [
@@ -169,7 +157,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
             "context_frames": context_frames,
             "eval_frames": eval_frames,
             "frame_timestamps": frame_timestamps,
-            "video": datapoint["video"].parent.parent.name,
+            "video_id": datapoint["video_id"],
         }
 
     @property
@@ -183,7 +171,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
             frame_timestamps = pad_sequence(
                 [dp["frame_timestamps"] for dp in datapoints], batch_first=True
             )
-            video = [dp["video"] for dp in datapoints]
+            video_id = [dp["video_id"] for dp in datapoints]
             idx = torch.tensor([dp["index"] for dp in datapoints])
             return {
                 "index": idx,
@@ -192,7 +180,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
                 "frame_timestamps": frame_timestamps,
                 "input_ids": padded.input_ids,
                 "attention_mask": padded.attention_mask,
-                "video": video,
+                "video_id": video_id,
             }
 
         return collate
@@ -308,7 +296,7 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
                 )[0].strip()
                 results[index].append(
                     {
-                        "video": batch["video"][0],
+                        "video_id": batch["video_id"][0],
                         "role": "assistant",
                         "content": response,
                         "start": batch["frame_timestamps"][
