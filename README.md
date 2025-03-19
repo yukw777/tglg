@@ -6,7 +6,27 @@
 # If Slurm, ensure you have the latest CUDA and GCC loaded
 module load cuda gcc
 
-# Create a virtual env, e.g., using uv
+# Create a virtual env, e.g., using uv, conda or venv, and activate it
+uv venv
+source .venv/bin/activate
+
+# flash-attn build dependencies
+pip install torch setuptools psutil packaging ninja
+
+# Build flash-attn
+pip install flash-attn --no-build-isolation
+
+# Install the project
+pip install -e '.[flash-attn]'
+
+# Workaround for https://github.com/OpenNMT/CTranslate2/issues/1826
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/.venv/lib/python3.10/site-packages/nvidia/cudnn/lib/
+```
+
+## Development
+
+```bash
+# Create a virtual env using uv
 uv venv
 
 # flash-attn build dependencies
@@ -15,9 +35,8 @@ uv pip install torch setuptools psutil packaging ninja
 # Build flash-attn
 uv pip install flash-attn --no-build-isolation
 
-# Install python dependencies
-# Specify --extra flash-attn if necessary
-uv sync
+# Install the project
+uv sync --all-extras
 
 # Workaround for https://github.com/OpenNMT/CTranslate2/issues/1826
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/.venv/lib/python3.10/site-packages/nvidia/cudnn/lib/
