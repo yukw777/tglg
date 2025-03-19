@@ -1,7 +1,9 @@
 import csv
 import os
 import sys
+from multiprocessing.managers import BaseManager
 from pathlib import Path
+from queue import Queue
 
 import pandas as pd
 import torch
@@ -12,6 +14,7 @@ from jsonargparse import auto_cli
 from torch.utils.data import DataLoader, Subset
 
 from real_time_vlm_benchmark.baseline_models.utils.generation import GenerationConfig
+from real_time_vlm_benchmark.baseline_models.utils.sample import QueueSampler
 from real_time_vlm_benchmark.baseline_models.videollm_online_models.holo_assist import (
     VideoLLMOnlineHoloAssistModel,
 )
@@ -35,6 +38,9 @@ def run(
     wandb_run_name: str | None = None,
     random_seed: int = 42,
     out_file_name: str | None = None,
+    mp_manager_ip_addr: str = "",
+    mp_manager_port: int = 12345,
+    mp_manager_auth_key: bytes = b"password",
 ) -> int:
     set_seed(random_seed)
 
@@ -88,51 +94,78 @@ def run(
     if end_idx is not None:
         inference_indices = set(idx for idx in inference_indices if idx < end_idx)
 
-    with accelerator.split_between_processes(
-        sorted(inference_indices)
-    ) as per_process_indices:
-        dataloader = DataLoader(
-            Subset(dataset, per_process_indices),
-            batch_size=per_device_batch_size,
-            num_workers=num_dataloader_workers,
-            pin_memory=True,
-            collate_fn=model.collate_fn,
-        )
-        failure = torch.tensor(False, device=accelerator.device)
-        for batch in tqdm(dataloader, desc="Inference"):
-            try:
-                batch["context_frames"] = batch["context_frames"].to(accelerator.device)
-                batch["eval_frames"] = batch["eval_frames"].to(accelerator.device)
-                batch["input_ids"] = batch["input_ids"].to(accelerator.device)
-                batch["attention_mask"] = batch["attention_mask"].to(accelerator.device)
-                with torch.inference_mode():
-                    try:
-                        preds = model.predict(batch, **gen_config)
-                    except torch.cuda.OutOfMemoryError:
-                        print(
-                            f"[rank {accelerator.process_index}] CUDA OOM raised for batch {batch['index'].tolist()}. Retrying with OffloadedCache."
-                        )
-                        preds = model.predict(
-                            batch, use_offloaded_cache=True, **gen_config
-                        )
-            except Exception as e:
-                print(
-                    f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"
-                )
-                failure = torch.tensor(True, device=accelerator.device)
-                continue
-            for index, utters in preds.items():
-                with open(results_dir / f"{index}.csv", "w", newline="") as csvfile:
-                    writer = csv.DictWriter(csvfile, ["video_id", "start", "content"])
-                    writer.writeheader()
-                    for utter in utters:
-                        writer.writerow(
-                            {
-                                "video_id": utter["video_id"],
-                                "start": utter["start"],
-                                "content": utter["content"],
-                            }
-                        )
+    filtered_dataset = Subset(dataset, sorted(inference_indices))
+
+    # set up the queue
+    class QueueManager(BaseManager):
+        pass
+
+    with accelerator.main_process_first():
+        if accelerator.is_main_process:
+            queue: Queue[int] = Queue()
+            for i in range(len(filtered_dataset)):
+                queue.put(i)
+            QueueManager.register("get_queue", lambda: queue)
+            manager = QueueManager(
+                address=(mp_manager_ip_addr, mp_manager_port),
+                authkey=mp_manager_auth_key,
+            )
+            manager.start()
+        else:
+            QueueManager.register("get_queue")
+            manager = QueueManager(
+                address=(mp_manager_ip_addr, mp_manager_port),
+                authkey=mp_manager_auth_key,
+            )
+            manager.connect()
+            queue = manager.get_queue()  # type: ignore
+
+    dataloader = DataLoader(
+        filtered_dataset,
+        batch_size=per_device_batch_size,
+        num_workers=num_dataloader_workers,
+        pin_memory=True,
+        collate_fn=model.collate_fn,
+        sampler=QueueSampler(queue),
+    )
+    failure = torch.tensor(False, device=accelerator.device)
+    progress_bar = tqdm(total=len(filtered_dataset), desc="Inference")
+    for batch in dataloader:
+        try:
+            batch["context_frames"] = batch["context_frames"].to(accelerator.device)
+            batch["eval_frames"] = batch["eval_frames"].to(accelerator.device)
+            batch["input_ids"] = batch["input_ids"].to(accelerator.device)
+            batch["attention_mask"] = batch["attention_mask"].to(accelerator.device)
+            with torch.inference_mode():
+                try:
+                    preds = model.predict(batch, **gen_config)
+                except torch.cuda.OutOfMemoryError:
+                    print(
+                        f"[rank {accelerator.process_index}] CUDA OOM raised for batch {batch['index'].tolist()}. Retrying with OffloadedCache."
+                    )
+                    preds = model.predict(batch, use_offloaded_cache=True, **gen_config)
+        except Exception as e:
+            print(
+                f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"
+            )
+            failure = torch.tensor(True, device=accelerator.device)
+            # remove this batch from the total
+            progress_bar.total -= len(batch["video_id"])
+            progress_bar.refresh()
+            continue
+        for index, utters in preds.items():
+            with open(results_dir / f"{index}.csv", "w", newline="") as csvfile:
+                writer = csv.DictWriter(csvfile, ["video_id", "start", "content"])
+                writer.writeheader()
+                for utter in utters:
+                    writer.writerow(
+                        {
+                            "video_id": utter["video_id"],
+                            "start": utter["start"],
+                            "content": utter["content"],
+                        }
+                    )
+        progress_bar.update(len(batch["video_id"]))
     success = (~torch.any(accelerator.gather(failure))).item()
 
     if success and accelerator.is_main_process and out_file_name is not None:
