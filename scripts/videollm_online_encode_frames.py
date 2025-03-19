@@ -1,8 +1,9 @@
 import sys
+from multiprocessing.managers import BaseManager
 from pathlib import Path
+from queue import Queue
 
 import torch
-import torch.multiprocessing as mp
 
 # decord must be imported after torch
 # https://github.com/dmlc/decord/issues/293
@@ -10,7 +11,7 @@ import decord  # isort: skip
 from dataclasses import asdict
 
 from accelerate import Accelerator
-from accelerate.utils import broadcast_object_list, set_seed
+from accelerate.utils import set_seed, tqdm
 from decord import VideoReader
 from einops import rearrange
 from jsonargparse import auto_cli
@@ -20,7 +21,6 @@ from torch.utils.data import (
     Subset,
 )
 from torchvision.transforms.v2.functional import resize
-from tqdm import tqdm
 from transformers import AutoModel
 from videollm_online.models.arguments_live import get_args_class
 from videollm_online.models.configuration_live import LiveConfigMixin
@@ -63,6 +63,9 @@ def run(
     end_idx: int | None = None,
     random_seed: int = 42,
     torch_dtype: str = "bfloat16",
+    mp_manager_ip_addr: str = "",
+    mp_manager_port: int = 12345,
+    mp_manager_auth_key: bytes = b"password",
 ) -> int:
     set_seed(random_seed)
 
@@ -112,15 +115,28 @@ def run(
     accelerator = Accelerator()
 
     # set up the queue
-    queue = None
-    if accelerator.is_main_process:
-        manager = mp.Manager()
-        queue = manager.Queue()
-        for i in range(len(filtered_frame_data)):
-            queue.put(i)
-    obj_list = broadcast_object_list([queue])
-    queue = obj_list[0]
-    assert queue is not None
+    class QueueManager(BaseManager):
+        pass
+
+    with accelerator.main_process_first():
+        if accelerator.is_main_process:
+            queue: Queue[int] = Queue()
+            for i in range(len(filtered_frame_data)):
+                queue.put(i)
+            QueueManager.register("get_queue", lambda: queue)
+            manager = QueueManager(
+                address=(mp_manager_ip_addr, mp_manager_port),
+                authkey=mp_manager_auth_key,
+            )
+            manager.start()
+        else:
+            QueueManager.register("get_queue")
+            manager = QueueManager(
+                address=(mp_manager_ip_addr, mp_manager_port),
+                authkey=mp_manager_auth_key,
+            )
+            manager.connect()
+            queue = manager.get_queue()  # type: ignore
 
     frame_dataset = FrameDataset(filtered_frame_data, args.frame_resolution)
 
@@ -148,10 +164,8 @@ def run(
         sampler=QueueSampler(queue),
     )
     failure = torch.tensor(False, device=accelerator.device)
-    # NOTE: We have to use the vanilla tqdm, not the wrapper from Accelerate,
-    # as we're not synchronizing in the main process. Using the wrapper causes
-    # the loop to exit early if multiple dataloader workers are used.
-    for batch in tqdm(dataloader, desc="Encode"):
+    progress_bar = tqdm(total=len(filtered_frame_data), desc="Encode")
+    for batch in dataloader:
         try:
             batch_frames = batch["frames"].split(per_device_num_frame)
             batch_encoded_frames_list = []
@@ -163,7 +177,7 @@ def run(
                     batch_encoded_frames_list.append(encoded_frames)
         except Exception as e:
             print(
-                f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"
+                f"[rank {accelerator.process_index}] Exception raised for batch {batch['video_id'].tolist()}. Skipping: {e}"
             )
             failure = torch.tensor(True, device=accelerator.device)
             continue
@@ -181,6 +195,7 @@ def run(
                     encoded_frame.to(torch.device("cpu"), getattr(torch, torch_dtype)),
                     results_dir / video_id / f"{frame_id}.pt",
                 )
+        progress_bar.update(len(batch["video_id"]))
     success = (~torch.any(accelerator.gather(failure))).item()
     accelerator.end_training()
     return 0 if success else 1
