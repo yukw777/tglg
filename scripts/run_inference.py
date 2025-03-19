@@ -1,4 +1,5 @@
 import csv
+import multiprocessing as mp
 import os
 import sys
 from multiprocessing.managers import BaseManager
@@ -9,9 +10,10 @@ import pandas as pd
 import torch
 import wandb
 from accelerate import Accelerator
-from accelerate.utils import set_seed, tqdm
+from accelerate.utils import set_seed
 from jsonargparse import auto_cli
 from torch.utils.data import DataLoader, Subset
+from tqdm import tqdm
 
 from real_time_vlm_benchmark.baseline_models.utils.generation import GenerationConfig
 from real_time_vlm_benchmark.baseline_models.utils.sample import QueueSampler
@@ -96,9 +98,27 @@ def run(
 
     filtered_dataset = Subset(dataset, sorted(inference_indices))
 
-    # set up the queue
+    # set up the queues
     class QueueManager(BaseManager):
         pass
+
+    class ProgressBarProcess(mp.Process):
+        def __init__(self, progress_queue: mp.Queue, total: int) -> None:
+            self.progress_queue = progress_queue
+            self.progress_bar = tqdm(total=total, desc="Inference")
+            super().__init__()
+
+        def run(self) -> None:
+            while True:
+                progress = self.progress_queue.get()
+                if progress is None:
+                    self.progress_bar.close()
+                    return
+                if progress >= 0:
+                    self.progress_bar.update(progress)
+                else:
+                    self.progress_bar.total += progress
+                    self.progress_bar.refresh()
 
     with accelerator.main_process_first():
         if accelerator.is_main_process:
@@ -106,19 +126,29 @@ def run(
             for i in range(len(filtered_dataset)):
                 queue.put(i)
             QueueManager.register("get_queue", lambda: queue)
+            # NOTE: we have to use mp.Queue(), not the regular Queue b/c
+            # the progress bar process is a local process.
+            progress_queue: mp.Queue[int | None] = mp.Queue()
+            QueueManager.register("get_progress_queue", lambda: progress_queue)
             manager = QueueManager(
                 address=(mp_manager_ip_addr, mp_manager_port),
                 authkey=mp_manager_auth_key,
             )
             manager.start()
+            progress_bar_proc = ProgressBarProcess(
+                progress_queue, len(filtered_dataset)
+            )
+            progress_bar_proc.start()
         else:
             QueueManager.register("get_queue")
+            QueueManager.register("get_progress_queue")
             manager = QueueManager(
                 address=(mp_manager_ip_addr, mp_manager_port),
                 authkey=mp_manager_auth_key,
             )
             manager.connect()
             queue = manager.get_queue()  # type: ignore
+            progress_queue = manager.get_progress_queue()  # type: ignore
 
     dataloader = DataLoader(
         filtered_dataset,
@@ -129,7 +159,6 @@ def run(
         sampler=QueueSampler(queue),
     )
     failure = torch.tensor(False, device=accelerator.device)
-    progress_bar = tqdm(total=len(filtered_dataset), desc="Inference")
     for batch in dataloader:
         try:
             batch["context_frames"] = batch["context_frames"].to(accelerator.device)
@@ -150,8 +179,7 @@ def run(
             )
             failure = torch.tensor(True, device=accelerator.device)
             # remove this batch from the total
-            progress_bar.total -= len(batch["video_id"])
-            progress_bar.refresh()
+            progress_queue.put(-len(batch["video_id"]))
             continue
         for index, utters in preds.items():
             with open(results_dir / f"{index}.csv", "w", newline="") as csvfile:
@@ -165,7 +193,7 @@ def run(
                             "content": utter["content"],
                         }
                     )
-        progress_bar.update(len(batch["video_id"]))
+        progress_queue.put(len(batch["video_id"]))
     success = (~torch.any(accelerator.gather(failure))).item()
 
     if success and accelerator.is_main_process and out_file_name is not None:
@@ -189,6 +217,8 @@ def run(
         table = wandb.Table(dataframe=df)
         run.log({"inference": table})
 
+    # signal the progress bar process to exit
+    progress_queue.put(None)
     accelerator.end_training()
     return 0 if success else 1
 
