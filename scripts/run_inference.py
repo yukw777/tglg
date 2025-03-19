@@ -106,7 +106,15 @@ def run(
                 batch["input_ids"] = batch["input_ids"].to(accelerator.device)
                 batch["attention_mask"] = batch["attention_mask"].to(accelerator.device)
                 with torch.inference_mode():
-                    preds = model.predict(batch, **gen_config)
+                    try:
+                        preds = model.predict(batch, **gen_config)
+                    except torch.cuda.OutOfMemoryError:
+                        print(
+                            f"[rank {accelerator.process_index}] CUDA OOM raised for batch {batch['index'].tolist()}. Retrying with OffloadedCache."
+                        )
+                        preds = model.predict(
+                            batch, use_offloaded_cache=True, **gen_config
+                        )
             except Exception as e:
                 print(
                     f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"

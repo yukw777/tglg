@@ -2,6 +2,7 @@ from dataclasses import asdict
 from typing import Callable
 
 import torch
+from transformers import OffloadedCache
 
 # decord must be imported after torch
 # https://github.com/dmlc/decord/issues/293
@@ -186,7 +187,9 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         return collate
 
     @torch.inference_mode()
-    def predict(self, batch: dict, **gen_kwargs) -> dict[int, list]:
+    def predict(
+        self, batch: dict, use_offloaded_cache: bool = False, **gen_kwargs
+    ) -> dict[int, list]:
         # NOTE: we don't support batch prediction
         assert batch["input_ids"].size(0) == 1, "Batch prediction not supported"
 
@@ -194,12 +197,21 @@ class VideoLLMOnlineHoloAssistModel(nn.Module):
         # NOTE: we maintain attention_mask despite not supporting batch prediction,
         # because the model doesn't have a pad token set, so attention_mask can't be inferred.
         attention_mask = batch["attention_mask"]
-        outputs = self.model(
-            inputs_embeds=self.model.joint_embed(
-                batch["input_ids"], batch["context_frames"]
-            ),
-            attention_mask=attention_mask,
+        joint_embeds = self.model.joint_embed(
+            batch["input_ids"], batch["context_frames"]
         )
+        if use_offloaded_cache:
+            outputs = self.model(
+                inputs_embeds=joint_embeds, attention_mask=attention_mask
+            )
+        else:
+            outputs = self.model(
+                inputs_embeds=self.model.joint_embed(
+                    batch["input_ids"], batch["context_frames"]
+                ),
+                attention_mask=attention_mask,
+                past_key_values=OffloadedCache(),
+            )
 
         index = batch["index"][0].item()
         results: dict[int, list] = {index: []}
