@@ -82,3 +82,14 @@ python scripts/gen_anns_soccernet.py \
 --pbp_annotated_dir path/to/SoccerNet-pbp \
 --output_file path/to/SoccerNet/real-time-eval-annotation.json
 ```
+
+## Video Frame Pre-encoding
+
+```bash
+# set --dataset to the desired dataset
+torchrun --nnodes={num_nodes} --nproc_per_node={num_gpus} scripts/videollm_online_encode_frames.py \
+--dataset real_time_vlm_benchmark.datasets.holo_assist.HoloAssistDataset \
+--dataset.video_dir_path /path/to/HoloAssist/video_pitch_shifted/ \
+--dataset.ann_file_path /path/to/HoloAssist/data-annotation-trainval-v1_1.json \
+--results_dir path/to/encoded_frames/HoloAssist
+```
