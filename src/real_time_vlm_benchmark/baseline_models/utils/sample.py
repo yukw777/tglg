@@ -1,5 +1,6 @@
 import math
 import multiprocessing as mp
+from queue import Empty
 from typing import Any
 
 import torch
@@ -41,8 +42,12 @@ class QueueSampler(Sampler):
         self.queue = queue
 
     def __iter__(self) -> Any:
-        while not self.queue.empty():
-            yield self.queue.get()
+        while True:
+            try:
+                item = self.queue.get_nowait()
+            except Empty:
+                break
+            yield item
 
     def __len__(self) -> int:
         return self.queue.qsize()
