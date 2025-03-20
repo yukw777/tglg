@@ -218,7 +218,8 @@ def run(
         run.log({"inference": table})
 
     # signal the progress bar process to exit
-    progress_queue.put(None)
+    if accelerator.is_main_process:
+        progress_queue.put(None)
     accelerator.end_training()
     return 0 if success else 1
 

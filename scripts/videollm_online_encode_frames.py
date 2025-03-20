@@ -223,7 +223,8 @@ def run(
         progress_queue.put(len(batch["video_id"]))
     success = (~torch.any(accelerator.gather(failure))).item()
     # signal the progress bar process to exit
-    progress_queue.put(None)
+    if accelerator.is_main_process:
+        progress_queue.put(None)
     accelerator.end_training()
     return 0 if success else 1
 
