@@ -2,8 +2,7 @@ import json
 from pathlib import Path
 from typing import Any, Callable
 
-from torch.utils.data import Dataset
-
+from real_time_vlm_benchmark.datasets.real_time import RealTimeDataset
 from real_time_vlm_benchmark.datasets.utils import convert_real_time_anns_to_datapoint
 
 
@@ -82,7 +81,7 @@ def convert_holo_assist(
     return anns
 
 
-class HoloAssistDataset(Dataset):
+class HoloAssistDataset(RealTimeDataset):
     def __init__(
         self,
         video_dir_path: str,
@@ -95,7 +94,7 @@ class HoloAssistDataset(Dataset):
         self.video_frame_dir_path = (
             Path(video_frame_dir_path) if video_frame_dir_path is not None else None
         )
-        self.preprocessor = preprocessor
+        self._preprocessor = preprocessor
         with open(ann_file_path) as f:
             anns = json.load(f)
         self.data = convert_real_time_anns_to_datapoint(anns)

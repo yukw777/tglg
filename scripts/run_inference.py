@@ -17,14 +17,14 @@ from tqdm import tqdm
 from real_time_vlm_benchmark.baseline_models import BaselineModel
 from real_time_vlm_benchmark.baseline_models.utils.generation import GenerationConfig
 from real_time_vlm_benchmark.baseline_models.utils.sample import QueueSampler
-from real_time_vlm_benchmark.datasets.holo_assist import HoloAssistDataset
+from real_time_vlm_benchmark.datasets import RealTimeDataset
 
 # Disable Tokenizers Parallelism to Play Nice w/ PyTorch Multiprocessing DataLoaders
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def run(
-    dataset: HoloAssistDataset,
+    dataset: RealTimeDataset,
     results_dir: Path,
     model: BaselineModel,
     per_device_batch_size: int = 1,

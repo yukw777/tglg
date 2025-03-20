@@ -1,6 +1,6 @@
 from functools import partial
 
-from real_time_vlm_benchmark.baseline_models.videollm_online_models import (
+from real_time_vlm_benchmark.baseline_models.videollm_online_models.videollm_online import (
     VideoLLMOnlineModel,
 )
 
