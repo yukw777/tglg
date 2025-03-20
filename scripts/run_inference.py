@@ -14,11 +14,9 @@ from jsonargparse import auto_cli
 from torch.utils.data import DataLoader, Subset
 from tqdm import tqdm
 
+from real_time_vlm_benchmark.baseline_models import BaselineModel
 from real_time_vlm_benchmark.baseline_models.utils.generation import GenerationConfig
 from real_time_vlm_benchmark.baseline_models.utils.sample import QueueSampler
-from real_time_vlm_benchmark.baseline_models.videollm_online_models.holo_assist import (
-    VideoLLMOnlineHoloAssistModel,
-)
 from real_time_vlm_benchmark.datasets.holo_assist import HoloAssistDataset
 
 # Disable Tokenizers Parallelism to Play Nice w/ PyTorch Multiprocessing DataLoaders
@@ -28,7 +26,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 def run(
     dataset: HoloAssistDataset,
     results_dir: Path,
-    model: VideoLLMOnlineHoloAssistModel | None = None,
+    model: BaselineModel,
     per_device_batch_size: int = 1,
     num_dataloader_workers: int = 4,
     start_idx: int | None = None,
@@ -44,9 +42,6 @@ def run(
     mp_manager_auth_key: bytes = b"password",
 ) -> int:
     set_seed(random_seed)
-
-    if model is None:
-        model = VideoLLMOnlineHoloAssistModel()
 
     # initialize accelerator
     # NOTE: accelerator has to be initialized after model initialization
