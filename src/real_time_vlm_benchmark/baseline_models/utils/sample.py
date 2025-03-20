@@ -1,5 +1,5 @@
 import math
-from queue import Queue
+import multiprocessing as mp
 from typing import Any
 
 import torch
@@ -37,7 +37,7 @@ def sample_frames_for_dialogue(
 
 
 class QueueSampler(Sampler):
-    def __init__(self, queue: Queue) -> None:
+    def __init__(self, queue: mp.Queue) -> None:
         self.queue = queue
 
     def __iter__(self) -> Any:

@@ -2,7 +2,6 @@ import multiprocessing as mp
 import sys
 from multiprocessing.managers import BaseManager
 from pathlib import Path
-from queue import Queue
 
 import torch
 
@@ -135,7 +134,7 @@ def run(
                 self.progress_bar.update(progress)
 
     if accelerator.is_main_process:
-        queue: Queue[int] = Queue()
+        queue: mp.Queue[int] = mp.Queue()
         for i in range(len(filtered_frame_data)):
             queue.put(i)
         QueueManager.register("get_queue", lambda: queue)
