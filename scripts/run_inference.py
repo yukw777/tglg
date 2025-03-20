@@ -120,35 +120,35 @@ def run(
                     self.progress_bar.total += progress
                     self.progress_bar.refresh()
 
-    with accelerator.main_process_first():
-        if accelerator.is_main_process:
-            queue: Queue[int] = Queue()
-            for i in range(len(filtered_dataset)):
-                queue.put(i)
-            QueueManager.register("get_queue", lambda: queue)
-            # NOTE: we have to use mp.Queue(), not the regular Queue b/c
-            # the progress bar process is a local process.
-            progress_queue: mp.Queue[int | None] = mp.Queue()
-            QueueManager.register("get_progress_queue", lambda: progress_queue)
-            manager = QueueManager(
-                address=(mp_manager_ip_addr, mp_manager_port),
-                authkey=mp_manager_auth_key,
-            )
-            manager.start()
-            progress_bar_proc = ProgressBarProcess(
-                progress_queue, len(filtered_dataset)
-            )
-            progress_bar_proc.start()
-        else:
-            QueueManager.register("get_queue")
-            QueueManager.register("get_progress_queue")
-            manager = QueueManager(
-                address=(mp_manager_ip_addr, mp_manager_port),
-                authkey=mp_manager_auth_key,
-            )
-            manager.connect()
-            queue = manager.get_queue()  # type: ignore
-            progress_queue = manager.get_progress_queue()  # type: ignore
+    if accelerator.is_main_process:
+        queue: Queue[int] = Queue()
+        for i in range(len(filtered_dataset)):
+            queue.put(i)
+        QueueManager.register("get_queue", lambda: queue)
+        # NOTE: we have to use mp.Queue(), not the regular Queue b/c
+        # the progress bar process is a local process.
+        progress_queue: mp.Queue[int | None] = mp.Queue()
+        QueueManager.register("get_progress_queue", lambda: progress_queue)
+        manager = QueueManager(
+            address=(mp_manager_ip_addr, mp_manager_port),
+            authkey=mp_manager_auth_key,
+        )
+        manager.start()
+        progress_bar_proc = ProgressBarProcess(progress_queue, len(filtered_dataset))
+        progress_bar_proc.start()
+    accelerator.wait_for_everyone()
+
+    if not accelerator.is_main_process:
+        QueueManager.register("get_queue")
+        QueueManager.register("get_progress_queue")
+        manager = QueueManager(
+            address=(mp_manager_ip_addr, mp_manager_port),
+            authkey=mp_manager_auth_key,
+        )
+        manager.connect()
+        queue = manager.get_queue()  # type: ignore
+        progress_queue = manager.get_progress_queue()  # type: ignore
+    accelerator.wait_for_everyone()
 
     dataloader = DataLoader(
         filtered_dataset,
