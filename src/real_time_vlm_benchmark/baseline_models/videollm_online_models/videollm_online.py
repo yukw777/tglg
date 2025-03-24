@@ -124,11 +124,10 @@ class VideoLLMOnlineModel(BaselineModel):
             frames = rearrange(frames, "t h w c -> t c h w")
             frames = resize(frames, [self.model.config.frame_resolution] * 2)
         else:
-            encoded_frames = [
-                torch.load(datapoint["encoded_frames_dir"] / f"{frame_id}.pt")
-                for frame_id in frame_idx.tolist()
-            ]
-            frames = torch.stack(encoded_frames)
+            encoded_frame_dict = torch.load(datapoint["encoded_frames_path"])
+            frames = torch.stack(
+                [encoded_frame_dict[frame_id] for frame_id in frame_idx.tolist()]
+            )
 
         # construct an interleaved dialogue
         dialogue = [

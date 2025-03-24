@@ -110,7 +110,9 @@ class HoloAssistDataset(RealTimeDataset):
             "dialogue": dialogue,
         }
         if self.video_frame_dir_path is not None:
-            datapoint["encoded_frames_dir"] = self.video_frame_dir_path / video_id
+            datapoint["encoded_frames_path"] = (
+                self.video_frame_dir_path / f"{video_id}.pt"
+            )
         if self.preprocessor is not None:
             return self.preprocessor(datapoint)
         return datapoint

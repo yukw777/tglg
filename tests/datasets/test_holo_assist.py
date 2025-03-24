@@ -340,7 +340,7 @@ def test_convert_holo_assist(
                         {"role": "user", "content": "u0", "eval": False},
                         {"role": "assistant", "content": "a2", "eval": True},
                     ],
-                    "encoded_frames_dir": Path("video_frame_dir_path/video0"),
+                    "encoded_frames_path": Path("video_frame_dir_path/video0.pt"),
                 }
             ],
         ),

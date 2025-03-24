@@ -96,12 +96,13 @@ def run(
         datapoint = frame_data[i]
         frame_id_set = set(datapoint["frame_idx"].tolist())
         finished_id_set: set[int] = set()
-        frames_dir = results_dir / datapoint["video_id"]
-        frames_dir.mkdir(parents=True, exist_ok=True)
-        for f in (frames_dir).iterdir():
-            finished_id_set.add(int(f.stem))
-        frame_idx = torch.tensor(sorted(frame_id_set - finished_id_set))
-        if frame_idx.size(0) == 0:
+        frames_file = results_dir / f"{datapoint['video_id']}.pt"
+        frames_file.parent.mkdir(parents=True, exist_ok=True)
+        if frames_file.exists():
+            finished_frames_dict = torch.load(frames_file)
+            finished_id_set.update(finished_frames_dict.keys())
+        frame_idx = sorted(frame_id_set - finished_id_set)
+        if len(frame_idx) == 0:
             continue
         filtered_frame_data.append(
             {
@@ -176,7 +177,7 @@ def run(
     def collate(datapoints: list[dict]) -> dict:
         return {
             "video_id": [dp["video_id"] for dp in datapoints],
-            "frame_idx": [dp["frame_idx"].tolist() for dp in datapoints],
+            "frame_idx": [dp["frame_idx"] for dp in datapoints],
             "frames": torch.cat([dp["frames"] for dp in datapoints]),
         }
 
@@ -214,11 +215,19 @@ def run(
             ),
             strict=True,
         ):
-            for frame_id, encoded_frame in zip(frame_idx, encoded_frames, strict=True):
-                torch.save(
-                    encoded_frame.to(torch.device("cpu"), getattr(torch, torch_dtype)),
-                    results_dir / video_id / f"{frame_id}.pt",
+            encoded_frame_dict = {
+                frame_id: encoded_frame
+                for frame_id, encoded_frame in zip(
+                    frame_idx,
+                    encoded_frames.to(torch.device("cpu"), getattr(torch, torch_dtype)),
+                    strict=True,
                 )
+            }
+            frames_file = results_dir / f"{video_id}.pt"
+            if frames_file.exists():
+                finished_frames_dict = torch.load(frames_file)
+                encoded_frame_dict.update(finished_frames_dict)
+            torch.save(encoded_frame_dict, frames_file)
         progress_queue.put(len(batch["video_id"]))
     success = (~torch.any(accelerator.gather(failure))).item()
     # signal the progress bar process to exit
