@@ -97,7 +97,6 @@ def run(
         frame_id_set = set(datapoint["frame_idx"].tolist())
         finished_id_set: set[int] = set()
         frames_file = results_dir / f"{datapoint['video_id']}.pt"
-        frames_file.parent.mkdir(parents=True, exist_ok=True)
         if frames_file.exists():
             finished_frames_dict = torch.load(frames_file)
             finished_id_set.update(finished_frames_dict.keys())
@@ -215,18 +214,32 @@ def run(
             ),
             strict=True,
         ):
+            # we combine the previously encoded frames with the new ones
+            # and save the slices to save disk space.
+            encoded_frames = encoded_frames.to(
+                torch.device("cpu"), getattr(torch, torch_dtype)
+            )
+            frames_file = results_dir / f"{video_id}.pt"
+            if frames_file.exists():
+                finished_frames_dict = torch.load(frames_file)
+                finished_frame_idx = list(finished_frames_dict.keys())
+                frame_idx.extend(finished_frame_idx)
+                encoded_frames = torch.cat(
+                    [encoded_frames]
+                    + [
+                        finished_frames_dict[frame_id].unsqueeze(0)
+                        for frame_id in finished_frame_idx
+                    ]
+                )
             encoded_frame_dict = {
                 frame_id: encoded_frame
                 for frame_id, encoded_frame in zip(
                     frame_idx,
-                    encoded_frames.to(torch.device("cpu"), getattr(torch, torch_dtype)),
+                    encoded_frames,
                     strict=True,
                 )
             }
-            frames_file = results_dir / f"{video_id}.pt"
-            if frames_file.exists():
-                finished_frames_dict = torch.load(frames_file)
-                encoded_frame_dict.update(finished_frames_dict)
+            frames_file.parent.mkdir(parents=True, exist_ok=True)
             torch.save(encoded_frame_dict, frames_file)
         progress_queue.put(len(batch["video_id"]))
     success = (~torch.any(accelerator.gather(failure))).item()
