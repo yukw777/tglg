@@ -10,6 +10,7 @@ def main(
     teamspace: str,
     frame_token_interval_thresholds: list[float],
     root_results_dir: Path,
+    run_name_prefix: str,
     cwd: str = ".",
     run_inference_args: dict[str, str] | None = None,
     dry_run: bool = False,
@@ -27,11 +28,11 @@ def main(
         studio = Studio(user=studio_user, name=studio_name, teamspace=teamspace)
         studio.start()
 
-    script_cmd = f"cd {cwd} && uv run torchrun {torchrun_map[selected_machine]} scripts/run_inference.py \\"
+    script_cmd = f"cd {cwd} && torchrun {torchrun_map[selected_machine]} scripts/run_inference.py \\"
     if run_inference_args is None:
         run_inference_args = {}
     for i, threshold in enumerate(frame_token_interval_thresholds):
-        run_name = f"holo-assist+videollm-online+threshold={threshold}"
+        run_name = f"{run_name_prefix}+threshold={threshold}"
         run_inference_args["model.frame_token_interval_threshold"] = str(threshold)
         run_inference_args["results_dir"] = str(root_results_dir / run_name)
         run_inference_args["wandb_run_name"] = run_name
