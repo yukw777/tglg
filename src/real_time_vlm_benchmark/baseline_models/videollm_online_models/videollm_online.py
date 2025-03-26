@@ -115,6 +115,7 @@ class VideoLLMOnlineModel(BaselineModel):
             dialogue,
             vr.get_avg_fps(),
             self.frame_fps,
+            len(vr),
             max_num_frames=self.max_num_frames,
         )
         frame_timestamps = frame_idx / vr.get_avg_fps()
