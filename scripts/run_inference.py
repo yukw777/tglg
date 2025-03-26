@@ -28,7 +28,7 @@ def run(
     results_dir: Path,
     model: BaselineModel,
     per_device_batch_size: int = 1,
-    num_dataloader_workers: int = 4,
+    num_dataloader_workers: int = 2,
     start_idx: int | None = None,
     end_idx: int | None = None,
     gen_config: GenerationConfig | None = None,
