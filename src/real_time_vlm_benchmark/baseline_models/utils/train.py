@@ -101,7 +101,7 @@ def train_preprocess(
     v_placeholder_id: int,
     stream_generation_prompt_ids: torch.Tensor,
     eos_token_id: int,
-) -> dict[str, torch.Tensor]:
+) -> dict[str, torch.Tensor | list[int]]:
     decord.bridge.set_bridge("torch")
     vr = VideoReader(str(datapoint["video_path"]))
     dialogue = datapoint["dialogue"]
@@ -151,7 +151,10 @@ def train_preprocess(
     return {
         "input_ids": input_ids,
         "frames": frames[:num_interleaved_frames],
-        "labels": labels,
+        # NOTE: We return a list here to avoid having the collator converting the labels
+        # into a list of numpy arrays and constructing a tensor from them, which is
+        # extremely slow.
+        "labels": labels.tolist(),
     }
 
 
