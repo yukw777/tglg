@@ -1,3 +1,4 @@
+import json
 import multiprocessing as mp
 import sys
 from multiprocessing.managers import BaseManager
@@ -55,6 +56,7 @@ class FrameDataset(Dataset):
 
 def run(
     dataset: Dataset,
+    video_stats_file: Path,
     results_dir: Path,
     version: str = "live1+",
     per_device_num_frame: int = 512,
@@ -84,8 +86,11 @@ def run(
     if end_idx is None:
         end_idx = len(dataset)  # type: ignore
 
+    with open(video_stats_file) as f:
+        video_stats = json.load(f)
     frame_data = convert_to_frame_dataset(
         Subset(dataset, list(range(start_idx, end_idx))),
+        video_stats,
         args.frame_fps,
         max_num_frames=args.max_num_frames,
     )
