@@ -115,7 +115,7 @@ def train() -> None:
         eval_dataset=val_dataset,
         data_collator=DataCollatorForVideoLLMOnline(tokenizer),
     )
-    trainer.train()
+    trainer.train(resume_from_checkpoint=videollm_online_args.resume_from_checkpoint)
     trainer.save_model()
 
 
