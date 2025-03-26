@@ -18,11 +18,13 @@ def sample_frames_for_dialogue(
     Returns the indices for frames sampled at the given fps for the given dialogue.
     """
     # sample frames from max(0, end time - max_num_frames/sample_fps) to the end time of the last utterance at self.frame_fps
+    for utter in dialogue:
+        if utter["role"] != "system":
+            start_time = utter["start"]
+            break
     end_time = dialogue[-1]["end"]
-    if max_num_frames is None:
-        start_time = 0
-    else:
-        start_time = max(0, end_time - max_num_frames / sample_fps)
+    if max_num_frames is not None:
+        start_time = max(start_time, end_time - max_num_frames / sample_fps)
     start_time_frame = math.ceil(start_time * video_avg_fps)
     end_time_frame = min(math.floor(end_time * video_avg_fps), video_num_frames - 1)
     num_frames = end_time_frame - start_time_frame + 1
