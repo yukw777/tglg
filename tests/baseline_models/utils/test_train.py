@@ -18,15 +18,18 @@ from real_time_vlm_benchmark.baseline_models.utils.train import (
                 {"role": "assistant", "start": 8},
             ],
             torch.arange(3, 8.5, 0.5).tolist(),
-            [
-                {"role": "system", "content": "system message"},
-                {"role": "stream", "num_frames": 1},
-                {"role": "assistant", "start": 3},
-                {"role": "stream", "num_frames": 4},
-                {"role": "assistant", "start": 5},
-                {"role": "stream", "num_frames": 6},
-                {"role": "assistant", "start": 8},
-            ],
+            (
+                [
+                    {"role": "system", "content": "system message"},
+                    {"role": "stream", "num_frames": 1},
+                    {"role": "assistant", "start": 3},
+                    {"role": "stream", "num_frames": 4},
+                    {"role": "assistant", "start": 5},
+                    {"role": "stream", "num_frames": 6},
+                    {"role": "assistant", "start": 8},
+                ],
+                11,
+            ),
         ),
         (
             [
@@ -36,13 +39,16 @@ from real_time_vlm_benchmark.baseline_models.utils.train import (
                 {"role": "assistant", "start": 8},
             ],
             torch.arange(4, 8.5, 0.5).tolist(),
-            [
-                {"role": "system", "content": "system message"},
-                {"role": "stream", "num_frames": 3},
-                {"role": "assistant", "start": 5},
-                {"role": "stream", "num_frames": 6},
-                {"role": "assistant", "start": 8},
-            ],
+            (
+                [
+                    {"role": "system", "content": "system message"},
+                    {"role": "stream", "num_frames": 3},
+                    {"role": "assistant", "start": 5},
+                    {"role": "stream", "num_frames": 6},
+                    {"role": "assistant", "start": 8},
+                ],
+                9,
+            ),
         ),
     ],
 )

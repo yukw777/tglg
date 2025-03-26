@@ -19,7 +19,7 @@ def construct_interleaved_dialogue_for_training(
     dialogue: list[dict],
     frame_timestamps: list[float],
     sys_msg_fn: Callable[[list[dict]], str],
-) -> list[dict]:
+) -> tuple[list[dict], int]:
     """
     Construct an interleaved dialogue with frames and utterances, and return the number of frames taken
     for the interleaved dialogue
@@ -42,7 +42,7 @@ def construct_interleaved_dialogue_for_training(
         interleaved_dialogue.append({"role": "stream", "num_frames": num_frames})
         curr_frame_count = i
         interleaved_dialogue.append(utterance)
-    return interleaved_dialogue
+    return interleaved_dialogue, curr_frame_count
 
 
 def generate_labels(
@@ -128,8 +128,10 @@ def train_preprocess(
     dialogue = [
         utter for utter in dialogue if utter.get("start", float("inf")) >= start_time
     ]
-    interleaved_dialogue = construct_interleaved_dialogue_for_training(
-        dialogue, frame_timestamps, sys_msg_fn=sys_msg_fn
+    interleaved_dialogue, num_interleaved_frames = (
+        construct_interleaved_dialogue_for_training(
+            dialogue, frame_timestamps, sys_msg_fn=sys_msg_fn
+        )
     )
 
     # tokenize the interleave dialogue
@@ -146,4 +148,8 @@ def train_preprocess(
         eos_token_id,
     )
 
-    return {"input_ids": input_ids, "frames": frames, "labels": labels}
+    return {
+        "input_ids": input_ids,
+        "frames": frames[:num_interleaved_frames],
+        "labels": labels,
+    }
