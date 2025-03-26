@@ -107,7 +107,7 @@ def train() -> None:
     trainer = transformers.Trainer(
         model=model,
         processing_class=tokenizer,
-        args=args,
+        args=videollm_online_args,
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
         data_collator=DataCollatorForVideoLLMOnline(tokenizer),
