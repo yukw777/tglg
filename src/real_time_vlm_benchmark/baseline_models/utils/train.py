@@ -1,3 +1,4 @@
+import cv2
 import torch
 
 # decord must be imported after torch
@@ -102,20 +103,22 @@ def train_preprocess(
     stream_generation_prompt_ids: torch.Tensor,
     eos_token_id: int,
 ) -> dict[str, torch.Tensor]:
-    decord.bridge.set_bridge("torch")
-    vr = VideoReader(str(datapoint["video_path"]))
     dialogue = datapoint["dialogue"]
 
+    vidcap = cv2.VideoCapture(str(datapoint["video_path"]))
+    fps = vidcap.get(cv2.CAP_PROP_FPS)
     frame_idx, start_time, _ = sample_frames_for_dialogue(
-        dialogue, vr.get_avg_fps(), frame_fps, max_num_frames=max_num_frames
+        dialogue, fps, frame_fps, max_num_frames=max_num_frames
     )
-    frame_timestamps = frame_idx / vr.get_avg_fps()
+    frame_timestamps = frame_idx / fps
     if use_encoded_frames:
         encoded_frame_dict = torch.load(datapoint["encoded_frames_path"])
         frames = torch.stack(
             [encoded_frame_dict[frame_id] for frame_id in frame_idx.tolist()]
         )
     else:
+        decord.bridge.set_bridge("torch")
+        vr = VideoReader(str(datapoint["video_path"]))
         frames = vr.get_batch(frame_idx)
         frames = rearrange(frames, "t h w c -> t c h w")
         frames = resize(frames, frame_resolution)
@@ -126,7 +129,7 @@ def train_preprocess(
     ]
     interleaved_dialogue, num_interleaved_frames = (
         construct_interleaved_dialogue_for_training(
-            dialogue, frame_timestamps, sys_msg_fn=sys_msg_fn
+            dialogue, frame_timestamps.tolist(), sys_msg_fn=sys_msg_fn
         )
     )
 

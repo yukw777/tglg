@@ -1,6 +1,7 @@
 from dataclasses import asdict
 from typing import Callable
 
+import cv2
 import torch
 from transformers import OffloadedCache
 
@@ -107,18 +108,20 @@ class VideoLLMOnlineModel(BaselineModel):
         self.stream_generation_prompt_ids: torch.Tensor  # For type checkers
 
     def preprocess(self, datapoint: dict) -> dict[str, torch.Tensor]:
-        decord.bridge.set_bridge("torch")
-        vr = VideoReader(str(datapoint["video_path"]))
         dialogue = datapoint["dialogue"]
 
+        vidcap = cv2.VideoCapture(str(datapoint["video_path"]))
+        fps = vidcap.get(cv2.CAP_PROP_FPS)
         frame_idx, start_time, _ = sample_frames_for_dialogue(
             dialogue,
-            vr.get_avg_fps(),
+            fps,
             self.frame_fps,
             max_num_frames=self.max_num_frames,
         )
-        frame_timestamps = frame_idx / vr.get_avg_fps()
+        frame_timestamps = frame_idx / fps
         if self.set_vision_inside:
+            decord.bridge.set_bridge("torch")
+            vr = VideoReader(str(datapoint["video_path"]))
             frames = vr.get_batch(frame_idx)
             frames = rearrange(frames, "t h w c -> t c h w")
             frames = resize(frames, [self.model.config.frame_resolution] * 2)
@@ -135,7 +138,7 @@ class VideoLLMOnlineModel(BaselineModel):
             if utter.get("start", float("inf")) >= start_time
         ]
         interleaved_dialogue, num_interleaved_frames = construct_interleaved_dialogue(
-            dialogue, frame_timestamps, sys_msg_fn=self.sys_msg_fn
+            dialogue, frame_timestamps.tolist(), sys_msg_fn=self.sys_msg_fn
         )
 
         # tokenize the interleave dialogue
