@@ -21,18 +21,24 @@ def convert_to_frame_dataset(
     max_num_frames: int | None = None,
     show_progress: bool = True,
 ) -> list[dict]:
+    videos = set(str(datapoint["video_path"]) for datapoint in iter(real_time_dataset))
+    video_stats = {}
+    for video in tqdm(videos, desc="Obtain Video Stats"):
+        vr = VideoReader(video)
+        video_stats[video] = {"fps": vr.get_avg_fps(), "num_frames": len(vr)}
+
     frame_data: dict[tuple[str, Path], set[int]] = defaultdict(set)
     for datapoint in tqdm(
         real_time_dataset, disable=not show_progress, desc="Convert to Frame Dataset"
     ):
-        vr = VideoReader(str(datapoint["video_path"]))
         dialogue = datapoint["dialogue"]
 
+        stats = video_stats[str(datapoint["video_path"])]
         frame_idx, _, _ = sample_frames_for_dialogue(
             dialogue,
-            vr.get_avg_fps(),
+            stats["fps"],
             sample_fps,
-            len(vr),
+            stats["num_frames"],
             max_num_frames=max_num_frames,
         )
         for frame_id in frame_idx.tolist():
