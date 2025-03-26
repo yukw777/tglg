@@ -100,9 +100,12 @@ def train() -> None:
 
     # Load the best model at the end so we can save it
     videollm_online_args.load_best_model_at_end = True
+    videollm_online_args.metric_for_best_model = "loss"
     # Workaround for https://github.com/huggingface/transformers/issues/26969
+    # and https://github.com/huggingface/transformers/issues/23018
     videollm_online_args.gradient_checkpointing_kwargs = {"use_reentrant": False}
-    # Workaround for https://github.com/huggingface/transformers/issues/23018
+    # This is to avoid an extra autograph traversal every iteration, since we know
+    # there are no unused parameters.
     videollm_online_args.ddp_find_unused_parameters = False
     trainer = transformers.Trainer(
         model=model,
