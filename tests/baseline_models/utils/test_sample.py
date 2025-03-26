@@ -102,7 +102,7 @@ from real_time_vlm_benchmark.baseline_models.utils.sample import (
             2,
             33,
             10,
-            list(range(13, 30, 2)) + [32],
+            [12, 14, 16, 18, 20, 23, 25, 27, 29, 32],
             3,
             8,
         ),

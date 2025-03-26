@@ -25,8 +25,8 @@ def sample_frames_for_dialogue(
     end_time = dialogue[-1]["end"]
     if max_num_frames is not None:
         start_time = max(start_time, end_time - max_num_frames / sample_fps)
-    start_time_frame = math.ceil(start_time * video_avg_fps)
-    end_time_frame = min(math.floor(end_time * video_avg_fps), video_num_frames - 1)
+    start_time_frame = math.floor(start_time * video_avg_fps)
+    end_time_frame = min(math.ceil(end_time * video_avg_fps), video_num_frames - 1)
     num_frames = end_time_frame - start_time_frame + 1
     frame_interval = video_avg_fps / sample_fps
     num_frames_to_sample = math.ceil(num_frames / frame_interval)
