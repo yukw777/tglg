@@ -3,7 +3,29 @@ from pathlib import Path
 from typing import Any, Callable
 
 from real_time_vlm_benchmark.datasets.real_time import RealTimeDataset
-from real_time_vlm_benchmark.datasets.utils import convert_real_time_anns_to_datapoint
+
+
+def _convert_real_time_anns_to_datapoint(
+    anns: dict[str, list[dict]], tolerance: float = 5
+) -> list[tuple[str, list[dict]]]:
+    data: list[tuple[str, list[dict]]] = []
+    for video_id, dialogue in anns.items():
+        curr_segment: list[dict] = [dialogue[0]]
+        i = 1
+        while i < len(dialogue):
+            if curr_segment[-1]["end"] + tolerance > dialogue[i]["start"]:
+                # if the current utterance's start time is within tolerance seconds of
+                # the end time of the last utterance of the current segment, add.
+                curr_segment.append(dialogue[i])
+            else:
+                # otherwise, start a new segment
+                data.append((video_id, curr_segment))
+                curr_segment = [dialogue[i]]
+            i += 1
+        # take care of stragglers
+        if len(curr_segment) > 0:
+            data.append((video_id, curr_segment))
+    return data
 
 
 class SoccerNetDataset(RealTimeDataset):
@@ -21,7 +43,7 @@ class SoccerNetDataset(RealTimeDataset):
         self._preprocessor = preprocessor
         with open(ann_file_path) as f:
             anns = json.load(f)
-        self.data = convert_real_time_anns_to_datapoint(anns)
+        self.data = _convert_real_time_anns_to_datapoint(anns)
         self.video_paths: dict[str, Path] = {}
         for video_path in Path(video_dir_path).glob("**/*.mkv"):
             self.video_paths[f"{video_path.parts[-2]}/{video_path.stem}"] = video_path
