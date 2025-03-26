@@ -8,7 +8,7 @@ from typing import Callable
 from decord import VideoReader
 from einops import rearrange
 from torchvision.transforms.v2.functional import resize
-from transformers import PreTrainedTokenizerBase
+from transformers import DataCollatorForSeq2Seq, PreTrainedTokenizerBase
 
 from real_time_vlm_benchmark.baseline_models.utils.sample import (
     sample_frames_for_dialogue,
@@ -153,3 +153,11 @@ def train_preprocess(
         "frames": frames[:num_interleaved_frames],
         "labels": labels,
     }
+
+
+class DataCollatorForVideoLLMOnline(DataCollatorForSeq2Seq):
+    def __call__(self, features, return_tensors=None):
+        frames = torch.cat([f.pop("frames") for f in features])
+        collated = super().__call__(features, return_tensors=return_tensors)
+        collated["frames"] = frames
+        return collated

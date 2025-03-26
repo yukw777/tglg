@@ -3,7 +3,7 @@ from real_time_vlm_benchmark.baseline_models.videollm_online_models.videollm_onl
 )
 
 
-def _system_message(dialogue: list[dict]) -> str:
+def soccernet_system_message(dialogue: list[dict]) -> str:
     return (
         "You're a soccer play-by-play commentator. "
         "Blow are your commentaries, interleaved with the list of video frames from the soccer match. "
@@ -26,5 +26,5 @@ class VideoLLMOnlineSoccerNetModel(VideoLLMOnlineModel):
             frame_token_interval_threshold=frame_token_interval_threshold,
             show_progress=show_progress,
             set_vision_inside=set_vision_inside,
-            sys_msg_fn=_system_message,
+            sys_msg_fn=soccernet_system_message,
         )

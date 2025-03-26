@@ -12,6 +12,7 @@ dependencies = [
     "lightning>=2.5.0.post0",
     "lightning-sdk>=0.2.3",
     "pandas>=2.2.3",
+    "peft>=0.13.2",
     "scikit-learn>=1.6.1",
     "scipy>=1.15.2",
     "sentence-transformers>=3.4.1",
