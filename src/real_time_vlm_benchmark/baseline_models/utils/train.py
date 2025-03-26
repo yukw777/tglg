@@ -107,11 +107,7 @@ def train_preprocess(
     dialogue = datapoint["dialogue"]
 
     frame_idx, start_time, _ = sample_frames_for_dialogue(
-        dialogue,
-        vr.get_avg_fps(),
-        frame_fps,
-        len(vr),
-        max_num_frames=max_num_frames,
+        dialogue, vr.get_avg_fps(), frame_fps, max_num_frames=max_num_frames
     )
     frame_timestamps = frame_idx / vr.get_avg_fps()
     if use_encoded_frames:

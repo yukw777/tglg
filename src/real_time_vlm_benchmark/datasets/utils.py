@@ -29,11 +29,7 @@ def convert_to_frame_dataset(
         dialogue = datapoint["dialogue"]
 
         frame_idx, _, _ = sample_frames_for_dialogue(
-            dialogue,
-            vr.get_avg_fps(),
-            sample_fps,
-            len(vr),
-            max_num_frames=max_num_frames,
+            dialogue, vr.get_avg_fps(), sample_fps, max_num_frames=max_num_frames
         )
         for frame_id in frame_idx.tolist():
             frame_data[(datapoint["video_id"], datapoint["video_path"])].add(frame_id)

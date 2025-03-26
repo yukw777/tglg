@@ -11,7 +11,6 @@ def sample_frames_for_dialogue(
     dialogue: list[dict],
     video_avg_fps: float,
     sample_fps: float,
-    video_num_frames: int,
     max_num_frames: int | None = None,
 ) -> tuple[torch.Tensor, float, float]:
     """
@@ -26,7 +25,8 @@ def sample_frames_for_dialogue(
     if max_num_frames is not None:
         start_time = max(start_time, end_time - max_num_frames / sample_fps)
     start_time_frame = math.floor(start_time * video_avg_fps)
-    end_time_frame = min(math.ceil(end_time * video_avg_fps), video_num_frames - 1)
+    # subtract 1 to be safe
+    end_time_frame = math.floor(end_time * video_avg_fps) - 1
     num_frames = end_time_frame - start_time_frame + 1
     frame_interval = video_avg_fps / sample_fps
     num_frames_to_sample = math.ceil(num_frames / frame_interval)
