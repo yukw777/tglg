@@ -102,6 +102,8 @@ def train() -> None:
     videollm_online_args.load_best_model_at_end = True
     # Workaround for https://github.com/huggingface/transformers/issues/26969
     videollm_online_args.gradient_checkpointing_kwargs = {"use_reentrant": False}
+    # Workaround for https://github.com/huggingface/transformers/issues/23018
+    videollm_online_args.ddp_find_unused_parameters = False
     trainer = transformers.Trainer(
         model=model,
         processing_class=tokenizer,
