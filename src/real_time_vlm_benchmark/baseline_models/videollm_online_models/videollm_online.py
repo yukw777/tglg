@@ -1,8 +1,10 @@
+import math
 from dataclasses import asdict
 from typing import Callable
 
 import torch
-from transformers import OffloadedCache
+from transformers import OffloadedCache, PreTrainedTokenizerBase
+from transformers.modeling_outputs import CausalLMOutputWithPast
 
 # decord must be imported after torch
 # https://github.com/dmlc/decord/issues/293
@@ -140,9 +142,9 @@ class VideoLLMOnlineModel(BaselineModel):
         )
 
         # tokenize the interleave dialogue
-        input_ids = self.tokenizer.apply_chat_template(
-            interleaved_dialogue, return_tensors="pt", add_stream_prompt=True
-        ).squeeze(0)
+        input_ids, num_interleaved_frames = self._tokenize_interleaved_dialogue(
+            interleaved_dialogue, frames.size(0), num_interleaved_frames
+        )
 
         # divide frames into context_frames to be included in the context
         # and eval_frames that will be "streamed" for evaluation.
@@ -157,6 +159,16 @@ class VideoLLMOnlineModel(BaselineModel):
             "frame_timestamps": frame_timestamps,
             "video_id": datapoint["video_id"],
         }
+
+    def _tokenize_interleaved_dialogue(
+        self,
+        interleaved_dialogue: list[dict],
+        num_total_frames: int,
+        num_remaining_frames: int,
+    ) -> tuple[torch.Tensor, int]:
+        return self.tokenizer.apply_chat_template(
+            interleaved_dialogue, return_tensors="pt", add_stream_prompt=True
+        ).squeeze(0), num_remaining_frames
 
     @property
     def collate_fn(self) -> Callable[[list[dict]], dict]:
@@ -183,10 +195,9 @@ class VideoLLMOnlineModel(BaselineModel):
 
         return collate
 
-    @torch.inference_mode()
-    def predict(
-        self, batch: dict, use_offloaded_cache: bool = False, **gen_kwargs
-    ) -> dict[int, list]:
+    def _process_context(
+        self, batch: dict, use_offloaded_cache: bool
+    ) -> CausalLMOutputWithPast:
         # NOTE: we don't support batch prediction
         assert batch["input_ids"].size(0) == 1, "Batch prediction not supported"
 
@@ -209,10 +220,18 @@ class VideoLLMOnlineModel(BaselineModel):
                 attention_mask=attention_mask,
                 past_key_values=OffloadedCache(),
             )
+        return outputs
+
+    @torch.inference_mode()
+    def predict(
+        self, batch: dict, use_offloaded_cache: bool = False, **gen_kwargs
+    ) -> dict[int, list]:
+        outputs = self._process_context(batch, use_offloaded_cache)
 
         index = batch["index"][0].item()
         results: dict[int, list] = {index: []}
         eval_frames = batch["eval_frames"]
+        attention_mask = batch["attention_mask"]
         for i in tqdm(
             range(eval_frames.size(0)), desc="Frames", disable=not self.show_progress
         ):
@@ -313,5 +332,239 @@ class VideoLLMOnlineModel(BaselineModel):
                         ].item(),
                     }
                 )
+
+        return results
+
+
+def _tokenize_real_time_interleaved_dialogue(
+    tokenizer: PreTrainedTokenizerBase,
+    v_placeholder_id: int,
+    frame_num_tokens: int,
+    sample_fps: int,
+    num_total_frames: int,
+    num_interleaved_frames: int,
+    interleaved_dialogue: list[dict],
+) -> tuple[torch.Tensor, int]:
+    def handle_text_utterance(
+        tokens: list[int], text_utter: dict, num_frames: int
+    ) -> int:
+        """
+        Interleave frame tokens and text tokens and return the number of remaining frame tokens.
+        """
+        role_prefix = "\nUser:" if text_utter["role"] == "user" else "\nAssistant:"
+        tokens.extend(tokenizer(role_prefix, add_special_tokens=False).input_ids)
+
+        # interleave overlapping frame tokens and text tokens
+        num_overlapped_frames = min(
+            math.ceil((text_utter["end"] - text_utter["start"])) * sample_fps,
+            num_frames,
+        )
+        frame_tokens = [
+            [v_placeholder_id] * frame_num_tokens for _ in range(num_overlapped_frames)
+        ]
+        tokenized_content = tokenizer(
+            f" {text_utter['content']}{tokenizer.eos_token if text_utter['role'] == 'assistant' else ''}",
+            add_special_tokens=False,
+        ).input_ids
+        if num_overlapped_frames > len(tokenized_content):
+            longer_seq = frame_tokens
+            interval = num_overlapped_frames // len(tokenized_content)
+        else:
+            longer_seq = tokenized_content
+            interval = len(tokenized_content) // num_overlapped_frames
+        j = 0
+        while j < len(longer_seq):
+            # frame tokens always come first
+            if frame_tokens == longer_seq:
+                tokens.extend(
+                    v
+                    for v_placeholder_id_seq in frame_tokens[
+                        j * interval : (j + 1) * interval
+                    ]
+                    for v in v_placeholder_id_seq
+                )
+                tokens.extend(tokenized_content[j : j + 1])
+            else:
+                tokens.extend(
+                    v
+                    for v_placeholder_id_seq in frame_tokens[j : j + 1]
+                    for v in v_placeholder_id_seq
+                )
+                tokens.extend(tokenized_content[j * interval : (j + 1) * interval])
+            j += 1
+        # add the remainder from the longer sequence, if any
+        if longer_seq == frame_tokens:
+            tokens.extend(
+                v
+                for v_placeholder_id_seq in frame_tokens[j * interval :]
+                for v in v_placeholder_id_seq
+            )
+        else:
+            tokens.extend(tokenized_content[j * interval :])
+
+        return num_frames - num_overlapped_frames
+
+    tokens: list[int] = []
+    curr_text_utter: dict | None = None
+    for i, utter in enumerate(interleaved_dialogue):
+        if utter["role"] == "system":
+            assert i == 0 and len(tokens) == 0
+            tokens.extend(
+                tokenizer(
+                    f"{tokenizer.bos_token}{utter['content']}\n",
+                    add_special_tokens=False,
+                ).input_ids
+            )
+        elif utter["role"] == "stream":
+            if curr_text_utter is None:
+                # no corresponding text utterance so just add
+                tokens.extend(
+                    [v_placeholder_id] * frame_num_tokens * utter["num_frames"]
+                )
+            else:
+                remainder = handle_text_utterance(
+                    tokens, curr_text_utter, utter["num_frames"]
+                )
+
+                # add the rest of the frame tokens, if any
+                tokens.extend([v_placeholder_id] * frame_num_tokens * remainder)
+
+                # reset curr_text_utter
+                curr_text_utter = None
+        else:
+            if curr_text_utter is not None:
+                assert f"A textual utterance without a corresponding stream utterance: {utter}"
+            assert utter["role"] in {"assistant", "user"}
+            curr_text_utter = utter
+    if curr_text_utter is not None:
+        # we have a straggler text utterance without a corresponding stream utterance
+        # so take some frames from the remaining frames
+        remainder = handle_text_utterance(
+            tokens, curr_text_utter, num_total_frames - num_interleaved_frames
+        )
+        num_interleaved_frames = num_total_frames - remainder
+
+    return torch.tensor(tokens), num_interleaved_frames
+
+
+class RealTimeModel(VideoLLMOnlineModel):
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.register_buffer(
+            "stream_generation_prompt_ids",
+            self.tokenizer(
+                "\nAssistant:", return_tensors="pt", add_special_tokens=False
+            ).input_ids,
+            persistent=False,
+        )
+        # Assume 150 wpm and 1.3 tokens per word
+        # for frame_fps of 2, the number of tokens per frame is 2
+        self.num_tokens_per_frame = math.ceil(150 * 1.3 / 60 / self.frame_fps)
+
+    def _tokenize_interleaved_dialogue(
+        self,
+        interleaved_dialogue: list[dict],
+        num_total_frames: int,
+        num_remaining_frames: int,
+    ) -> tuple[torch.Tensor, int]:
+        return _tokenize_real_time_interleaved_dialogue(
+            self.tokenizer,
+            self.model.config.v_placeholder_id,
+            self.frame_num_tokens,
+            self.frame_fps,
+            num_total_frames,
+            num_remaining_frames,
+            interleaved_dialogue,
+        )
+
+    @torch.inference_mode()
+    def predict(
+        self, batch: dict, use_offloaded_cache: bool = False, **gen_kwargs
+    ) -> dict[int, list]:
+        # we manage max_new_tokens manually
+        max_new_tokens = gen_kwargs.pop("max_new_tokens", None)
+
+        outputs = self._process_context(batch, use_offloaded_cache)
+
+        index = batch["index"][0].item()
+        results: dict[int, list] = {index: []}
+        eval_frames = batch["eval_frames"]
+        attention_mask = batch["attention_mask"]
+        curr_utter: dict | None = None
+        for i in tqdm(
+            range(eval_frames.size(0)), desc="Frames", disable=not self.show_progress
+        ):
+            # keep generating one token at a time until it's ready to generate,
+            # i.e., the next token is "\n" (198)
+            attention_mask = torch.cat(
+                [
+                    attention_mask,
+                    torch.ones(
+                        attention_mask.size(0),
+                        self.frame_num_tokens,
+                        device=self.model.device,
+                    ),
+                ],
+                dim=1,
+            )
+            outputs = self.model(
+                inputs_embeds=self.model.visual_embed(eval_frames[i : i + 1]).unsqueeze(
+                    0
+                ),
+                past_key_values=outputs.past_key_values,
+                attention_mask=attention_mask,
+            )
+            next_token_probs = outputs.logits[:, -1:].softmax(dim=-1)
+            next_token_id = next_token_probs.argmax(dim=-1)
+            if next_token_id == self.stream_generation_prompt_ids[:, 0]:
+                # we generate with the stream generation prompt
+                input_ids = torch.cat(
+                    [
+                        # NOTE: we have to prepend these 1's due to the way generation with cache works.
+                        # See https://github.com/huggingface/transformers/issues/36151 for more details.
+                        torch.ones_like(attention_mask, dtype=torch.int64),
+                        self.stream_generation_prompt_ids,
+                    ],
+                    dim=1,
+                )
+                attention_mask = torch.cat(
+                    [
+                        attention_mask,
+                        torch.ones_like(self.stream_generation_prompt_ids),
+                    ],
+                    dim=1,
+                )
+                outputs = self.model.generate(
+                    input_ids=input_ids,
+                    past_key_values=outputs.past_key_values,
+                    attention_mask=attention_mask,
+                    return_dict_in_generate=True,
+                    # we generate up to num_tokens_per_frame
+                    max_new_tokens=self.num_tokens_per_frame,
+                    # Set to suppress warning
+                    pad_token_id=self.tokenizer.pad_token_id,
+                    **gen_kwargs,
+                )
+                response = self.tokenizer.decode(
+                    outputs.sequences[0, input_ids.size(1) :], skip_special_tokens=True
+                ).strip()
+                if curr_utter is None:
+                    curr_utter = {
+                        "video_id": batch["video_id"][0],
+                        "role": "assistant",
+                        "content": response,
+                        "start": batch["frame_timestamps"][
+                            :, batch["context_frames"].size(0) + i
+                        ].item(),
+                    }
+                else:
+                    curr_utter["content"] += response
+                if (
+                    outputs.sequences[0, -1] == self.tokenizer.eos_token_id
+                    or len(curr_utter["content"]) > max_new_tokens
+                ):
+                    # done with this one, so append and start a new utterance
+                    results[index].append(curr_utter)
+                    curr_utter = None
 
         return results

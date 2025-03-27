@@ -1,7 +1,9 @@
 import pytest
 import torch
+from transformers import AutoTokenizer
 
 from real_time_vlm_benchmark.baseline_models.videollm_online_models.videollm_online import (
+    _tokenize_real_time_interleaved_dialogue,
     construct_interleaved_dialogue,
 )
 
@@ -120,3 +122,132 @@ def test_construct_interleaved_dialogue(
         )
         == expected
     )
+
+
+@pytest.mark.parametrize(
+    "interleaved_dialogue,num_total_frames,num_interleaved_frames,expected_tokens,expected_num_interleaved_frames",
+    [
+        (
+            [
+                {"role": "system", "content": "system message"},
+                {"role": "stream", "num_frames": 7},
+                {"role": "user", "content": "user utterance 0", "start": 3, "end": 4},
+                {"role": "stream", "num_frames": 6},
+                {
+                    "role": "assistant",
+                    "content": "assistant utterance 0",
+                    "start": 6.2,
+                    "end": 7.5,
+                },
+            ],
+            18,
+            13,
+            ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
+            + ["<v>"] * 3 * 7
+            + ["Ċ", "User", ":"]
+            + ["<v>"] * 3
+            + ["Ġuser", "Ġutter"]
+            + ["<v>"] * 3
+            + ["ance", "Ġ", "0"]
+            + ["<v>"] * 3 * 4
+            + ["Ċ", "Assistant", ":"]
+            + ["<v>"] * 3
+            + ["Ġassistant"]
+            + ["<v>"] * 3
+            + ["Ġutter"]
+            + ["<v>"] * 3
+            + ["ance"]
+            + ["<v>"] * 3
+            + ["Ġ", "0", "<|eot_id|>"],
+            17,
+        ),
+        (
+            [
+                {"role": "system", "content": "system message"},
+                {"role": "stream", "num_frames": 7},
+                {"role": "user", "content": "user utterance 0", "start": 3, "end": 4},
+                {"role": "stream", "num_frames": 6},
+                {
+                    "role": "assistant",
+                    "content": "assistant utterance 0",
+                    "start": 6.6,
+                    "end": 8.6,
+                },
+                {"role": "stream", "num_frames": 8},
+            ],
+            25,
+            21,
+            ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
+            + ["<v>"] * 3 * 7
+            + ["Ċ", "User", ":"]
+            + ["<v>"] * 3
+            + ["Ġuser", "Ġutter"]
+            + ["<v>"] * 3
+            + ["ance", "Ġ", "0"]
+            + ["<v>"] * 3 * 4
+            + ["Ċ", "Assistant", ":"]
+            + ["<v>"] * 3
+            + ["Ġassistant"]
+            + ["<v>"] * 3
+            + ["Ġutter"]
+            + ["<v>"] * 3
+            + ["ance"]
+            + ["<v>"] * 3
+            + ["Ġ", "0", "<|eot_id|>"]
+            + ["<v>"] * 3 * 4,
+            21,
+        ),
+        (
+            [
+                {"role": "system", "content": "system message"},
+                {"role": "stream", "num_frames": 7},
+                {"role": "user", "content": "user utterance 0", "start": 3, "end": 4},
+                {"role": "stream", "num_frames": 6},
+                {
+                    "role": "assistant",
+                    "content": "assistant utterance 0",
+                    "start": 6.2,
+                    "end": 7.5,
+                },
+            ],
+            16,
+            13,
+            ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
+            + ["<v>"] * 3 * 7
+            + ["Ċ", "User", ":"]
+            + ["<v>"] * 3
+            + ["Ġuser", "Ġutter"]
+            + ["<v>"] * 3
+            + ["ance", "Ġ", "0"]
+            + ["<v>"] * 3 * 4
+            + ["Ċ", "Assistant", ":"]
+            + ["<v>"] * 3
+            + ["Ġassistant"]
+            + ["Ġutter"]
+            + ["<v>"] * 3
+            + ["ance", "Ġ"]
+            + ["<v>"] * 3
+            + ["0", "<|eot_id|>"],
+            16,
+        ),
+    ],
+)
+def test_tokenize_real_time_interleaved_dialogue(
+    interleaved_dialogue: list[dict],
+    num_total_frames: int,
+    num_interleaved_frames: int,
+    expected_tokens: list[str],
+    expected_num_interleaved_frames: int,
+) -> None:
+    tokenizer = AutoTokenizer.from_pretrained("chenjoya/videollm-online-8b-v1plus")
+    tokenized, new_num_remaining_frames = _tokenize_real_time_interleaved_dialogue(
+        tokenizer,
+        tokenizer.convert_tokens_to_ids("<v>"),
+        3,
+        2,
+        num_total_frames,
+        num_interleaved_frames,
+        interleaved_dialogue,
+    )
+    assert tokenized.tolist() == tokenizer.convert_tokens_to_ids(expected_tokens)
+    assert new_num_remaining_frames == expected_num_interleaved_frames
