@@ -3,6 +3,18 @@ def convert_pbp_annotated(pbp_annotated: dict, tolerance: float = 5) -> list[dic
     Figure out play-by-play segments with the given tolerance, and mark them for evaluation.
     """
     segments = pbp_annotated["segments"]
+    i = 0
+    while i < len(segments):
+        seg = segments[i]
+        if seg["end"] < seg["start"]:
+            # WhisperX seems to have a bug when a single number is transcribed,
+            # the start and end times are flipped. Manual inspection shows that
+            # these should be merged with the previous segment.
+            segments[i - 1]["text"] += f" {seg['text']}"
+            segments[i - 1]["end"] = seg["start"]
+            segments = segments[:i] + segments[i + 1 :]
+            continue
+        i += 1
 
     # first copy over all the segments
     anns: list[dict] = []

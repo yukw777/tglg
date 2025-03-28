@@ -119,6 +119,46 @@ from real_time_vlm_benchmark.datasets.soccernet.utils import convert_pbp_annotat
                 },
             ],
         ),
+        (
+            {
+                "segments": [
+                    {
+                        "text": "Juanfran looks up, well blocked by Sancho, serving a good game, the Athletic No.",
+                        "start": 2321.751,
+                        "end": 2326.135,
+                        "is_pbp": True,
+                    },
+                    {
+                        "text": "6.",
+                        "start": 2326.475,
+                        "end": 2326.135,
+                        "is_pbp": True,
+                    },
+                    {
+                        "text": "Almost playing as a third central defender.",
+                        "start": 2327.015,
+                        "end": 2328.977,
+                        "is_pbp": True,
+                    },
+                ],
+            },
+            [
+                {
+                    "role": "assistant",
+                    "content": "Juanfran looks up, well blocked by Sancho, serving a good game, the Athletic No. 6.",
+                    "start": 2321.751,
+                    "end": 2326.475,
+                    "eval": True,
+                },
+                {
+                    "role": "assistant",
+                    "content": "Almost playing as a third central defender.",
+                    "start": 2327.015,
+                    "end": 2328.977,
+                    "eval": True,
+                },
+            ],
+        ),
     ],
 )
 def test_convert_pbp_annotated(pbp_annotated: dict, expected: list[dict]) -> None:

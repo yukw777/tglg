@@ -37,6 +37,11 @@ def main(
     train_videos, val_videos = random_split(train_videos, (1 - val_ratio, val_ratio))
 
     output_dir_path = Path(output_dir)
+    output_dir_path.mkdir(parents=True, exist_ok=True)
+    all_file = output_dir_path / f"{output_file_prefix}.json"
+    with open(all_file, "w") as f:
+        json.dump({video: anns[video] for video in iter(videos)}, f, indent=4)
+
     train_file = output_dir_path / f"{output_file_prefix}_train.json"
     with open(train_file, "w") as f:
         json.dump({video: anns[video] for video in iter(train_videos)}, f, indent=4)
