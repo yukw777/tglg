@@ -83,7 +83,11 @@ def train() -> None:
         v_placeholder_id=model.config.v_placeholder_id,
         stream_generation_prompt_ids=tokenizer.apply_chat_template(
             [{}], add_stream_generation_prompt=True, return_tensors="pt"
-        ).squeeze(0),
+        ).squeeze(0)
+        if train_args.videollm_online_variant == "default"
+        else tokenizer(
+            "\nAssistant:", return_tensors="pt", add_special_tokens=False
+        ).input_ids.squeeze(0),
         eos_token_id=model.config.eos_token_id,
         frame_num_tokens=model.config.frame_num_tokens,
         sample_fps=videollm_online_args.frame_fps,
