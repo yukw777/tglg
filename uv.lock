@@ -1815,7 +1815,7 @@ wheels = [
 
 [[package]]
 name = "lightning-sdk"
-version = "0.2.3"
+version = "0.2.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "backoff" },
@@ -1835,7 +1835,7 @@ dependencies = [
     { name = "wget" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2a/0a/780a998cb744c4406036fa021063b5b71d1ed786f93db3a7f2b8492737b7/lightning_sdk-0.2.3-py3-none-any.whl", hash = "sha256:5b7d2d54c68950956034b43c1e7e7be8de0a83c906c2f0b1cfa5c2e2b576d084", size = 1770052 },
+    { url = "https://files.pythonhosted.org/packages/b6/01/6c4719aa2071da5b04982472cca85909e5838568737114f9c5315cbac7ba/lightning_sdk-0.2.7-py3-none-any.whl", hash = "sha256:39aec4d7a0b2c7ee27f3fda4ed5c5bf987806fc1d86d8dfe66ca92596ce3f7e2", size = 1898023 },
 ]
 
 [[package]]
