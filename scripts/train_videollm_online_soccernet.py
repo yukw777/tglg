@@ -104,7 +104,7 @@ def train() -> None:
 
     # Load the best model at the end so we can save it
     videollm_online_args.load_best_model_at_end = True
-    videollm_online_args.metric_for_best_model = "loss"
+    videollm_online_args.metric_for_best_model = "eval_loss"
     # Workaround for https://github.com/huggingface/transformers/issues/26969
     # and https://github.com/huggingface/transformers/issues/23018
     videollm_online_args.gradient_checkpointing_kwargs = {"use_reentrant": False}
