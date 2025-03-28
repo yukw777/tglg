@@ -2,9 +2,9 @@ import pytest
 import torch
 from transformers import AutoTokenizer
 
-from real_time_vlm_benchmark.baseline_models.videollm_online_models.videollm_online import (
-    _tokenize_real_time_interleaved_dialogue,
+from real_time_vlm_benchmark.baseline_models.utils.generation import (
     construct_interleaved_dialogue,
+    tokenize_real_time_interleaved_dialogue,
 )
 
 
@@ -240,7 +240,7 @@ def test_tokenize_real_time_interleaved_dialogue(
     expected_num_interleaved_frames: int,
 ) -> None:
     tokenizer = AutoTokenizer.from_pretrained("chenjoya/videollm-online-8b-v1plus")
-    tokenized, new_num_remaining_frames = _tokenize_real_time_interleaved_dialogue(
+    tokenized, new_num_remaining_frames = tokenize_real_time_interleaved_dialogue(
         tokenizer,
         tokenizer.convert_tokens_to_ids("<v>"),
         3,
