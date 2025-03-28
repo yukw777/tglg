@@ -143,6 +143,8 @@ WANDB_PROJECT=videollm-online-soccernet-train torchrun --nnodes=1 --nproc_per_no
 
 ### Real-Time Model
 
+Takes about 2 1/2 hours on 4xL40S.
+
 ```bash
 WANDB_PROJECT=real-time-soccernet-train torchrun --nnodes=1 --nproc_per_node=4 --tee 3 --log-dir real-time-soccernet-training-logs scripts/train_videollm_online_soccernet.py \
 --live_version live1+ \
