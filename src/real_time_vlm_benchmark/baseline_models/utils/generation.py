@@ -157,12 +157,11 @@ def tokenize_real_time_interleaved_dialogue(
                 assert f"A textual utterance without a corresponding stream utterance: {utter}"
             assert utter["role"] in {"assistant", "user"}
             curr_text_utter = utter
-    if curr_text_utter is not None:
+    num_extra_frames = num_total_frames - num_interleaved_frames
+    if curr_text_utter is not None and num_extra_frames > 0:
         # we have a straggler text utterance without a corresponding stream utterance
         # so take some frames from the remaining frames
-        remainder = handle_text_utterance(
-            tokens, curr_text_utter, num_total_frames - num_interleaved_frames
-        )
+        remainder = handle_text_utterance(tokens, curr_text_utter, num_extra_frames)
         num_interleaved_frames = num_total_frames - remainder
 
     return torch.tensor(tokens), num_interleaved_frames

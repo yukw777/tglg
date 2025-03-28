@@ -230,6 +230,17 @@ def test_construct_interleaved_dialogue(
             + ["0", "<|eot_id|>"],
             16,
         ),
+        (
+            [
+                {"role": "system", "content": "system message"},
+                {"role": "stream", "num_frames": 1},
+                {"role": "user", "content": "user utterance 0", "start": 3, "end": 4},
+            ],
+            1,
+            1,
+            ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"] + ["<v>"] * 3,
+            1,
+        ),
     ],
 )
 def test_tokenize_real_time_interleaved_dialogue(
