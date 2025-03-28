@@ -125,7 +125,7 @@ def test_construct_interleaved_dialogue(
 
 
 @pytest.mark.parametrize(
-    "interleaved_dialogue,num_total_frames,num_interleaved_frames,expected_tokens,expected_num_interleaved_frames",
+    "interleaved_dialogue,num_total_frames,num_interleaved_frames,train,expected_tokens,expected_num_interleaved_frames",
     [
         (
             [
@@ -142,6 +142,7 @@ def test_construct_interleaved_dialogue(
             ],
             18,
             13,
+            False,
             ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
             + ["<v>"] * 3 * 7
             + ["Ċ", "User", ":"]
@@ -153,32 +154,31 @@ def test_construct_interleaved_dialogue(
             + ["Ċ", "Assistant", ":"]
             + ["<v>"] * 3
             + ["Ġassistant"]
-            + ["<v>"] * 3
             + ["Ġutter"]
             + ["<v>"] * 3
-            + ["ance"]
+            + ["ance", "Ġ"]
             + ["<v>"] * 3
-            + ["Ġ", "0", "<|eot_id|>"],
-            17,
+            + ["0", "<|eot_id|>"],
+            16,
         ),
         (
             [
                 {"role": "system", "content": "system message"},
-                {"role": "stream", "num_frames": 7},
+                {"role": "stream", "num_frames": 1},
                 {"role": "user", "content": "user utterance 0", "start": 3, "end": 4},
                 {"role": "stream", "num_frames": 6},
                 {
                     "role": "assistant",
                     "content": "assistant utterance 0",
-                    "start": 6.6,
-                    "end": 8.6,
+                    "start": 6.2,
+                    "end": 18.6,
                 },
-                {"role": "stream", "num_frames": 8},
             ],
             25,
-            21,
+            7,
+            False,
             ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
-            + ["<v>"] * 3 * 7
+            + ["<v>"] * 3
             + ["Ċ", "User", ":"]
             + ["<v>"] * 3
             + ["Ġuser", "Ġutter"]
@@ -187,15 +187,12 @@ def test_construct_interleaved_dialogue(
             + ["<v>"] * 3 * 4
             + ["Ċ", "Assistant", ":"]
             + ["<v>"] * 3
-            + ["Ġassistant"]
+            + ["Ġassistant", "Ġutter"]
             + ["<v>"] * 3
-            + ["Ġutter"]
+            + ["ance", "Ġ"]
             + ["<v>"] * 3
-            + ["ance"]
-            + ["<v>"] * 3
-            + ["Ġ", "0", "<|eot_id|>"]
-            + ["<v>"] * 3 * 4,
-            21,
+            + ["0", "<|eot_id|>"],
+            10,
         ),
         (
             [
@@ -212,6 +209,7 @@ def test_construct_interleaved_dialogue(
             ],
             16,
             13,
+            False,
             ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
             + ["<v>"] * 3 * 7
             + ["Ċ", "User", ":"]
@@ -238,7 +236,22 @@ def test_construct_interleaved_dialogue(
             ],
             1,
             1,
+            False,
             ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"] + ["<v>"] * 3,
+            1,
+        ),
+        (
+            [
+                {"role": "system", "content": "system message"},
+                {"role": "stream", "num_frames": 1},
+                {"role": "user", "content": "user utterance 0", "start": 3, "end": 4},
+            ],
+            1,
+            1,
+            True,
+            ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
+            + ["<v>"] * 3
+            + ["<|eot_id|>"],
             1,
         ),
     ],
@@ -247,6 +260,7 @@ def test_tokenize_real_time_interleaved_dialogue(
     interleaved_dialogue: list[dict],
     num_total_frames: int,
     num_interleaved_frames: int,
+    train: bool,
     expected_tokens: list[str],
     expected_num_interleaved_frames: int,
 ) -> None:
@@ -259,6 +273,7 @@ def test_tokenize_real_time_interleaved_dialogue(
         num_total_frames,
         num_interleaved_frames,
         interleaved_dialogue,
+        train=train,
     )
     assert tokenized.tolist() == tokenizer.convert_tokens_to_ids(expected_tokens)
     assert new_num_remaining_frames == expected_num_interleaved_frames

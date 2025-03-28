@@ -65,6 +65,7 @@ def tokenize_real_time_interleaved_dialogue(
     num_total_frames: int,
     num_interleaved_frames: int,
     interleaved_dialogue: list[dict],
+    train: bool = False,
 ) -> tuple[torch.Tensor, int]:
     def handle_text_utterance(
         tokens: list[int], text_utter: dict, num_frames: int
@@ -157,11 +158,30 @@ def tokenize_real_time_interleaved_dialogue(
                 assert f"A textual utterance without a corresponding stream utterance: {utter}"
             assert utter["role"] in {"assistant", "user"}
             curr_text_utter = utter
-    num_extra_frames = num_total_frames - num_interleaved_frames
-    if curr_text_utter is not None and num_extra_frames > 0:
+    if curr_text_utter is not None:
         # we have a straggler text utterance without a corresponding stream utterance
         # so take some frames from the remaining frames
-        remainder = handle_text_utterance(tokens, curr_text_utter, num_extra_frames)
-        num_interleaved_frames = num_total_frames - remainder
+        # NOTE: we don't want to too many extra frames here, otherwise we end with a
+        # frame token instead of a text token, e.g., eos. So we calculate the tokens per
+        # frame value, then divide the number of tokens of the straggler text utterance.
+        # We're tokenizing it twice, but this is cleaner.
+        tokenized_content = tokenizer(
+            f" {curr_text_utter['content']}{tokenizer.eos_token if curr_text_utter['role'] == 'assistant' else ''}",
+            add_special_tokens=False,
+        ).input_ids
+        # Assume 150 wpm and 1.3 tokens per word
+        num_tokens_per_frame = math.ceil(150 * 1.3 / 60 / sample_fps)
+        num_extra_frames = min(
+            len(tokenized_content) // num_tokens_per_frame,
+            num_total_frames - num_interleaved_frames,
+        )
+        if num_extra_frames > 0:
+            remainder = handle_text_utterance(tokens, curr_text_utter, num_extra_frames)
+            num_interleaved_frames += num_extra_frames - remainder
+
+    if train and tokens[-1] != tokenizer.eos_token_id:
+        # When training, we want to ensure that tokens end with an eos token
+        # so causal shifting works properly
+        tokens.append(tokenizer.eos_token_id)
 
     return torch.tensor(tokens), num_interleaved_frames
