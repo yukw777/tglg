@@ -112,3 +112,59 @@ torchrun --nnodes={num_nodes} --nproc_per_node={num_gpus} scripts/videollm_onlin
 --dataset.ann_file_path /path/to/HoloAssist/data-annotation-trainval-v1_1.json \
 --results_dir path/to/encoded_frames/HoloAssist
 ```
+
+## Fine-tune on SoccerNet
+
+### VideoLLM-Online
+
+Takes about 2 hours on 4xL40S.
+
+```bash
+WANDB_PROJECT=videollm-online-soccernet-train torchrun --nnodes=1 --nproc_per_node=4 scripts/train_videollm_online_soccernet.py \
+--live_version live1+ \
+--soccernet_dir path/to/SoccerNet \
+--video_frame_dir path/to/SoccerNet/encoded-frames \
+--pretrained_videollm_online chenjoya/videollm-online-8b-v1plus \
+--bf16 true \
+--report_to wandb \
+--num_train_epochs 5 \
+--per_device_train_batch_size 2 \
+--gradient_accumulation_steps 8 \
+--gradient_checkpointing True \
+--learning_rate 0.0001 \
+--optim adamw_torch \
+--lr_scheduler_type cosine \
+--warmup_ratio 0.05 \
+--logging_steps 10 \
+--dataloader_num_workers 16 \
+--dataloader_prefetch_factor 8 \
+--output_dir outputs/videollm-online-soccernet
+```
+
+### Real-Time Model
+
+```bash
+WANDB_PROJECT=real-time-soccernet-train torchrun --nnodes=1 --nproc_per_node=4 --tee 3 --log-dir real-time-soccernet-training-logs scripts/train_videollm_online_soccernet.py \
+--live_version live1+ \
+--videollm_online_variant real-time \
+--soccernet_dir path/to/SoccerNet \
+--video_frame_dir path/to/SoccerNet/encoded-frames \
+--pretrained_videollm_online chenjoya/videollm-online-8b-v1plus \
+--bf16 true \
+--report_to wandb \
+--save_strategy epoch \
+--eval_strategy epoch \
+--num_train_epochs 5 \
+--per_device_train_batch_size 2 \
+--gradient_accumulation_steps 8 \
+--gradient_checkpointing True \
+--per_device_eval_batch_size 2 \
+--learning_rate 0.0001 \
+--optim adamw_torch \
+--lr_scheduler_type cosine \
+--warmup_ratio 0.05 \
+--logging_steps 10 \
+--dataloader_num_workers 16 \
+--dataloader_prefetch_factor 8 \
+--output_dir outputs/real-time-soccernet
+```
