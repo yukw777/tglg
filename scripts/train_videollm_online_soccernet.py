@@ -32,6 +32,7 @@ class DataArguments:
 @dataclass
 class TrainArguments:
     pretrained_videollm_online: str
+    videollm_online_variant: str
     set_vision_inside: bool = False
 
 
@@ -84,6 +85,9 @@ def train() -> None:
             [{}], add_stream_generation_prompt=True, return_tensors="pt"
         ).squeeze(0),
         eos_token_id=model.config.eos_token_id,
+        frame_num_tokens=model.config.frame_num_tokens,
+        sample_fps=videollm_online_args.frame_fps,
+        videollm_online_variant=train_args.videollm_online_variant,
     )
     train_dataset = SoccerNetDataset(
         data_args.soccernet_dir,

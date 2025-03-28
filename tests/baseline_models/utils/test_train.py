@@ -4,6 +4,7 @@ import torch
 from real_time_vlm_benchmark.baseline_models.utils.train import (
     construct_interleaved_dialogue_for_training,
     generate_labels,
+    generate_real_time_labels,
 )
 
 
@@ -338,6 +339,145 @@ def test_generate_labels(
     shifted_input_ids, labels = generate_labels(
         input_ids,
         frame_token_interval_id,
+        v_placeholder_id,
+        stream_generation_prompt_ids,
+        eos_token_id,
+    )
+    assert shifted_input_ids.equal(expected_input_ids)
+    assert labels.equal(expected_labels)
+
+
+@pytest.mark.parametrize(
+    "input_ids,expected_input_ids,expected_labels",
+    [
+        # NOTE: 128000 is bos_token_id
+        (
+            torch.tensor([128000, 0, 128009]),
+            torch.tensor([128000, 0]),
+            torch.tensor([-100, -100]),
+        ),
+        (
+            torch.tensor([128000, 198, 72803, 25, 0, 1, 2, 128009]),
+            torch.tensor([128000, 198, 72803, 25, 0, 1, 2]),
+            torch.tensor([198, 72803, 25, 0, 1, 2, 128009]),
+        ),
+        (
+            torch.tensor(
+                [
+                    128000,
+                    9125,
+                    1984,
+                    198,
+                    128256,
+                    128256,
+                    128256,
+                    198,
+                    1502,
+                    25,
+                    128256,
+                    1217,
+                    22256,
+                    128256,
+                    685,
+                    220,
+                    15,
+                    128256,
+                    128256,
+                    198,
+                    72803,
+                    25,
+                    128256,
+                    18328,
+                    22256,
+                    128256,
+                    685,
+                    220,
+                    128256,
+                    15,
+                    128009,
+                ]
+            ),
+            torch.tensor(
+                [
+                    128000,
+                    9125,
+                    1984,
+                    198,
+                    128256,
+                    128256,
+                    128256,
+                    198,
+                    1502,
+                    25,
+                    128256,
+                    1217,
+                    22256,
+                    128256,
+                    685,
+                    220,
+                    15,
+                    128256,
+                    128256,
+                    198,
+                    72803,
+                    25,
+                    128256,
+                    18328,
+                    22256,
+                    128256,
+                    685,
+                    220,
+                    128256,
+                    15,
+                ]
+            ),
+            torch.tensor(
+                [
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    -100,
+                    198,
+                    72803,
+                    25,
+                    -100,
+                    18328,
+                    22256,
+                    -100,
+                    685,
+                    220,
+                    -100,
+                    15,
+                    128009,
+                ]
+            ),
+        ),
+    ],
+)
+def test_generate_real_time_labels(
+    input_ids: torch.Tensor,
+    expected_input_ids: torch.Tensor,
+    expected_labels: torch.Tensor,
+) -> None:
+    eos_token_id = 128009
+    v_placeholder_id = 128256
+    stream_generation_prompt_ids = torch.tensor([198, 72803, 25])
+    shifted_input_ids, labels = generate_real_time_labels(
+        input_ids,
         v_placeholder_id,
         stream_generation_prompt_ids,
         eos_token_id,

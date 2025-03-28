@@ -10,6 +10,9 @@ from einops import rearrange
 from torchvision.transforms.v2.functional import resize
 from transformers import DataCollatorForSeq2Seq, PreTrainedTokenizerBase
 
+from real_time_vlm_benchmark.baseline_models.utils.generation import (
+    tokenize_real_time_interleaved_dialogue,
+)
 from real_time_vlm_benchmark.baseline_models.utils.sample import (
     sample_frames_for_dialogue,
 )
@@ -88,6 +91,36 @@ def generate_labels(
     return input_ids[:-1], labels[1:]
 
 
+def generate_real_time_labels(
+    input_ids: torch.Tensor,
+    v_placeholder_id: int,
+    stream_generation_prompt_ids: torch.Tensor,
+    eos_token_id: int,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    labels = torch.full_like(input_ids, -100)
+    i = 0
+    while i < input_ids.size(0):
+        if (
+            # if stream_generation_prompt ("\n", "Assistant", ":"),
+            # we use everything except for "<v>"'s up to the next "<|eot_id|>", inclusive.
+            i + 3 < input_ids.size(0)
+            and input_ids[i : i + 3].equal(stream_generation_prompt_ids)
+        ):
+            j = i
+            while j < input_ids.size(0) and input_ids[j] != eos_token_id:
+                if input_ids[j] != v_placeholder_id:
+                    labels[j] = input_ids[j]
+                j += 1
+            if j < input_ids.size(0) and input_ids[j] == eos_token_id:
+                labels[j] = input_ids[j]
+            i = j
+
+        i += 1
+
+    # causal shift labels and input_ids
+    return input_ids[:-1], labels[1:]
+
+
 def train_preprocess(
     datapoint: dict,
     *,
@@ -101,6 +134,9 @@ def train_preprocess(
     v_placeholder_id: int,
     stream_generation_prompt_ids: torch.Tensor,
     eos_token_id: int,
+    frame_num_tokens: int,
+    sample_fps: int,
+    videollm_online_variant: str,
 ) -> dict[str, torch.Tensor | list[int]]:
     decord.bridge.set_bridge("torch")
     vr = VideoReader(str(datapoint["video_path"]))
@@ -134,19 +170,35 @@ def train_preprocess(
         )
     )
 
-    # tokenize the interleave dialogue
-    input_ids = tokenizer.apply_chat_template(
-        interleaved_dialogue, return_tensors="pt"
-    ).squeeze(0)
+    if videollm_online_variant == "default":
+        # tokenize the interleave dialogue
+        input_ids = tokenizer.apply_chat_template(
+            interleaved_dialogue, return_tensors="pt"
+        ).squeeze(0)
 
-    # generate labels
-    input_ids, labels = generate_labels(
-        input_ids,
-        frame_token_interval_id,
-        v_placeholder_id,
-        stream_generation_prompt_ids,
-        eos_token_id,
-    )
+        # generate labels
+        input_ids, labels = generate_labels(
+            input_ids,
+            frame_token_interval_id,
+            v_placeholder_id,
+            stream_generation_prompt_ids,
+            eos_token_id,
+        )
+    elif videollm_online_variant == "real-time":
+        input_ids, num_interleaved_frames = tokenize_real_time_interleaved_dialogue(
+            tokenizer,
+            v_placeholder_id,
+            frame_num_tokens,
+            sample_fps,
+            frames.size(0),
+            num_interleaved_frames,
+            interleaved_dialogue,
+        )
+        input_ids, labels = generate_real_time_labels(
+            input_ids, v_placeholder_id, stream_generation_prompt_ids, eos_token_id
+        )
+    else:
+        raise ValueError(f"Unknown VideoLLM-Online variant: {videollm_online_variant}")
 
     return {
         "input_ids": input_ids,
