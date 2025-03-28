@@ -97,7 +97,7 @@ def run(
 
     # filter out finished frame indices
     filtered_frame_data = []
-    for i in range(len(frame_data)):
+    for i in tqdm(range(len(frame_data)), desc="Filter Finished Indices"):
         datapoint = frame_data[i]
         frame_id_set = set(datapoint["frame_idx"].tolist())
         finished_id_set: set[int] = set()
