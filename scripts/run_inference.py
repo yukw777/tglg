@@ -153,6 +153,9 @@ def run(
         sampler=QueueSampler(queue),
     )
     failure = torch.tensor(False, device=accelerator.device)
+    # Make sure everyone starts at the same time, otherwise
+    # slow processes may not get any batches and just busy wait.
+    accelerator.wait_for_everyone()
     for batch in dataloader:
         try:
             batch["context_frames"] = batch["context_frames"].to(accelerator.device)
