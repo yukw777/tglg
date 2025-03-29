@@ -348,8 +348,7 @@ class RealTimeModel(VideoLLMOnlineModel):
         for i in tqdm(
             range(eval_frames.size(0)), desc="Frames", disable=not self.show_progress
         ):
-            # keep generating one token at a time until it's ready to generate,
-            # i.e., the next token is "\n" (198)
+            # update attention_mask for the current frame
             attention_mask = torch.cat(
                 [
                     attention_mask,
@@ -361,35 +360,92 @@ class RealTimeModel(VideoLLMOnlineModel):
                 ],
                 dim=1,
             )
-            outputs = self.model(
-                inputs_embeds=self.model.visual_embed(eval_frames[i : i + 1]).unsqueeze(
-                    0
-                ),
-                past_key_values=outputs.past_key_values,
-                attention_mask=attention_mask,
-            )
-            next_token_probs = outputs.logits[:, -1:].softmax(dim=-1)
-            next_token_id = next_token_probs.argmax(dim=-1)
-            if next_token_id == self.stream_generation_prompt_ids[:, 0]:
-                # we generate with the stream generation prompt
-                input_ids = torch.cat(
-                    [
-                        # NOTE: we have to prepend these 1's due to the way generation with cache works.
-                        # See https://github.com/huggingface/transformers/issues/36151 for more details.
-                        torch.ones_like(attention_mask, dtype=torch.int64),
-                        self.stream_generation_prompt_ids,
-                    ],
-                    dim=1,
+            if curr_utter is None:
+                # we haven't started generating, so see if the next token is "\n" (198)
+                outputs = self.model(
+                    inputs_embeds=self.model.visual_embed(
+                        eval_frames[i : i + 1]
+                    ).unsqueeze(0),
+                    past_key_values=outputs.past_key_values,
+                    attention_mask=attention_mask,
                 )
-                attention_mask = torch.cat(
+                next_token_probs = outputs.logits[:, -1:].softmax(dim=-1)
+                next_token_id = next_token_probs.argmax(dim=-1)
+                if next_token_id == self.stream_generation_prompt_ids[:, 0]:
+                    # we generate with the stream generation prompt
+                    input_ids = torch.cat(
+                        [
+                            # NOTE: we have to prepend these 1's due to the way generation with cache works.
+                            # See https://github.com/huggingface/transformers/issues/36151 for more details.
+                            torch.ones_like(attention_mask, dtype=torch.int64),
+                            self.stream_generation_prompt_ids,
+                        ],
+                        dim=1,
+                    )
+                    attention_mask = torch.cat(
+                        [
+                            attention_mask,
+                            torch.ones_like(self.stream_generation_prompt_ids),
+                        ],
+                        dim=1,
+                    )
+                    outputs = self.model.generate(
+                        input_ids=input_ids,
+                        past_key_values=outputs.past_key_values,
+                        attention_mask=attention_mask,
+                        return_dict_in_generate=True,
+                        # we generate up to num_tokens_per_frame
+                        max_new_tokens=self.num_tokens_per_frame,
+                        # Set to suppress warning
+                        pad_token_id=self.tokenizer.pad_token_id,
+                        **gen_kwargs,
+                    )
+                    attention_mask = torch.cat(
+                        [
+                            attention_mask,
+                            torch.ones(
+                                attention_mask.size(0),
+                                outputs.sequences.size(1) - input_ids.size(1),
+                                device=self.model.device,
+                            ),
+                        ],
+                        dim=1,
+                    )
+                    response = self.tokenizer.decode(
+                        outputs.sequences[0, input_ids.size(1) :],
+                        skip_special_tokens=True,
+                    )
+                    curr_utter = {
+                        "video_id": batch["video_id"][0],
+                        "role": "assistant",
+                        "content": response,
+                        "start": batch["frame_timestamps"][
+                            :, batch["context_frames"].size(0) + i
+                        ].item(),
+                    }
+            else:
+                # we're already generating so keep generating and appending
+                inputs_embeds = self.model.visual_embed(
+                    eval_frames[i : i + 1]
+                ).unsqueeze(0)
+                inputs_embeds = torch.cat(
                     [
-                        attention_mask,
-                        torch.ones_like(self.stream_generation_prompt_ids),
+                        # we have to pad inputs_embeds due to the way
+                        # hugging face handles generating with inputs_embeds
+                        # and KV cache. The padding is automatically stripped.
+                        torch.zeros(
+                            inputs_embeds.size(0),
+                            outputs.past_key_values.get_seq_length(),
+                            inputs_embeds.size(2),
+                            dtype=inputs_embeds.dtype,
+                            device=inputs_embeds.device,
+                        ),
+                        inputs_embeds,
                     ],
                     dim=1,
                 )
                 outputs = self.model.generate(
-                    input_ids=input_ids,
+                    inputs_embeds=inputs_embeds,
                     past_key_values=outputs.past_key_values,
                     attention_mask=attention_mask,
                     return_dict_in_generate=True,
@@ -399,25 +455,40 @@ class RealTimeModel(VideoLLMOnlineModel):
                     pad_token_id=self.tokenizer.pad_token_id,
                     **gen_kwargs,
                 )
+                generated_input_ids = outputs.sequences[0]
+                attention_mask = torch.cat(
+                    [
+                        attention_mask,
+                        torch.ones(
+                            attention_mask.size(0),
+                            generated_input_ids.size(0),
+                            device=self.model.device,
+                        ),
+                    ],
+                    dim=1,
+                )
                 response = self.tokenizer.decode(
-                    outputs.sequences[0, input_ids.size(1) :], skip_special_tokens=True
-                ).strip()
-                if curr_utter is None:
-                    curr_utter = {
-                        "video_id": batch["video_id"][0],
-                        "role": "assistant",
-                        "content": response,
-                        "start": batch["frame_timestamps"][
-                            :, batch["context_frames"].size(0) + i
-                        ].item(),
-                    }
-                else:
-                    curr_utter["content"] += response
+                    generated_input_ids,
+                    skip_special_tokens=True,
+                )
+                curr_utter["content"] += response
                 if (
-                    outputs.sequences[0, -1] == self.tokenizer.eos_token_id
-                    or len(curr_utter["content"]) > max_new_tokens
+                    len(curr_utter["content"]) > max_new_tokens
+                    and generated_input_ids[-1] != self.tokenizer.eos_token_id
                 ):
+                    # we've generated past max_new_tokens, and the last generated token is not eos_token,
+                    # so append one
+                    generated_input_ids = torch.cat(
+                        [
+                            generated_input_ids,
+                            torch.tensor(
+                                [self.tokenizer.eos_token_id], device=self.model.device
+                            ),
+                        ]
+                    )
+                if generated_input_ids[-1] == self.tokenizer.eos_token_id:
                     # done with this one, so append and start a new utterance
+                    curr_utter["content"] = curr_utter["content"].strip()
                     results[index].append(curr_utter)
                     curr_utter = None
 
