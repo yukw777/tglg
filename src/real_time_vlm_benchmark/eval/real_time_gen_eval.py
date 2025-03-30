@@ -1,7 +1,10 @@
+from copy import deepcopy
+
 import numpy as np
 import torch
 from scipy.optimize import linear_sum_assignment
 from sentence_transformers import SentenceTransformer
+from spacy import Language
 
 
 def compute_similarity_matrix(
@@ -133,3 +136,20 @@ def compute_final_score(
         "mean_timing": mean_timing,
         "final_score": (alpha * mean_acc + (1 - alpha) * mean_timing) * f1_score,
     }
+
+
+def canonicalize(model: Language, utterances: list[dict]) -> list[dict]:
+    replaced = deepcopy(utterances)
+
+    for utter in replaced:
+        doc = model(utter["content"])
+        new_tokens = []
+        for token in doc:
+            # replace player and team names
+            if token.ent_type_ in {"PERSON", "ORG"}:
+                new_tokens.append(token.ent_type_ + token.whitespace_)
+            else:
+                new_tokens.append(token.text_with_ws)
+        utter["content"] = "".join(new_tokens)
+
+    return replaced

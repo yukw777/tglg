@@ -5,12 +5,15 @@ from pprint import pprint
 
 import numpy as np
 import pandas as pd
+import spacy
 import wandb
 from jsonargparse import auto_cli
 from sentence_transformers import SentenceTransformer
+from tqdm import tqdm
 
 from real_time_vlm_benchmark.eval.real_time_gen_eval import (
     align_utterances,
+    canonicalize,
     compute_accuracy_scores,
     compute_f1_score,
     compute_final_score,
@@ -23,6 +26,8 @@ def eval(
     model: SentenceTransformer,
     generated: dict[str, list[dict]],
     ground_truth: dict[str, list[dict]],
+    replace_proper_nouns: bool = False,
+    spacy_model: spacy.Language | None = None,
 ) -> dict:
     individual_eval_results = []
     total_matched_pairs = []
@@ -33,21 +38,24 @@ def eval(
     total_start_scores = np.array([])
     total_stop_scores = np.array([])
     total_overlap_scores = np.array([])
-    for video_id, gt_utters in ground_truth.items():
+    for video_id, gt_utters in tqdm(ground_truth.items(), desc="Evaluating"):
+        gen_utters = generated[video_id]
+        if replace_proper_nouns:
+            assert spacy_model is not None
+            gt_utters = canonicalize(spacy_model, gt_utters)
+            gen_utters = canonicalize(spacy_model, gen_utters)
         total_ground_truth.extend(gt_utters)
-        total_generated.extend(generated[video_id])
+        total_generated.extend(gen_utters)
 
-        sim_mat = compute_similarity_matrix(model, generated[video_id], gt_utters)
-        matched_pairs = align_utterances(generated[video_id], gt_utters, sim_mat)
+        sim_mat = compute_similarity_matrix(model, gen_utters, gt_utters)
+        matched_pairs = align_utterances(gen_utters, gt_utters, sim_mat)
         total_matched_pairs.extend(matched_pairs)
 
         accuracy_scores = compute_accuracy_scores(
-            matched_pairs, generated[video_id], gt_utters, sim_mat
+            matched_pairs, gen_utters, gt_utters, sim_mat
         )
         total_accuracy_scores = np.concat([total_accuracy_scores, accuracy_scores])
-        timing_scores = compute_timing_scores(
-            matched_pairs, generated[video_id], gt_utters
-        )
+        timing_scores = compute_timing_scores(matched_pairs, gen_utters, gt_utters)
         total_timing_scores = np.concat(
             [total_timing_scores, timing_scores["timing_scores"]]
         )
@@ -76,10 +84,10 @@ def eval(
                     "start": float(start),
                     "stop": float(stop),
                     "overlap": float(overlap),
-                    "gen_start": generated[video_id][matched_gen]["start"],
+                    "gen_start": gen_utters[matched_gen]["start"],
                     "gt_start": gt_utters[matched_gt]["start"],
                     "gt_end": gt_utters[matched_gt]["end"],
-                    "gen_content": generated[video_id][matched_gen]["content"],
+                    "gen_content": gen_utters[matched_gen]["content"],
                     "gt_content": gt_utters[matched_gt]["content"],
                 }
             )
@@ -123,9 +131,14 @@ def main(
     eval_project: str,
     eval_entity: str | None = None,
     sent_sim_model_name: str = "all-mpnet-base-v2",
+    replace_proper_nouns: bool = False,
+    spacy_model_name: str = "en_core_web_lg",
 ) -> None:
     sent_sim_model = SentenceTransformer(sent_sim_model_name)
     ground_truth = read_ground_truth(ground_truth_file)
+    spacy_model = None
+    if replace_proper_nouns:
+        spacy_model = spacy.load(spacy_model_name)
 
     if eval_entity is None:
         eval_entity = inference_entity
@@ -143,7 +156,13 @@ def main(
         table = inference_run.logged_artifacts()[0]["inference"]
         df = table.get_dataframe()
         generated = preprocess_inference_results(df)
-        eval_results = eval(sent_sim_model, generated, ground_truth)
+        eval_results = eval(
+            sent_sim_model,
+            generated,
+            ground_truth,
+            replace_proper_nouns=replace_proper_nouns,
+            spacy_model=spacy_model,
+        )
         results_table = pd.DataFrame(eval_results.pop("individual_eval_results"))
         print(f"==== Metrics for {inference_run.name} ====")
         pprint(eval_results)
