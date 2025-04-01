@@ -170,3 +170,21 @@ WANDB_PROJECT=real-time-soccernet-train torchrun --nnodes=1 --nproc_per_node=4 -
 --dataloader_prefetch_factor 8 \
 --output_dir outputs/real-time-soccernet
 ```
+
+## Run Inference
+
+Below is an example for RealTimeSoccerNet on SoccerNet, but the script is designed to be able to handle all the models and datasets.
+
+```bash
+torchrun --nnodes=1 --nproc_per_node=4 --tee 3 --log-dir path/to/log/dir scripts/run_inference.py \
+--model real_time_vlm_benchmark.baseline_models.videollm_online_models.RealTimeSoccerNetModel \
+--model.checkpoint path/to/real-time-soccernet/checkpoint \
+--dataset real_time_vlm_benchmark.datasets.SoccerNetDataset \
+--dataset.video_dir_path path/to/SoccerNet/ \
+--dataset.ann_file_path path/to/SoccerNet/real-time-eval-annotation_test.json \
+--dataset.video_frame_dir_path path/to/SoccerNet/encoded-frames \
+--gen_config.max_new_tokens 128 \
+--wandb_project real-time-model-soccernet-inference \
+--results_dir path/to/inference-results/soccernet+real-time-model \
+--wandb_run_name soccernet+real-time-model
+```
