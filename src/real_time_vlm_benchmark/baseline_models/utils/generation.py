@@ -94,8 +94,9 @@ def tokenize_real_time_interleaved_dialogue(
             interval = math.ceil(len(tokenized_content) / num_overlapped_frames)
         j = 0
         while j < len(longer_seq):
-            # frame tokens always come first
+            # text tokens always come first
             if frame_tokens == longer_seq:
+                tokens.extend(tokenized_content[j : j + 1])
                 tokens.extend(
                     v
                     for v_placeholder_id_seq in frame_tokens[
@@ -103,24 +104,14 @@ def tokenize_real_time_interleaved_dialogue(
                     ]
                     for v in v_placeholder_id_seq
                 )
-                tokens.extend(tokenized_content[j : j + 1])
             else:
+                tokens.extend(tokenized_content[j * interval : (j + 1) * interval])
                 tokens.extend(
                     v
                     for v_placeholder_id_seq in frame_tokens[j : j + 1]
                     for v in v_placeholder_id_seq
                 )
-                tokens.extend(tokenized_content[j * interval : (j + 1) * interval])
             j += 1
-        # add the remainder from the longer sequence, if any
-        if longer_seq == frame_tokens:
-            tokens.extend(
-                v
-                for v_placeholder_id_seq in frame_tokens[j * interval :]
-                for v in v_placeholder_id_seq
-            )
-        else:
-            tokens.extend(tokenized_content[j * interval :])
 
         return num_frames - num_overlapped_frames
 
@@ -164,8 +155,7 @@ def tokenize_real_time_interleaved_dialogue(
         # frame value, then divide the number of tokens of the straggler text utterance.
         # We're tokenizing it twice, but this is cleaner.
         tokenized_content = tokenizer(
-            f" {curr_text_utter['content']}{tokenizer.eos_token if curr_text_utter['role'] == 'assistant' else ''}",
-            add_special_tokens=False,
+            f" {curr_text_utter['content']}", add_special_tokens=False
         ).input_ids
         # Assume 150 wpm and 1.3 tokens per word
         num_tokens_per_frame = math.ceil(150 * 1.3 / 60 / sample_fps)
@@ -177,4 +167,13 @@ def tokenize_real_time_interleaved_dialogue(
             remainder = handle_text_utterance(tokens, curr_text_utter, num_extra_frames)
             num_interleaved_frames += num_extra_frames - remainder
 
-    return torch.tensor(tokens), num_interleaved_frames
+    # remove the trailing frame tokens
+    num_trailing_frame_tokens = 0
+    for token in reversed(tokens):
+        if token == v_placeholder_id:
+            num_trailing_frame_tokens += 1
+        else:
+            break
+    return torch.tensor(
+        tokens[:-num_trailing_frame_tokens]
+    ), num_interleaved_frames - num_trailing_frame_tokens // frame_num_tokens

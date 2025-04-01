@@ -144,20 +144,14 @@ def test_construct_interleaved_dialogue(
             13,
             ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
             + ["<v>"] * 3 * 7
-            + ["Ċ", "User", ":"]
-            + ["<v>"] * 3
-            + ["Ġuser", "Ġutter", "ance"]
+            + ["Ċ", "User", ":", "Ġuser", "Ġutter", "ance"]
             + ["<v>"] * 3
             + ["Ġ", "0"]
-            + ["<v>"] * 3 * 4
-            + ["Ċ", "Assistant", ":"]
+            + ["<v>"] * 3 * 5
+            + ["Ċ", "Assistant", ":", "Ġassistant", "Ġutter", "ance"]
             + ["<v>"] * 3
-            + ["Ġassistant", "Ġutter"]
-            + ["<v>"] * 3
-            + ["ance", "Ġ"]
-            + ["<v>"] * 3
-            + ["0"],
-            16,
+            + ["Ġ", "0"],
+            14,
         ),
         (
             [
@@ -176,20 +170,14 @@ def test_construct_interleaved_dialogue(
             7,
             ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
             + ["<v>"] * 3
-            + ["Ċ", "User", ":"]
-            + ["<v>"] * 3
-            + ["Ġuser", "Ġutter", "ance"]
+            + ["Ċ", "User", ":", "Ġuser", "Ġutter", "ance"]
             + ["<v>"] * 3
             + ["Ġ", "0"]
-            + ["<v>"] * 3 * 4
-            + ["Ċ", "Assistant", ":"]
+            + ["<v>"] * 3 * 5
+            + ["Ċ", "Assistant", ":", "Ġassistant", "Ġutter", "ance"]
             + ["<v>"] * 3
-            + ["Ġassistant", "Ġutter"]
-            + ["<v>"] * 3
-            + ["ance", "Ġ"]
-            + ["<v>"] * 3
-            + ["0"],
-            10,
+            + ["Ġ", "0"],
+            8,
         ),
         (
             [
@@ -208,20 +196,14 @@ def test_construct_interleaved_dialogue(
             13,
             ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"]
             + ["<v>"] * 3 * 7
-            + ["Ċ", "User", ":"]
-            + ["<v>"] * 3
-            + ["Ġuser", "Ġutter", "ance"]
+            + ["Ċ", "User", ":", "Ġuser", "Ġutter", "ance"]
             + ["<v>"] * 3
             + ["Ġ", "0"]
-            + ["<v>"] * 3 * 4
-            + ["Ċ", "Assistant", ":"]
+            + ["<v>"] * 3 * 5
+            + ["Ċ", "Assistant", ":", "Ġassistant", "Ġutter", "ance"]
             + ["<v>"] * 3
-            + ["Ġassistant", "Ġutter"]
-            + ["<v>"] * 3
-            + ["ance", "Ġ"]
-            + ["<v>"] * 3
-            + ["0"],
-            16,
+            + ["Ġ", "0"],
+            14,
         ),
         (
             [
@@ -231,8 +213,8 @@ def test_construct_interleaved_dialogue(
             ],
             1,
             1,
-            ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"] + ["<v>"] * 3,
-            1,
+            ["<|begin_of_text|>", "system", "Ġmessage", "Ċ"],
+            0,
         ),
     ],
 )
