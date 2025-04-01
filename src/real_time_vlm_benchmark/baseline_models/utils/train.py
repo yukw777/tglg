@@ -193,7 +193,6 @@ def train_preprocess(
             frames.size(0),
             num_interleaved_frames,
             interleaved_dialogue,
-            train=True,
         )
         input_ids, labels = generate_real_time_labels(
             input_ids, v_placeholder_id, stream_generation_prompt_ids, eos_token_id

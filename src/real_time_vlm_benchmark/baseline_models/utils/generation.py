@@ -65,7 +65,6 @@ def tokenize_real_time_interleaved_dialogue(
     num_total_frames: int,
     num_interleaved_frames: int,
     interleaved_dialogue: list[dict],
-    train: bool = False,
 ) -> tuple[torch.Tensor, int]:
     def handle_text_utterance(
         tokens: list[int], text_utter: dict, num_frames: int
@@ -85,15 +84,14 @@ def tokenize_real_time_interleaved_dialogue(
             [v_placeholder_id] * frame_num_tokens for _ in range(num_overlapped_frames)
         ]
         tokenized_content = tokenizer(
-            f" {text_utter['content']}{tokenizer.eos_token if text_utter['role'] == 'assistant' else ''}",
-            add_special_tokens=False,
+            f" {text_utter['content']}", add_special_tokens=False
         ).input_ids
         if num_overlapped_frames > len(tokenized_content):
             longer_seq = frame_tokens
-            interval = num_overlapped_frames // len(tokenized_content)
+            interval = math.ceil(num_overlapped_frames / len(tokenized_content))
         else:
             longer_seq = tokenized_content
-            interval = len(tokenized_content) // num_overlapped_frames
+            interval = math.ceil(len(tokenized_content) / num_overlapped_frames)
         j = 0
         while j < len(longer_seq):
             # frame tokens always come first
@@ -178,10 +176,5 @@ def tokenize_real_time_interleaved_dialogue(
         if num_extra_frames > 0:
             remainder = handle_text_utterance(tokens, curr_text_utter, num_extra_frames)
             num_interleaved_frames += num_extra_frames - remainder
-
-    if train and tokens[-1] != tokenizer.eos_token_id:
-        # When training, we want to ensure that tokens end with an eos token
-        # so causal shifting works properly
-        tokens.append(tokenizer.eos_token_id)
 
     return torch.tensor(tokens), num_interleaved_frames
