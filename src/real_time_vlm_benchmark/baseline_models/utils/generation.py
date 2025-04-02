@@ -60,24 +60,32 @@ def construct_interleaved_dialogue(
 def tokenize_real_time_interleaved_dialogue(
     tokenizer: PreTrainedTokenizerBase,
     v_placeholder_id: int,
+    eos_token_id: int,
     frame_num_tokens: int,
     sample_fps: int,
     num_total_frames: int,
     num_interleaved_frames: int,
     interleaved_dialogue: list[dict],
-) -> tuple[torch.Tensor, int]:
+) -> tuple[torch.Tensor, torch.Tensor, int]:
     def handle_text_utterance(
-        tokens: list[int], text_utter: dict, num_frames: int
+        tokens: list[int], labels: list[int], text_utter: dict, num_frames: int
     ) -> int:
         """
         Interleave frame tokens and text tokens and return the number of remaining frame tokens.
         """
         role_prefix = "\nUser:" if text_utter["role"] == "user" else "\nAssistant:"
-        tokens.extend(tokenizer(role_prefix, add_special_tokens=False).input_ids)
+        role_tokens = tokenizer(role_prefix, add_special_tokens=False).input_ids
+        tokens.extend(role_tokens)
+        if text_utter["role"] == "user":
+            labels.extend([-100] * len(role_tokens))
+        else:
+            # causal shift
+            labels.pop()
+            labels.extend(role_tokens)
 
         # interleave overlapping frame tokens and text tokens
         num_overlapped_frames = min(
-            math.ceil((text_utter["end"] - text_utter["start"])) * sample_fps,
+            math.ceil((text_utter["end"] - text_utter["start"]) * sample_fps),
             num_frames,
         )
         frame_tokens = [
@@ -92,53 +100,68 @@ def tokenize_real_time_interleaved_dialogue(
         else:
             longer_seq = tokenized_content
             interval = math.ceil(len(tokenized_content) / num_overlapped_frames)
-        j = 0
-        while j < len(longer_seq):
-            # text tokens always come first
+        i = 0
+        while i < len(longer_seq) / interval:
             if frame_tokens == longer_seq:
-                tokens.extend(tokenized_content[j : j + 1])
-                tokens.extend(
+                text_tokens = tokenized_content[i : i + 1]
+                v_placeholders = [
                     v
                     for v_placeholder_id_seq in frame_tokens[
-                        j * interval : (j + 1) * interval
+                        i * interval : (i + 1) * interval
                     ]
                     for v in v_placeholder_id_seq
-                )
+                ]
             else:
-                tokens.extend(tokenized_content[j * interval : (j + 1) * interval])
-                tokens.extend(
+                text_tokens = tokenized_content[i * interval : (i + 1) * interval]
+                v_placeholders = [
                     v
-                    for v_placeholder_id_seq in frame_tokens[j : j + 1]
+                    for v_placeholder_id_seq in frame_tokens[i : i + 1]
                     for v in v_placeholder_id_seq
-                )
-            j += 1
+                ]
+            # text tokens always come first
+            tokens.extend(text_tokens)
+            if text_utter["role"] == "user":
+                labels.extend([-100] * len(text_tokens))
+            else:
+                labels.extend(text_tokens)
+                if (frame_tokens == longer_seq and i + 1 >= len(tokenized_content)) or (
+                    frame_tokens != longer_seq
+                    and (i + 1) * interval >= len(tokenized_content)
+                ):
+                    # if last set of text tokens, append eos token for causal shifting
+                    labels.append(eos_token_id)
+            tokens.extend(v_placeholders)
+            labels.extend([-100] * len(v_placeholders))
+            i += 1
 
         return num_frames - num_overlapped_frames
 
     tokens: list[int] = []
+    labels: list[int] = []
     curr_text_utter: dict | None = None
     for i, utter in enumerate(interleaved_dialogue):
         if utter["role"] == "system":
             assert i == 0 and len(tokens) == 0
-            tokens.extend(
-                tokenizer(
-                    f"{tokenizer.bos_token}{utter['content']}\n",
-                    add_special_tokens=False,
-                ).input_ids
-            )
+            text_tokens = tokenizer(
+                f"{utter['content']}\n", add_special_tokens=False
+            ).input_ids
+            tokens.extend(text_tokens)
+            labels.extend([-100] * len(text_tokens))
         elif utter["role"] == "stream":
             if curr_text_utter is None:
                 # no corresponding text utterance so just add
-                tokens.extend(
-                    [v_placeholder_id] * frame_num_tokens * utter["num_frames"]
-                )
+                num_v_placeholders = frame_num_tokens * utter["num_frames"]
+                tokens.extend([v_placeholder_id] * num_v_placeholders)
+                labels.extend([-100] * num_v_placeholders)
             else:
                 remainder = handle_text_utterance(
-                    tokens, curr_text_utter, utter["num_frames"]
+                    tokens, labels, curr_text_utter, utter["num_frames"]
                 )
 
                 # add the rest of the frame tokens, if any
-                tokens.extend([v_placeholder_id] * frame_num_tokens * remainder)
+                num_v_placeholders = frame_num_tokens * remainder
+                tokens.extend([v_placeholder_id] * num_v_placeholders)
+                labels.extend([-100] * num_v_placeholders)
 
                 # reset curr_text_utter
                 curr_text_utter = None
@@ -160,11 +183,13 @@ def tokenize_real_time_interleaved_dialogue(
         # Assume 150 wpm and 1.3 tokens per word
         num_tokens_per_frame = math.ceil(150 * 1.3 / 60 / sample_fps)
         num_extra_frames = min(
-            len(tokenized_content) // num_tokens_per_frame,
+            math.ceil(len(tokenized_content) / num_tokens_per_frame),
             num_total_frames - num_interleaved_frames,
         )
         if num_extra_frames > 0:
-            remainder = handle_text_utterance(tokens, curr_text_utter, num_extra_frames)
+            remainder = handle_text_utterance(
+                tokens, labels, curr_text_utter, num_extra_frames
+            )
             num_interleaved_frames += num_extra_frames - remainder
 
     # remove the trailing frame tokens
@@ -174,6 +199,11 @@ def tokenize_real_time_interleaved_dialogue(
             num_trailing_frame_tokens += 1
         else:
             break
-    return torch.tensor(
-        tokens[:-num_trailing_frame_tokens]
-    ), num_interleaved_frames - num_trailing_frame_tokens // frame_num_tokens
+    if num_trailing_frame_tokens > 0:
+        tokens = tokens[:-num_trailing_frame_tokens]
+        labels = labels[:-num_trailing_frame_tokens]
+    return (
+        torch.tensor(tokens),
+        torch.tensor(labels),
+        num_interleaved_frames - num_trailing_frame_tokens // frame_num_tokens,
+    )

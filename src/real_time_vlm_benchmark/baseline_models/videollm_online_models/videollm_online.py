@@ -321,15 +321,17 @@ class RealTimeModel(VideoLLMOnlineModel):
         num_total_frames: int,
         num_remaining_frames: int,
     ) -> tuple[torch.Tensor, int]:
-        return tokenize_real_time_interleaved_dialogue(
+        input_ids, _, num_interleaved_frames = tokenize_real_time_interleaved_dialogue(
             self.tokenizer,
             self.model.config.v_placeholder_id,
+            self.tokenizer.eos_token_id,
             self.frame_num_tokens,
             self.frame_fps,
             num_total_frames,
             num_remaining_frames,
             interleaved_dialogue,
         )
+        return input_ids, num_interleaved_frames
 
     @torch.inference_mode()
     def predict(
