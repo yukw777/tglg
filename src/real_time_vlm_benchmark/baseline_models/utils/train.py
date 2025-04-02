@@ -94,7 +94,6 @@ def generate_labels(
 def train_preprocess(
     datapoint: dict,
     *,
-    frame_fps: float,
     max_num_frames: int,
     frame_resolution: list[int],
     use_encoded_frames: bool,
@@ -107,25 +106,38 @@ def train_preprocess(
     frame_num_tokens: int,
     sample_fps: int,
     videollm_online_variant: str,
+    video_stats: dict | None = None,
 ) -> dict[str, torch.Tensor | list[int]]:
-    decord.bridge.set_bridge("torch")
-    vr = VideoReader(str(datapoint["video_path"]))
     dialogue = datapoint["dialogue"]
 
+    vr: VideoReader | None = None
+    if video_stats is None:
+        vr = VideoReader(str(datapoint["video_path"]))
+        avg_fps = vr.get_avg_fps()
+        total_num_frames = len(vr)
+    else:
+        stats = video_stats[datapoint["video_id"]]
+        avg_fps = stats["fps"]
+        total_num_frames = stats["num_frames"]
     frame_idx, start_time, _ = sample_frames_for_dialogue(
         dialogue,
-        vr.get_avg_fps(),
-        frame_fps,
-        len(vr),
+        avg_fps,
+        sample_fps,
+        total_num_frames,
         max_num_frames=max_num_frames,
     )
-    frame_timestamps = frame_idx / vr.get_avg_fps()
+    frame_timestamps = frame_idx / avg_fps
     if use_encoded_frames:
         encoded_frame_dict = torch.load(datapoint["encoded_frames_path"])
         frames = torch.stack(
             [encoded_frame_dict[frame_id] for frame_id in frame_idx.tolist()]
         )
     else:
+        decord.bridge.set_bridge("torch")
+        if video_stats is None:
+            assert vr is not None
+        else:
+            vr = VideoReader(str(datapoint["video_path"]))
         frames = vr.get_batch(frame_idx)
         frames = rearrange(frames, "t h w c -> t c h w")
         frames = resize(frames, frame_resolution)

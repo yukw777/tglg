@@ -1,3 +1,4 @@
+import json
 import math
 from dataclasses import asdict
 from typing import Callable
@@ -36,6 +37,7 @@ class VideoLLMOnlineModel(BaselineModel):
         show_progress: bool = False,
         set_vision_inside: bool = False,
         sys_msg_fn: Callable[[list[dict]], str] | None = None,
+        video_stats_file: str | None = None,
     ) -> None:
         super().__init__()
         args = get_args_class(version)(
@@ -54,6 +56,12 @@ class VideoLLMOnlineModel(BaselineModel):
                 return args.system_prompt
 
             self.sys_msg_fn = default_sys_msg_fn
+
+        self.video_stats: dict | None = None
+        if video_stats_file is not None:
+            with open(video_stats_file) as f:
+                self.video_stats = json.load(f)
+
         self.model, self.tokenizer = build_model_and_tokenizer(
             is_training=False, set_vision_inside=self.set_vision_inside, **asdict(args)
         )
@@ -74,19 +82,32 @@ class VideoLLMOnlineModel(BaselineModel):
         self.stream_generation_prompt_ids: torch.Tensor  # For type checkers
 
     def preprocess(self, datapoint: dict) -> dict[str, torch.Tensor]:
-        decord.bridge.set_bridge("torch")
-        vr = VideoReader(str(datapoint["video_path"]))
         dialogue = datapoint["dialogue"]
+
+        vr: VideoReader | None = None
+        if self.video_stats is None:
+            vr = VideoReader(str(datapoint["video_path"]))
+            avg_fps = vr.get_avg_fps()
+            total_num_frames = len(vr)
+        else:
+            stats = self.video_stats[datapoint["video_id"]]
+            avg_fps = stats["fps"]
+            total_num_frames = stats["num_frames"]
 
         frame_idx, start_time, _ = sample_frames_for_dialogue(
             dialogue,
-            vr.get_avg_fps(),
+            avg_fps,
             self.frame_fps,
-            len(vr),
+            total_num_frames,
             max_num_frames=self.max_num_frames,
         )
-        frame_timestamps = frame_idx / vr.get_avg_fps()
+        frame_timestamps = frame_idx / avg_fps
         if self.set_vision_inside:
+            decord.bridge.set_bridge("torch")
+            if self.video_stats is None:
+                assert vr is not None
+            else:
+                vr = VideoReader(str(datapoint["video_path"]))
             frames = vr.get_batch(frame_idx)
             frames = rearrange(frames, "t h w c -> t c h w")
             frames = resize(frames, [self.model.config.frame_resolution] * 2)

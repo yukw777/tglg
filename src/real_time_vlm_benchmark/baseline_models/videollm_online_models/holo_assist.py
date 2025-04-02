@@ -21,40 +21,16 @@ def _construct_system_message(dialogue: list[dict], use_narration: bool) -> str:
 
 
 class VideoLLMOnlineHoloAssistModel(VideoLLMOnlineModel):
-    def __init__(
-        self,
-        version: str = "live1+",
-        checkpoint: str = "chenjoya/videollm-online-8b-v1plus",
-        frame_token_interval_threshold: float = 0.725,
-        use_narration: bool = False,
-        show_progress: bool = False,
-        set_vision_inside: bool = False,
-    ) -> None:
+    def __init__(self, use_narration: bool = False, **kwargs) -> None:
         super().__init__(
-            version=version,
-            checkpoint=checkpoint,
-            frame_token_interval_threshold=frame_token_interval_threshold,
-            show_progress=show_progress,
-            set_vision_inside=set_vision_inside,
+            **kwargs,
             sys_msg_fn=partial(_construct_system_message, use_narration=use_narration),
         )
 
 
 class RealTimeHoloAssistModel(RealTimeModel):
-    def __init__(
-        self,
-        version: str = "live1+",
-        checkpoint: str = "chenjoya/videollm-online-8b-v1plus",
-        frame_token_interval_threshold: float = 0.725,
-        use_narration: bool = False,
-        show_progress: bool = False,
-        set_vision_inside: bool = False,
-    ) -> None:
+    def __init__(self, use_narration: bool = False, **kwargs) -> None:
         super().__init__(
-            version=version,
-            checkpoint=checkpoint,
-            frame_token_interval_threshold=frame_token_interval_threshold,
-            show_progress=show_progress,
-            set_vision_inside=set_vision_inside,
+            **kwargs,
             sys_msg_fn=partial(_construct_system_message, use_narration=use_narration),
         )

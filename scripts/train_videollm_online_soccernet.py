@@ -1,3 +1,4 @@
+import json
 import os
 from dataclasses import asdict, dataclass
 from functools import partial
@@ -34,6 +35,7 @@ class TrainArguments:
     pretrained_videollm_online: str
     videollm_online_variant: str
     set_vision_inside: bool = False
+    video_stats_file: str | None = None
 
 
 def train() -> None:
@@ -71,9 +73,12 @@ def train() -> None:
         model.set_vision_inside()
 
     # set up data processing
+    video_stats: dict | None = None
+    if train_args.video_stats_file is not None:
+        with open(train_args.video_stats_file) as f:
+            video_stats = json.load(f)
     preprocessor = partial(
         train_preprocess,
-        frame_fps=videollm_online_args.frame_fps,
         max_num_frames=videollm_online_args.max_num_frames,
         frame_resolution=[model.config.frame_resolution] * 2,
         use_encoded_frames=not train_args.set_vision_inside,
@@ -92,6 +97,7 @@ def train() -> None:
         frame_num_tokens=model.config.frame_num_tokens,
         sample_fps=videollm_online_args.frame_fps,
         videollm_online_variant=train_args.videollm_online_variant,
+        video_stats=video_stats,
     )
     train_dataset = SoccerNetDataset(
         data_args.soccernet_dir,

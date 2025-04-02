@@ -104,12 +104,25 @@ python scripts/gen_anns_soccernet.py \
 
 ## Video Frame Pre-encoding
 
+### Generate Video Statistics Files
+
+We need to know the total number of frames and average frame rate for each video in order to interleave text and frame tokens properly. Unfortunately, this is an expensive operation, so it's best to pre-calculate.
+
+```bash
+python scripts/calc_video_stats.py \
+--real_time_dataset real_time_vlm_benchmark.datasets.HoloAssistDataset \
+--real_time_dataset.video_dir_path /path/to/HoloAssist/HoloAssist/video_pitch_shifted/ \
+--real_time_dataset.ann_file_path /path/to/HoloAssist/real-time-eval-annotation.json \
+--out_file /path/to/HoloAssist/video_stats.json
+```
+
 ```bash
 # set --dataset to the desired dataset
 torchrun --nnodes={num_nodes} --nproc_per_node={num_gpus} scripts/videollm_online_encode_frames.py \
 --dataset real_time_vlm_benchmark.datasets.holo_assist.HoloAssistDataset \
 --dataset.video_dir_path /path/to/HoloAssist/video_pitch_shifted/ \
 --dataset.ann_file_path /path/to/HoloAssist/data-annotation-trainval-v1_1.json \
+--video_stats_file /path/to/HoloAssist/video_stats.json \
 --results_dir path/to/encoded_frames/HoloAssist
 ```
 
@@ -124,6 +137,7 @@ WANDB_PROJECT=videollm-online-soccernet-train torchrun --nnodes=1 --nproc_per_no
 --live_version live1+ \
 --soccernet_dir path/to/SoccerNet \
 --video_frame_dir path/to/SoccerNet/encoded-frames \
+--video_stats_file path/to/SoccerNet/video_stats.json \
 --pretrained_videollm_online chenjoya/videollm-online-8b-v1plus \
 --bf16 true \
 --report_to wandb \
@@ -136,8 +150,7 @@ WANDB_PROJECT=videollm-online-soccernet-train torchrun --nnodes=1 --nproc_per_no
 --lr_scheduler_type cosine \
 --warmup_ratio 0.05 \
 --logging_steps 10 \
---dataloader_num_workers 16 \
---dataloader_prefetch_factor 8 \
+--dataloader_num_workers 4 \
 --output_dir outputs/videollm-online-soccernet
 ```
 
@@ -151,6 +164,7 @@ WANDB_PROJECT=real-time-soccernet-train torchrun --nnodes=1 --nproc_per_node=4 -
 --videollm_online_variant real-time \
 --soccernet_dir path/to/SoccerNet \
 --video_frame_dir path/to/SoccerNet/encoded-frames \
+--video_stats_file path/to/SoccerNet/video_stats.json \
 --pretrained_videollm_online chenjoya/videollm-online-8b-v1plus \
 --bf16 true \
 --report_to wandb \
@@ -166,8 +180,7 @@ WANDB_PROJECT=real-time-soccernet-train torchrun --nnodes=1 --nproc_per_node=4 -
 --lr_scheduler_type cosine \
 --warmup_ratio 0.05 \
 --logging_steps 10 \
---dataloader_num_workers 16 \
---dataloader_prefetch_factor 8 \
+--dataloader_num_workers 4 \
 --output_dir outputs/real-time-soccernet
 ```
 
@@ -179,6 +192,7 @@ Below is an example for RealTimeSoccerNet on SoccerNet, but the script is design
 torchrun --nnodes=1 --nproc_per_node=4 --tee 3 --log-dir path/to/log/dir scripts/run_inference.py \
 --model real_time_vlm_benchmark.baseline_models.videollm_online_models.RealTimeSoccerNetModel \
 --model.checkpoint path/to/real-time-soccernet/checkpoint \
+--model.video_stats_file path/to/SoccerNet/video_stats.json \
 --dataset real_time_vlm_benchmark.datasets.SoccerNetDataset \
 --dataset.video_dir_path path/to/SoccerNet/ \
 --dataset.ann_file_path path/to/SoccerNet/real-time-eval-annotation_test.json \
