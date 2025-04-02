@@ -1,5 +1,6 @@
 import math
-from typing import Callable, TypedDict
+from itertools import islice, zip_longest
+from typing import Callable, Iterator, TypedDict
 
 import torch
 from transformers import PreTrainedTokenizerBase
@@ -67,6 +68,11 @@ def tokenize_real_time_interleaved_dialogue(
     num_interleaved_frames: int,
     interleaved_dialogue: list[dict],
 ) -> tuple[torch.Tensor, torch.Tensor, int]:
+    def chunked(seq: list, n: int) -> Iterator[list]:
+        iterator = iter(seq)
+        while chunk := list(islice(iterator, n)):
+            yield chunk
+
     def handle_text_utterance(
         tokens: list[int], labels: list[int], text_utter: dict, num_frames: int
     ) -> int:
@@ -88,51 +94,38 @@ def tokenize_real_time_interleaved_dialogue(
             math.ceil((text_utter["end"] - text_utter["start"]) * sample_fps),
             num_frames,
         )
-        frame_tokens = [
-            [v_placeholder_id] * frame_num_tokens for _ in range(num_overlapped_frames)
-        ]
+        frame_tokens = [v_placeholder_id] * num_overlapped_frames
         tokenized_content = tokenizer(
             f" {text_utter['content']}", add_special_tokens=False
         ).input_ids
         if num_overlapped_frames > len(tokenized_content):
-            longer_seq = frame_tokens
-            interval = math.ceil(num_overlapped_frames / len(tokenized_content))
+            # when there are more frames, we want to keep the chunk size small,
+            # so we end this utterance with frames.
+            chunk_size = num_overlapped_frames // len(tokenized_content)
+            chunked_frame_tokens = list(chunked(frame_tokens, chunk_size))
+            chunked_tokenized_content = [[text] for text in tokenized_content]
         else:
-            longer_seq = tokenized_content
-            interval = math.ceil(len(tokenized_content) / num_overlapped_frames)
-        i = 0
-        while i < len(longer_seq) / interval:
-            if frame_tokens == longer_seq:
-                text_tokens = tokenized_content[i : i + 1]
-                v_placeholders = [
-                    v
-                    for v_placeholder_id_seq in frame_tokens[
-                        i * interval : (i + 1) * interval
-                    ]
-                    for v in v_placeholder_id_seq
-                ]
-            else:
-                text_tokens = tokenized_content[i * interval : (i + 1) * interval]
-                v_placeholders = [
-                    v
-                    for v_placeholder_id_seq in frame_tokens[i : i + 1]
-                    for v in v_placeholder_id_seq
-                ]
+            # when there are more text tokens, we want to push the chunk size to be big,
+            # so we end this utterance with frames.
+            chunk_size = math.ceil(len(tokenized_content) / num_overlapped_frames)
+            chunked_frame_tokens = [[frame] for frame in frame_tokens]
+            chunked_tokenized_content = list(chunked(tokenized_content, chunk_size))
+        for i, (text, frames) in enumerate(
+            zip_longest(chunked_tokenized_content, chunked_frame_tokens)
+        ):
             # text tokens always come first
-            tokens.extend(text_tokens)
-            if text_utter["role"] == "user":
-                labels.extend([-100] * len(text_tokens))
-            else:
-                labels.extend(text_tokens)
-                if (frame_tokens == longer_seq and i + 1 >= len(tokenized_content)) or (
-                    frame_tokens != longer_seq
-                    and (i + 1) * interval >= len(tokenized_content)
-                ):
-                    # if last set of text tokens, append eos token for causal shifting
-                    labels.append(eos_token_id)
-            tokens.extend(v_placeholders)
-            labels.extend([-100] * len(v_placeholders))
-            i += 1
+            if text is not None:
+                tokens.extend(text)
+                if text_utter["role"] == "user":
+                    labels.extend([-100] * len(text))
+                else:
+                    labels.extend(text)
+                    if i == len(chunked_tokenized_content) - 1:
+                        # if last set of text tokens, append eos token for causal shifting
+                        labels.append(eos_token_id)
+            if frames is not None:
+                tokens.extend(frames * frame_num_tokens)
+                labels.extend([-100] * len(frames) * frame_num_tokens)
 
         return num_frames - num_overlapped_frames
 

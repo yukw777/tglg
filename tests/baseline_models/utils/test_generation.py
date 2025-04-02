@@ -389,6 +389,234 @@ def test_construct_interleaved_dialogue(
             + ["Ċ", "Assistant", ":", "Ġutter", "<|eot_id|>"],
             22,
         ),
+        (
+            [
+                {"role": "system", "content": "system message"},
+                {"role": "stream", "num_frames": 1},
+                {
+                    "role": "assistant",
+                    "content": "Now rolls the reverse.",
+                    "start": 1789.267,
+                    "end": 1790.227,
+                    "eval": True,
+                },
+                {"role": "stream", "num_frames": 1},
+                {
+                    "role": "assistant",
+                    "content": "Mascherano is clearly still feeling it.",
+                    "start": 1790.288,
+                    "end": 1792.129,
+                    "eval": True,
+                },
+            ],
+            6,
+            2,
+            ["system", "Ġmessage", "Ċ"]
+            + ["<v>"] * 3
+            + ["Ċ", "Assistant", ":", "ĠNow", "Ġrolls", "Ġthe", "Ġreverse", "."]
+            + ["<v>"] * 3
+            + ["Ċ", "Assistant", ":", "ĠMas", "cher", "ano"]
+            + ["<v>"] * 3
+            + ["Ġis", "Ġclearly", "Ġstill"]
+            + ["<v>"] * 3
+            + ["Ġfeeling", "Ġit", "."],
+            [-100, -100, -100]
+            + [-100] * 2
+            + [
+                "Ċ",
+                "Assistant",
+                ":",
+                "ĠNow",
+                "Ġrolls",
+                "Ġthe",
+                "Ġreverse",
+                ".",
+                "<|eot_id|>",
+            ]
+            + [-100] * 2
+            + ["Ċ", "Assistant", ":", "ĠMas", "cher", "ano"]
+            + [-100] * 3
+            + ["Ġis", "Ġclearly", "Ġstill"]
+            + [-100] * 3
+            + ["Ġfeeling", "Ġit", ".", "<|eot_id|>"],
+            4,
+        ),
+        (
+            [
+                {"role": "system", "content": "system message"},
+                {"role": "stream", "num_frames": 1},
+                {
+                    "role": "assistant",
+                    "content": " Hard to deny to Messi for the penalty spot and stop it's time to keep the tie alive in the first leg.",
+                    "start": 913.092,
+                    "end": 918.056,
+                    "eval": True,
+                },
+                {"role": "stream", "num_frames": 9},
+                {
+                    "role": "assistant",
+                    "content": "It's Messi.",
+                    "start": 918.116,
+                    "end": 920.178,
+                    "eval": True,
+                },
+                {"role": "stream", "num_frames": 7},
+                {
+                    "role": "assistant",
+                    "content": "Ooh, sail just over the top.",
+                    "start": 921.179,
+                    "end": 922.58,
+                    "eval": True,
+                },
+                {"role": "stream", "num_frames": 3},
+                {
+                    "role": "assistant",
+                    "content": "It wasn't far away, was it?",
+                    "start": 922.74,
+                    "end": 925.042,
+                    "eval": True,
+                },
+                {"role": "stream", "num_frames": 4},
+                {
+                    "role": "assistant",
+                    "content": "He was plead with it to come down a little bit quicker, to catch us at the top of the net.",
+                    "start": 925.062,
+                    "end": 931.307,
+                    "eval": True,
+                },
+            ],
+            37,
+            24,
+            ["system", "Ġmessage", "Ċ"]
+            + ["<v>"] * 3
+            + ["Ċ", "Assistant", ":", "Ġ", "ĠHard", "Ġto"]
+            + ["<v>"] * 3
+            + ["Ġdeny", "Ġto", "ĠMessi"]
+            + ["<v>"] * 3
+            + ["Ġfor", "Ġthe", "Ġpenalty"]
+            + ["<v>"] * 3
+            + ["Ġspot", "Ġand", "Ġstop"]
+            + ["<v>"] * 3
+            + ["Ġit", "'s", "Ġtime"]
+            + ["<v>"] * 3
+            + ["Ġto", "Ġkeep", "Ġthe"]
+            + ["<v>"] * 3
+            + ["Ġtie", "Ġalive", "Ġin"]
+            + ["<v>"] * 3
+            + ["Ġthe", "Ġfirst", "Ġleg"]
+            + ["<v>"] * 3
+            + ["."]
+            + ["<v>"] * 3
+            + ["Ċ", "Assistant", ":", "ĠIt"]
+            + ["<v>"] * 3
+            + ["'s"]
+            + ["<v>"] * 3
+            + ["ĠMessi"]
+            + ["<v>"] * 3
+            + ["."]
+            + ["<v>"] * 3 * 4
+            + ["Ċ", "Assistant", ":", "ĠO", "oh", ","]
+            + ["<v>"] * 3
+            + ["Ġsail", "Ġjust", "Ġover"]
+            + ["<v>"] * 3
+            + ["Ġthe", "Ġtop", "."]
+            + ["<v>"] * 3
+            + ["Ċ", "Assistant", ":", "ĠIt", "Ġwasn", "'t"]
+            + ["<v>"] * 3
+            + ["Ġfar", "Ġaway", ","]
+            + ["<v>"] * 3
+            + ["Ġwas", "Ġit", "?"]
+            + ["<v>"] * 3 * 2
+            + ["Ċ", "Assistant", ":", "ĠHe", "Ġwas"]
+            + ["<v>"] * 3
+            + ["Ġplead", "Ġwith"]
+            + ["<v>"] * 3
+            + ["Ġit", "Ġto"]
+            + ["<v>"] * 3
+            + ["Ġcome", "Ġdown"]
+            + ["<v>"] * 3
+            + ["Ġa", "Ġlittle"]
+            + ["<v>"] * 3
+            + ["Ġbit", "Ġquicker"]
+            + ["<v>"] * 3
+            + [",", "Ġto"]
+            + ["<v>"] * 3
+            + ["Ġcatch", "Ġus"]
+            + ["<v>"] * 3
+            + ["Ġat", "Ġthe"]
+            + ["<v>"] * 3
+            + ["Ġtop", "Ġof"]
+            + ["<v>"] * 3
+            + ["Ġthe", "Ġnet"]
+            + ["<v>"] * 3
+            + ["."],
+            [-100, -100, -100]
+            + [-100] * 2
+            + ["Ċ", "Assistant", ":", "Ġ", "ĠHard", "Ġto"]
+            + [-100] * 3
+            + ["Ġdeny", "Ġto", "ĠMessi"]
+            + [-100] * 3
+            + ["Ġfor", "Ġthe", "Ġpenalty"]
+            + [-100] * 3
+            + ["Ġspot", "Ġand", "Ġstop"]
+            + [-100] * 3
+            + ["Ġit", "'s", "Ġtime"]
+            + [-100] * 3
+            + ["Ġto", "Ġkeep", "Ġthe"]
+            + [-100] * 3
+            + ["Ġtie", "Ġalive", "Ġin"]
+            + [-100] * 3
+            + ["Ġthe", "Ġfirst", "Ġleg"]
+            + [-100] * 3
+            + [".", "<|eot_id|>"]
+            + [-100] * 2
+            + ["Ċ", "Assistant", ":", "ĠIt"]
+            + [-100] * 3
+            + ["'s"]
+            + [-100] * 3
+            + ["ĠMessi"]
+            + [-100] * 3
+            + [".", "<|eot_id|>"]
+            + [-100] * 3 * 3
+            + [-100] * 2
+            + ["Ċ", "Assistant", ":", "ĠO", "oh", ","]
+            + [-100] * 3
+            + ["Ġsail", "Ġjust", "Ġover"]
+            + [-100] * 3
+            + ["Ġthe", "Ġtop", ".", "<|eot_id|>"]
+            + [-100] * 2
+            + ["Ċ", "Assistant", ":", "ĠIt", "Ġwasn", "'t"]
+            + [-100] * 3
+            + ["Ġfar", "Ġaway", ","]
+            + [-100] * 3
+            + ["Ġwas", "Ġit", "?", "<|eot_id|>"]
+            + [-100] * 3
+            + [-100] * 2
+            + ["Ċ", "Assistant", ":", "ĠHe", "Ġwas"]
+            + [-100] * 3
+            + ["Ġplead", "Ġwith"]
+            + [-100] * 3
+            + ["Ġit", "Ġto"]
+            + [-100] * 3
+            + ["Ġcome", "Ġdown"]
+            + [-100] * 3
+            + ["Ġa", "Ġlittle"]
+            + [-100] * 3
+            + ["Ġbit", "Ġquicker"]
+            + [-100] * 3
+            + [",", "Ġto"]
+            + [-100] * 3
+            + ["Ġcatch", "Ġus"]
+            + [-100] * 3
+            + ["Ġat", "Ġthe"]
+            + [-100] * 3
+            + ["Ġtop", "Ġof"]
+            + [-100] * 3
+            + ["Ġthe", "Ġnet"]
+            + [-100] * 3
+            + [".", "<|eot_id|>"],
+            35,
+        ),
     ],
 )
 def test_tokenize_real_time_interleaved_dialogue(
