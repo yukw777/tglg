@@ -150,7 +150,7 @@ WANDB_PROJECT=videollm-online-soccernet-train torchrun --nnodes=1 --nproc_per_no
 --lr_scheduler_type cosine \
 --warmup_ratio 0.05 \
 --logging_steps 10 \
---dataloader_num_workers 4 \
+--dataloader_num_workers 8 \
 --output_dir outputs/videollm-online-soccernet
 ```
 
@@ -180,7 +180,7 @@ WANDB_PROJECT=real-time-soccernet-train torchrun --nnodes=1 --nproc_per_node=4 -
 --lr_scheduler_type cosine \
 --warmup_ratio 0.05 \
 --logging_steps 10 \
---dataloader_num_workers 4 \
+--dataloader_num_workers 8 \
 --output_dir outputs/real-time-soccernet
 ```
 
