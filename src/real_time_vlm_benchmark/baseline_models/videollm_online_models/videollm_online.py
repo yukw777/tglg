@@ -175,15 +175,15 @@ class VideoLLMOnlineModel(BaselineModel):
         )
         if use_offloaded_cache:
             outputs = self.model(
-                inputs_embeds=joint_embeds, attention_mask=attention_mask
-            )
-        else:
-            outputs = self.model(
                 inputs_embeds=self.model.joint_embed(
                     batch["input_ids"], batch["context_frames"]
                 ),
                 attention_mask=attention_mask,
                 past_key_values=OffloadedCache(),
+            )
+        else:
+            outputs = self.model(
+                inputs_embeds=joint_embeds, attention_mask=attention_mask
             )
         return outputs
 
