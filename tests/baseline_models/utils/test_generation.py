@@ -322,9 +322,13 @@ def test_construct_interleaved_dialogue(
             ],
             1,
             1,
-            ["system", "Ġmessage", "Ċ"],
-            [-100, -100, -100],
-            0,
+            ["system", "Ġmessage", "Ċ"]
+            + ["<v>"] * 3
+            + ["Ċ", "User", ":", "Ġuser", "Ġutter", "ance", "Ġ", "0"],
+            [-100, -100, -100]
+            + [-100] * 3
+            + [-100, -100, -100, -100, -100, -100, -100, -100],
+            1,
         ),
         (
             [
@@ -616,6 +620,28 @@ def test_construct_interleaved_dialogue(
             + [-100] * 3
             + [".", "<|eot_id|>"],
             35,
+        ),
+        (
+            [
+                {"role": "system", "content": "system message"},
+                {"role": "stream", "num_frames": 1},
+                {
+                    "role": "assistant",
+                    "content": "Monreal.",
+                    "start": 325.377,
+                    "end": 325.657,
+                    "eval": True,
+                },
+            ],
+            1,
+            1,
+            ["system", "Ġmessage", "Ċ"]
+            + ["<v>"] * 3
+            + ["Ċ", "Assistant", ":", "ĠMon", "real", "."],
+            [-100, -100, -100]
+            + [-100] * 2
+            + ["Ċ", "Assistant", ":", "ĠMon", "real", ".", "<|eot_id|>"],
+            1,
         ),
     ],
 )
