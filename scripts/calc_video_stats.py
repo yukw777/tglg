@@ -13,12 +13,14 @@ def get_stats(video_path: Path) -> dict:
     return {"fps": vr.get_avg_fps(), "num_frames": len(vr)}
 
 
-def main(real_time_dataset: Dataset, out_file: Path) -> None:
+def main(real_time_dataset: Dataset, results_dir: Path, out_file: Path) -> None:
+    results_dir.mkdir(parents=True, exist_ok=True)
     videos = set(
         (datapoint["video_id"], datapoint["video_path"])
         for datapoint in iter(real_time_dataset)
     )
-    video_stats = {}
+    completed_videos = set(f.stem for f in results_dir.glob("**/*.json"))
+    videos -= completed_videos
     with ThreadPoolExecutor() as executor:
         future_to_video_id = {
             executor.submit(get_stats, video_path): video_id
@@ -28,8 +30,14 @@ def main(real_time_dataset: Dataset, out_file: Path) -> None:
             as_completed(future_to_video_id), total=len(future_to_video_id)
         ):
             video_id = future_to_video_id[future]
-            video_stats[video_id] = future.result()
+            with open(results_dir / f"{video_id}.json", "w") as f:
+                json.dump(future.result(), f)
 
+    video_stats = {}
+    for video_stat_file in results_dir.glob("**/*.json"):
+        with open(video_stat_file) as f:
+            stats = json.load(f)
+            video_stats[video_stat_file.stem] = stats
     with open(out_file, "w") as f:
         json.dump(video_stats, f, indent=4)
 
