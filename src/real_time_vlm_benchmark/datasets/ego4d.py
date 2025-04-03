@@ -20,9 +20,10 @@ def _convert_real_time_anns_to_datapoint(
         curr_user_utter: dict | None = None
         for i, utter in enumerate(conversation):
             if utter["role"] == "user":
-                assert curr_user_utter is None, (
-                    f"User utterance followed by another at {i} for {ann}"
-                )
+                if utter["content"].startswith("(") and utter["content"].endswith(")"):
+                    # some user utterances are user actions, e.g., (starts slicing cake), so we should skip this
+                    continue
+                # NOTE: curr_user_utter may already be set, but we overwrite since it's not followed by an assistant utterance.
                 curr_user_utter = utter
                 continue
             if curr_user_utter is None:

@@ -202,6 +202,92 @@ from real_time_vlm_benchmark.datasets.ego4d import _convert_real_time_anns_to_da
                 ),
             ],
         ),
+        (
+            [
+                {
+                    "video_uid": "f7a0beb6-b220-40c0-a72d-ec4b79134a73",
+                    "conversation": [
+                        {
+                            "role": "user",
+                            "content": "(some user action)",
+                            "time": 130.6,
+                        },
+                        {
+                            "role": "user",
+                            "content": "What are the prerequisites for the next task?",
+                            "time": 138.6,
+                        },
+                        {
+                            "role": "assistant",
+                            "content": "Before proceeding, please make sure you have sliced the tomatoes. We've already added pepper, salt, and sauce to them.",
+                            "time": 138.6,
+                        },
+                    ],
+                },
+            ],
+            [
+                (
+                    "f7a0beb6-b220-40c0-a72d-ec4b79134a73",
+                    [
+                        {
+                            "role": "user",
+                            "content": "What are the prerequisites for the next task?",
+                            "start": 138.6,
+                            "end": 141.8,
+                        },
+                        {
+                            "role": "assistant",
+                            "content": "Before proceeding, please make sure you have sliced the tomatoes. We've already added pepper, salt, and sauce to them.",
+                            "start": 142.1,
+                            "end": 149.7,
+                        },
+                    ],
+                )
+            ],
+        ),
+        (
+            [
+                {
+                    "video_uid": "39d087b0-afc2-47d8-ba91-b70dd8fab90e",
+                    "conversation": [
+                        {
+                            "role": "user",
+                            "content": "Actually, I'm trying to heat up a wok on the fire. Can you tell me the best way to do that?",
+                            "time": 1191.5,
+                        },
+                        {
+                            "role": "user",
+                            "content": "How do I know when the wok is hot enough?",
+                            "time": 1194.2,
+                        },
+                        {
+                            "role": "assistant",
+                            "content": "To check if the wok is hot enough, you can flick a few drops of water onto the surface. If they sizzle and evaporate quickly, the wok is ready to use.",
+                            "time": 1194.2,
+                        },
+                    ],
+                }
+            ],
+            [
+                (
+                    "39d087b0-afc2-47d8-ba91-b70dd8fab90e",
+                    [
+                        {
+                            "role": "user",
+                            "content": "How do I know when the wok is hot enough?",
+                            "start": 1194.2,
+                            "end": 1198.2,
+                        },
+                        {
+                            "role": "assistant",
+                            "content": "To check if the wok is hot enough, you can flick a few drops of water onto the surface. If they sizzle and evaporate quickly, the wok is ready to use.",
+                            "start": 1198.5,
+                            "end": 1210.9,
+                        },
+                    ],
+                ),
+            ],
+        ),
     ],
 )
 def test_convert_real_time_anns_to_datapoint(
