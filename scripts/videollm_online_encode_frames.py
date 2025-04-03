@@ -233,6 +233,7 @@ def run(
         sampler=QueueSampler(queue),
     )
     failure = torch.tensor(False, device=accelerator.device)
+    accelerator.wait_for_everyone()
     for batch in dataloader:
         try:
             with torch.inference_mode():
