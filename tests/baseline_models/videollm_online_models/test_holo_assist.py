@@ -1,7 +1,7 @@
 import pytest
 
 from real_time_vlm_benchmark.baseline_models.videollm_online_models.holo_assist import (
-    _construct_system_message,
+    holo_assist_system_message,
 )
 
 
@@ -24,7 +24,7 @@ from real_time_vlm_benchmark.baseline_models.videollm_online_models.holo_assist 
     ],
 )
 def test_construct_system_message(use_narration: bool, expected: str) -> None:
-    sys_msg = _construct_system_message(
+    sys_msg = holo_assist_system_message(
         [
             {"role": "system", "eval": False, "content": "summary", "start": 0},
             {"role": "assistant", "eval": False, "start": 3},

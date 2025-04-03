@@ -3,12 +3,24 @@ import torch
 # decord must be imported after torch
 # https://github.com/dmlc/decord/issues/293
 import decord  # isort: skip
+from dataclasses import asdict, dataclass
 from typing import Callable
 
 from decord import VideoReader
 from einops import rearrange
+from peft import PeftModel
 from torchvision.transforms.v2.functional import resize
-from transformers import DataCollatorForSeq2Seq, PreTrainedTokenizerBase
+from transformers import (
+    DataCollatorForSeq2Seq,
+    PreTrainedModel,
+    PreTrainedTokenizerBase,
+)
+from video_reader import PyVideoReader
+from videollm_online.models import LiveTrainingArguments
+from videollm_online.models.live_llama import LiveLlamaConfig, LiveLlamaForCausalLM
+from videollm_online.models.tokenization_live import (
+    build_live_tokenizer_and_update_config,
+)
 
 from real_time_vlm_benchmark.baseline_models.utils.generation import (
     tokenize_real_time_interleaved_dialogue,
@@ -107,6 +119,7 @@ def train_preprocess(
     sample_fps: int,
     videollm_online_variant: str,
     video_stats: dict | None = None,
+    use_decord: bool = True,
 ) -> dict[str, torch.Tensor | list[int]]:
     dialogue = datapoint["dialogue"]
 
@@ -133,12 +146,19 @@ def train_preprocess(
             [encoded_frame_dict[frame_id] for frame_id in frame_idx.tolist()]
         )
     else:
-        decord.bridge.set_bridge("torch")
-        if video_stats is None:
-            assert vr is not None
+        if use_decord:
+            decord.bridge.set_bridge("torch")
+            if video_stats is None:
+                assert vr is not None
+            else:
+                vr = VideoReader(str(datapoint["video_path"]))
+            frames = vr.get_batch(frame_idx)
         else:
-            vr = VideoReader(str(datapoint["video_path"]))
-        frames = vr.get_batch(frame_idx)
+            # NOTE: video_reader-rs supports resizing at decoding, which helps keeping the memory usage low.
+            vr = PyVideoReader(
+                str(datapoint["video_path"]), resize_shorter_side=frame_resolution[0]
+            )
+            frames = torch.from_numpy(vr.get_batch(datapoint["frame_idx"]))
         frames = rearrange(frames, "t h w c -> t c h w")
         frames = resize(frames, frame_resolution)
 
@@ -198,3 +218,39 @@ class DataCollatorForVideoLLMOnline(DataCollatorForSeq2Seq):
         collated = super().__call__(features, return_tensors=return_tensors)
         collated["frames"] = frames
         return collated
+
+
+@dataclass
+class TrainArguments:
+    pretrained_videollm_online: str
+    videollm_online_variant: str
+    set_vision_inside: bool = False
+    video_stats_file: str | None = None
+
+
+def init_model_tokenizer_for_training(
+    videollm_online_args: LiveTrainingArguments, train_args: TrainArguments
+) -> tuple[PreTrainedModel, PreTrainedTokenizerBase]:
+    # NOTE: we want to fine-tune the pretrained videollm-online,
+    # so we manually load the model instead of using build_model_and_tokenizer()
+    model = LiveLlamaForCausalLM.from_pretrained(
+        videollm_online_args.llm_pretrained,
+        config=LiveLlamaConfig.from_pretrained(
+            videollm_online_args.llm_pretrained, **asdict(videollm_online_args)
+        ),
+        torch_dtype="auto",
+        attn_implementation=videollm_online_args.attn_implementation,
+    )
+    tokenizer = build_live_tokenizer_and_update_config(
+        videollm_online_args.llm_pretrained, model.config
+    )
+    # build_live_tokenizer_and_update_config() for some reason sets padding_side to left,
+    # which is only necessary for inference. Let's override it.
+    tokenizer.padding_side = "right"
+    model = PeftModel.from_pretrained(
+        model, train_args.pretrained_videollm_online, is_trainable=True
+    )
+    if train_args.set_vision_inside:
+        model.set_vision_inside()
+
+    return model, tokenizer

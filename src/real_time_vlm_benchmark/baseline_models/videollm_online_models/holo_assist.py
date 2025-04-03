@@ -6,8 +6,9 @@ from real_time_vlm_benchmark.baseline_models.videollm_online_models.videollm_onl
 )
 
 
-def _construct_system_message(dialogue: list[dict], use_narration: bool) -> str:
-    assert dialogue[0]["role"] == "system"
+def holo_assist_system_message(dialogue: list[dict], use_narration: bool) -> str:
+    if use_narration:
+        assert dialogue[0]["role"] == "system"
     return (
         (
             "A multimodal AI assistant is helping users with some activities. "
@@ -24,7 +25,7 @@ class VideoLLMOnlineHoloAssistModel(VideoLLMOnlineModel):
     def __init__(self, use_narration: bool = False, **kwargs) -> None:
         super().__init__(
             **kwargs,
-            sys_msg_fn=partial(_construct_system_message, use_narration=use_narration),
+            sys_msg_fn=partial(holo_assist_system_message, use_narration=use_narration),
         )
 
 
@@ -32,5 +33,5 @@ class RealTimeHoloAssistModel(RealTimeModel):
     def __init__(self, use_narration: bool = False, **kwargs) -> None:
         super().__init__(
             **kwargs,
-            sys_msg_fn=partial(_construct_system_message, use_narration=use_narration),
+            sys_msg_fn=partial(holo_assist_system_message, use_narration=use_narration),
         )
