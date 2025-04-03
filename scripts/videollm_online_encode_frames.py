@@ -50,7 +50,7 @@ class FrameDataset(Dataset):
             frames = vr.get_batch(datapoint["frame_idx"])
         else:
             vr = PyVideoReader(str(datapoint["video_path"]))
-            frames = vr.get_batch(datapoint["frame_idx"])
+            frames = torch.from_numpy(vr.get_batch(datapoint["frame_idx"]))
         frames = rearrange(frames, "t h w c -> t c h w")
         frames = resize(frames, [self.frame_resolution] * 2)
         return {
