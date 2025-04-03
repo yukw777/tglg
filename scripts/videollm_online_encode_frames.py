@@ -75,6 +75,7 @@ def run(
     frame_chunk_size: int = 512,
     per_device_batch_size: int = 2,
     num_dataloader_workers: int = 4,
+    dataloader_prefetch_factor: int = 2,
     start_idx: int | None = None,
     end_idx: int | None = None,
     random_seed: int = 42,
@@ -214,12 +215,13 @@ def run(
         }
 
     with accelerator.split_between_processes(
-        sorted(range(len(frame_dataset)))
+        list(range(len(frame_dataset)))
     ) as per_process_idx:
         dataloader = DataLoader(
             Subset(frame_dataset, per_process_idx),
             batch_size=per_device_batch_size,
             num_workers=num_dataloader_workers,
+            prefetch_factor=dataloader_prefetch_factor,
             pin_memory=True,
             collate_fn=collate,
         )
