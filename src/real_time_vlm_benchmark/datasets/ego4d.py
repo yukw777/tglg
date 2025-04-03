@@ -82,13 +82,11 @@ class Ego4dGoalStepDataset(RealTimeDataset):
         self,
         video_dir_path: Path,
         ann_file_path: Path,
-        max_num_frames: int | None = None,
         video_frame_dir_path: Path | None = None,
         preprocessor: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
     ):
         super().__init__()
         self.video_dir_path = video_dir_path
-        self.max_num_frames = max_num_frames
         self.video_frame_dir_path = video_frame_dir_path
         self._preprocessor = preprocessor
         with open(ann_file_path) as f:
