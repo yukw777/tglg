@@ -1,9 +1,11 @@
 import math
-from itertools import islice, zip_longest
-from typing import Callable, Iterator, TypedDict
+from itertools import zip_longest
+from typing import Callable, TypedDict
 
 import torch
 from transformers import PreTrainedTokenizerBase
+
+from real_time_vlm_benchmark.datasets.utils import chunked
 
 GenerationConfig = TypedDict(
     "GenerationConfig",
@@ -68,11 +70,6 @@ def tokenize_real_time_interleaved_dialogue(
     num_interleaved_frames: int,
     interleaved_dialogue: list[dict],
 ) -> tuple[torch.Tensor, torch.Tensor, int]:
-    def chunked(seq: list, n: int) -> Iterator[list]:
-        iterator = iter(seq)
-        while chunk := list(islice(iterator, n)):
-            yield chunk
-
     def handle_text_utterance(
         tokens: list[int], labels: list[int], text_utter: dict, num_frames: int
     ) -> int:

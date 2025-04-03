@@ -1,5 +1,7 @@
 from collections import defaultdict
+from itertools import islice
 from pathlib import Path
+from typing import Iterator
 
 import torch
 from torch.utils.data import Dataset
@@ -42,3 +44,9 @@ def convert_to_frame_dataset(
         }
         for (video_id, video_path), idx in frame_data.items()
     ]
+
+
+def chunked(seq: list, n: int) -> Iterator[list]:
+    iterator = iter(seq)
+    while chunk := list(islice(iterator, n)):
+        yield chunk
