@@ -84,14 +84,30 @@ class Ego4dGoalStepDataset(RealTimeDataset):
         ann_file_path: Path,
         video_frame_dir_path: Path | None = None,
         preprocessor: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
+        video_stats: dict | None = None,
     ):
         super().__init__()
         self.video_dir_path = video_dir_path
         self.video_frame_dir_path = video_frame_dir_path
         self._preprocessor = preprocessor
+        self.ann_file_path = ann_file_path
         with open(ann_file_path) as f:
             anns = json.load(f)
         self.data = _convert_real_time_anns_to_datapoint(anns)
+        if video_stats is not None:
+            self._filter_data(video_stats)
+
+    def _filter_data(self, video_stats: dict) -> None:
+        i = 0
+        while i < len(self.data):
+            video_id, dialogue = self.data[i]
+            stats = video_stats[video_id]
+            vid_duration = stats["num_frames"] / stats["fps"]
+            if dialogue[-1]["start"] > vid_duration:
+                # the dialogue goes beyond the video duration so delete
+                del self.data[i]
+            else:
+                i += 1
 
     def __getitem__(self, index: int) -> dict:
         video_id, dialogue = self.data[index]

@@ -29,6 +29,7 @@ from videollm_online.models.configuration_live import LiveConfigMixin
 from videollm_online.models.vision_live import build_live_vision
 
 from real_time_vlm_benchmark.baseline_models.utils.sample import QueueSampler
+from real_time_vlm_benchmark.datasets import Ego4dGoalStepDataset
 from real_time_vlm_benchmark.datasets.utils import convert_to_frame_dataset
 
 
@@ -81,13 +82,24 @@ def run(
         vision_config.vision_pretrained, torch_dtype=getattr(torch, torch_dtype)
     ).vision_model
 
+    with open(video_stats_file) as f:
+        video_stats = json.load(f)
+    if isinstance(dataset, Ego4dGoalStepDataset):
+        # NOTE: Special handling for Ego4dGoalStepDataset
+        # Some dialogues in Ego4dGoalStepDataset go beyond the video duration,
+        # so let's filter them out by passing video_stats.
+        dataset = Ego4dGoalStepDataset(
+            dataset.video_dir_path,
+            dataset.ann_file_path,
+            video_frame_dir_path=dataset.video_frame_dir_path,
+            video_stats=video_stats,
+        )
+
     if start_idx is None:
         start_idx = 0
     if end_idx is None:
         end_idx = len(dataset)  # type: ignore
 
-    with open(video_stats_file) as f:
-        video_stats = json.load(f)
     frame_data = convert_to_frame_dataset(
         Subset(dataset, list(range(start_idx, end_idx))),
         video_stats,
