@@ -30,7 +30,6 @@ from videollm_online.models.arguments_live import get_args_class
 from videollm_online.models.configuration_live import LiveConfigMixin
 from videollm_online.models.vision_live import build_live_vision
 
-from real_time_vlm_benchmark.baseline_models.utils.sample import QueueSampler
 from real_time_vlm_benchmark.datasets import Ego4dGoalStepDataset
 from real_time_vlm_benchmark.datasets.utils import chunked, convert_to_frame_dataset
 
@@ -47,6 +46,7 @@ class FrameDataset(Dataset):
     def __getitem__(self, index: int) -> dict:
         datapoint = self.data[index]
         if self.use_decord:
+            decord.bridge.set_bridge("torch")
             vr = VideoReader(str(datapoint["video_path"]))
             frames = vr.get_batch(datapoint["frame_idx"])
         else:
@@ -176,10 +176,6 @@ def run(
                 self.progress_bar.update(progress)
 
     if accelerator.is_main_process:
-        queue: mp.Queue[int] = mp.Queue()
-        for i in range(len(filtered_frame_data)):
-            queue.put(i)
-        QueueManager.register("get_queue", lambda: queue)
         # NOTE: we have to use mp.Queue(), not the regular Queue b/c
         # the progress bar process is a local process.
         progress_queue: mp.Queue[int | None] = mp.Queue()
@@ -194,15 +190,12 @@ def run(
     accelerator.wait_for_everyone()
 
     if not accelerator.is_main_process:
-        QueueManager.register("get_queue")
         QueueManager.register("get_progress_queue")
-        QueueManager.register("get_file_locks")
         manager = QueueManager(
             address=(mp_manager_ip_addr, mp_manager_port),
             authkey=mp_manager_auth_key,
         )
         manager.connect()
-        queue = manager.get_queue()  # type: ignore
         progress_queue = manager.get_progress_queue()  # type: ignore
 
     accelerator.wait_for_everyone()
@@ -213,10 +206,6 @@ def run(
     vision_model.eval()
     vision_model.to(accelerator.device)
 
-    # set up the preprocessor
-    decord.bridge.set_bridge("torch")
-
-    # set up the dataloader
     def collate(datapoints: list[dict]) -> dict:
         return {
             "video_id": [dp["video_id"] for dp in datapoints],
@@ -224,68 +213,69 @@ def run(
             "frames": torch.cat([dp["frames"] for dp in datapoints]),
         }
 
-    dataloader = DataLoader(
-        frame_dataset,
-        batch_size=per_device_batch_size,
-        num_workers=num_dataloader_workers,
-        pin_memory=True,
-        collate_fn=collate,
-        sampler=QueueSampler(queue),
-    )
-    failure = torch.tensor(False, device=accelerator.device)
-    accelerator.wait_for_everyone()
-    for batch in dataloader:
-        try:
-            with torch.inference_mode():
-                batch_encoded_frames = vision_encode(
-                    vision_model, batch["frames"].to(accelerator.device)
+    with accelerator.split_between_processes(
+        sorted(range(len(frame_dataset)))
+    ) as per_process_idx:
+        dataloader = DataLoader(
+            Subset(frame_dataset, per_process_idx),
+            batch_size=per_device_batch_size,
+            num_workers=num_dataloader_workers,
+            pin_memory=True,
+            collate_fn=collate,
+        )
+        failure = torch.tensor(False, device=accelerator.device)
+        for batch in dataloader:
+            try:
+                with torch.inference_mode():
+                    batch_encoded_frames = vision_encode(
+                        vision_model, batch["frames"].to(accelerator.device)
+                    )
+            except Exception as e:
+                print(
+                    f"[rank {accelerator.process_index}] Exception raised for batch {batch['video_id']}. Skipping: {e}"
                 )
-        except Exception as e:
-            print(
-                f"[rank {accelerator.process_index}] Exception raised for batch {batch['video_id']}. Skipping: {e}"
-            )
-            failure = torch.tensor(True, device=accelerator.device)
-            continue
-        for video_id, frame_idx, encoded_frames in zip(
-            batch["video_id"],
-            batch["frame_idx"],
-            batch_encoded_frames.split(
-                [len(frame_idx) for frame_idx in batch["frame_idx"]]
-            ),
-            strict=True,
-        ):
-            # NOTE: CRITICAL REGION! Acquire a lock!
-            lock = FileLock(f"{video_id}.lock")
-            # we combine the previously encoded frames with the new ones
-            # and save the slices to save disk space.
-            encoded_frames = encoded_frames.to(
-                torch.device("cpu"), getattr(torch, torch_dtype)
-            )
-            frames_file = results_dir / f"{video_id}.pt"
-            if frames_file.exists():
-                finished_frames_dict = torch.load(frames_file)
-                finished_frame_idx = list(finished_frames_dict.keys())
-                frame_idx.extend(finished_frame_idx)
-                encoded_frames = torch.cat(
-                    [encoded_frames]
-                    + [
-                        finished_frames_dict[frame_id].unsqueeze(0)
-                        for frame_id in finished_frame_idx
-                    ]
+                failure = torch.tensor(True, device=accelerator.device)
+                continue
+            for video_id, frame_idx, encoded_frames in zip(
+                batch["video_id"],
+                batch["frame_idx"],
+                batch_encoded_frames.split(
+                    [len(frame_idx) for frame_idx in batch["frame_idx"]]
+                ),
+                strict=True,
+            ):
+                # NOTE: CRITICAL REGION! Acquire a lock!
+                lock = FileLock(f"{video_id}.lock")
+                # we combine the previously encoded frames with the new ones
+                # and save the slices to save disk space.
+                encoded_frames = encoded_frames.to(
+                    torch.device("cpu"), getattr(torch, torch_dtype)
                 )
-            encoded_frame_dict = {
-                frame_id: encoded_frame
-                for frame_id, encoded_frame in zip(
-                    frame_idx,
-                    encoded_frames,
-                    strict=True,
-                )
-            }
-            frames_file.parent.mkdir(parents=True, exist_ok=True)
-            torch.save(encoded_frame_dict, frames_file)
-            # NOTE: END OF CRITICAL REGION. Release the lock.
-            lock.release()
-            progress_queue.put(1)
+                frames_file = results_dir / f"{video_id}.pt"
+                if frames_file.exists():
+                    finished_frames_dict = torch.load(frames_file)
+                    finished_frame_idx = list(finished_frames_dict.keys())
+                    frame_idx.extend(finished_frame_idx)
+                    encoded_frames = torch.cat(
+                        [encoded_frames]
+                        + [
+                            finished_frames_dict[frame_id].unsqueeze(0)
+                            for frame_id in finished_frame_idx
+                        ]
+                    )
+                encoded_frame_dict = {
+                    frame_id: encoded_frame
+                    for frame_id, encoded_frame in zip(
+                        frame_idx,
+                        encoded_frames,
+                        strict=True,
+                    )
+                }
+                frames_file.parent.mkdir(parents=True, exist_ok=True)
+                torch.save(encoded_frame_dict, frames_file)
+                # NOTE: END OF CRITICAL REGION. Release the lock.
+                lock.release()
+                progress_queue.put(1)
     success = (~torch.any(accelerator.gather(failure))).item()
     # signal the progress bar process to exit
     if accelerator.is_main_process:
