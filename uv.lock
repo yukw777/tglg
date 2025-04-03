@@ -3684,6 +3684,7 @@ dependencies = [
     { name = "torchvision" },
     { name = "tqdm" },
     { name = "types-pyyaml" },
+    { name = "video-reader-rs" },
     { name = "videollm-online" },
     { name = "wandb" },
     { name = "whisperx" },
@@ -3728,6 +3729,7 @@ requires-dist = [
     { name = "torchvision", specifier = ">=0.21.0" },
     { name = "tqdm", specifier = ">=4.67.1" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20241230" },
+    { name = "video-reader-rs", specifier = ">=0.2.4" },
     { name = "videollm-online", git = "https://github.com/yukw777/videollm-online.git?rev=3be744ee9bda681a81c443dd7436c2f2826d0c78" },
     { name = "wandb", specifier = ">=0.19.7" },
     { name = "whisperx", specifier = ">=3.3.1" },
@@ -5123,6 +5125,30 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/4b/4d/938bd85e5bf2edeec766267a5015ad969730bb91e31b44021dfe8b22df6c/uvicorn-0.34.0.tar.gz", hash = "sha256:404051050cd7e905de2c9a7e61790943440b3416f49cb409f965d9dcd0fa73e9", size = 76568 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/61/14/33a3a1352cfa71812a3a21e8c9bfb83f60b0011f5e36f2b1399d51928209/uvicorn-0.34.0-py3-none-any.whl", hash = "sha256:023dc038422502fa28a09c7a30bf2b6991512da7dcdb8fd35fe57cfc154126f4", size = 62315 },
+]
+
+[[package]]
+name = "video-reader-rs"
+version = "0.2.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b2/97/eee622a057d3334e785eb63870172960125b6a057347f1cfaba491d06e60/video_reader_rs-0.2.4.tar.gz", hash = "sha256:580d7b542574bc70ee71bd0d02e1f79802407b28857f3c8f799e95716aa492d3", size = 34751 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a7/8e/c3355d9095692ca9d39f30a829ab84250987185c6bb0e02656daf42d5792/video_reader_rs-0.2.4-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:00b942e1ec1aa327b7157e54caad9c5130bbbe837446d279b37aa1d24ba5f07f", size = 11756952 },
+    { url = "https://files.pythonhosted.org/packages/d3/77/ca3ce9824ad3e02d93118fe177e981722a3feba9bc1f04b4ca1dd3d9caca/video_reader_rs-0.2.4-cp310-cp310-win_amd64.whl", hash = "sha256:d40372e1b0b5aa2ab38e8f6ca5acb8411252665eb7268c50732e861f05075168", size = 739004 },
+    { url = "https://files.pythonhosted.org/packages/f5/dd/7586d4d4c8d9e7eec07762354b39f9236849f5c0c8b63d9ae8cbce64e6c3/video_reader_rs-0.2.4-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:19d4fbccd0333cde31356c17dc3143a210d4894af2d312a6b5930f189763de41", size = 877410 },
+    { url = "https://files.pythonhosted.org/packages/ea/87/f121f25756fc325a1eeb5629dcb3f08c04aa482b5f2e1151a5f21fb11729/video_reader_rs-0.2.4-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:e039956d402c7f792eb15e3455cf7a09e9da62bd804cca897d025826a68f862c", size = 777440 },
+    { url = "https://files.pythonhosted.org/packages/4a/56/ce2eeeeb1a92d04656047bd967e4ebcf6806df377e2172a2e554509d0487/video_reader_rs-0.2.4-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:fb93dca336b2d76dbe06c80721857471c60ae2e5fad0772312ba1551aeed7e46", size = 11756326 },
+    { url = "https://files.pythonhosted.org/packages/04/8e/a4be81a7e9a6acf05c6a17410709eb5a05d63a7fca5ab7bd2168d1ee37f1/video_reader_rs-0.2.4-cp311-cp311-win_amd64.whl", hash = "sha256:1cb6111a9498e185e1901b936b167def69f6ee719fdd8db8370ff6469fdc5ff3", size = 738666 },
+    { url = "https://files.pythonhosted.org/packages/ca/b2/8505356652cbaf19fc310764f19427b4a5ab5849939ff081a227368f51ac/video_reader_rs-0.2.4-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:93acdb47c8e08bc3fc1d6c03241f5b47e92573c10fc6cd105ed175b0fb8ca645", size = 875267 },
+    { url = "https://files.pythonhosted.org/packages/73/e5/d98da546678e08a59dbf6af579cd09c5d9294911d6e77361577e7b005aeb/video_reader_rs-0.2.4-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:3aad2b1ade9396a7081d07d73e30169f65206aef5d1b195a114fa63b348f070e", size = 776098 },
+    { url = "https://files.pythonhosted.org/packages/a8/a4/71ef66f64b3d3473b61fd80132b45fd5907d9cd50ab08209e5ef88f786bc/video_reader_rs-0.2.4-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:731764c39b477e7c8c6cf2d9e6aebd394cc932ba2cf2b0d169da063f81ce4e0f", size = 11755188 },
+    { url = "https://files.pythonhosted.org/packages/94/e1/daceb12df395051a1e2ee69f0af20c5608365149e42e01e499abfcc80626/video_reader_rs-0.2.4-cp312-cp312-win_amd64.whl", hash = "sha256:26eb9499311d21fcc0a29c4fdc62f2763d919245f3743af2a836d2c7a98bf225", size = 736922 },
+    { url = "https://files.pythonhosted.org/packages/1e/27/8cbe688981dba7b6f672e1780006673882a290489a3261303dbdc974f729/video_reader_rs-0.2.4-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:f8dbcd8c8d8ac4e36e8529e7995ea21dcf1ba0bad22f4a48750a0987dd24a7bb", size = 874985 },
+    { url = "https://files.pythonhosted.org/packages/0d/4f/7e9ba7abdd794bb8e8985b5579e1911a4fb9bffbb1c5d99ec57b19395842/video_reader_rs-0.2.4-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:863f8a7dd944ef8bfbec483628784fc4143f3e45193ddaa3c91e38ba9f807dff", size = 776013 },
+    { url = "https://files.pythonhosted.org/packages/9c/01/11e9d8d8777de5b40bac2a56f2bb2122003755e3a93152f97f49d37319fc/video_reader_rs-0.2.4-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:12b7594d67b3c49bdc9957523d35ae4e6705145d116651427d9fb9bfecb36b90", size = 11754908 },
+    { url = "https://files.pythonhosted.org/packages/c8/2e/45cf79322d5b2d562eb8b0b04f1156751f5cdc633e987ee1860775dfb704/video_reader_rs-0.2.4-cp313-cp313-win_amd64.whl", hash = "sha256:829b6654c01306bafde26b83969913c6f38d4e46a040237b89a72847c425746e", size = 736478 },
+    { url = "https://files.pythonhosted.org/packages/bc/6e/64a337668d9a19f2469e8be3d1786c05da9f65c8c9c30b402fff72394785/video_reader_rs-0.2.4-pp310-pypy310_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:8e13be5b2a3799a6454bac86dbee9c9ad22f5011bc425507362d89c46cd3f61a", size = 11757522 },
+    { url = "https://files.pythonhosted.org/packages/d6/c6/e5ca65f0e2e0b7aee0b57707ae0f9231525b6281e6d76f5049e30dff1f97/video_reader_rs-0.2.4-pp311-pypy311_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:f9ab89bda59ad2b2b5a5f6c73acdc6879b886514ac0bbbf4b3c3d6d57e8195ef", size = 11757011 },
 ]
 
 [[package]]

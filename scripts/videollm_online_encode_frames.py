@@ -24,6 +24,7 @@ from torch.utils.data import (
 from torchvision.transforms.v2.functional import resize
 from tqdm import tqdm
 from transformers import AutoModel
+from video_reader import PyVideoReader
 from videollm_online.models.arguments_live import get_args_class
 from videollm_online.models.configuration_live import LiveConfigMixin
 from videollm_online.models.vision_live import build_live_vision
@@ -34,15 +35,22 @@ from real_time_vlm_benchmark.datasets.utils import convert_to_frame_dataset
 
 
 class FrameDataset(Dataset):
-    def __init__(self, data: list[dict], frame_resolution: int) -> None:
+    def __init__(
+        self, data: list[dict], frame_resolution: int, use_decord: bool
+    ) -> None:
         super().__init__()
         self.data = data
         self.frame_resolution = frame_resolution
+        self.use_decord = use_decord
 
     def __getitem__(self, index: int) -> dict:
         datapoint = self.data[index]
-        vr = VideoReader(str(datapoint["video_path"]))
-        frames = vr.get_batch(datapoint["frame_idx"])
+        if self.use_decord:
+            vr = VideoReader(str(datapoint["video_path"]))
+            frames = vr.get_batch(datapoint["frame_idx"])
+        else:
+            vr = PyVideoReader(str(datapoint["video_path"]))
+            frames = vr.get_batch(datapoint["frame_idx"])
         frames = rearrange(frames, "t h w c -> t c h w")
         frames = resize(frames, [self.frame_resolution] * 2)
         return {
@@ -70,6 +78,7 @@ def run(
     mp_manager_ip_addr: str = "",
     mp_manager_port: int = 12345,
     mp_manager_auth_key: bytes = b"password",
+    use_decord: bool = True,
 ) -> int:
     set_seed(random_seed)
 
@@ -180,7 +189,7 @@ def run(
         progress_queue = manager.get_progress_queue()  # type: ignore
     accelerator.wait_for_everyone()
 
-    frame_dataset = FrameDataset(filtered_frame_data, args.frame_resolution)
+    frame_dataset = FrameDataset(filtered_frame_data, args.frame_resolution, use_decord)
 
     # set up the model
     vision_model.eval()
