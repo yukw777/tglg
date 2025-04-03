@@ -8,6 +8,7 @@ dependencies = [
     "accelerate>=1.4.0",
     "decord>=0.6.0",
     "einops>=0.8.1",
+    "filelock>=3.17.0",
     "jsonargparse[signatures]>=4.37.0",
     "lightning>=2.5.0.post0",
     "lightning-sdk>=0.2.3",

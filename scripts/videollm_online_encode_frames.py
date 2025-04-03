@@ -15,6 +15,7 @@ from accelerate import Accelerator
 from accelerate.utils import set_seed
 from decord import VideoReader
 from einops import rearrange
+from filelock import FileLock
 from jsonargparse import auto_cli
 from torch.utils.data import (
     DataLoader,
@@ -140,12 +141,6 @@ def run(
             }
         )
 
-    # collect video IDs to create locks.
-    # shouldn't need to use a set, but just in case.
-    video_ids = set(
-        datapoint["video_id"] for datapoint in unchunked_filtered_frame_data
-    )
-
     # chunk frames to avoid decoding a large number of frames at once
     filtered_frame_data = []
     for datapoint in tqdm(unchunked_filtered_frame_data, desc="Chunk frames"):
@@ -189,8 +184,6 @@ def run(
         # the progress bar process is a local process.
         progress_queue: mp.Queue[int | None] = mp.Queue()
         QueueManager.register("get_progress_queue", lambda: progress_queue)
-        file_locks = {video_id: mp.Lock() for video_id in video_ids}
-        QueueManager.register("get_file_locks", lambda: file_locks)
         manager = QueueManager(
             address=(mp_manager_ip_addr, mp_manager_port),
             authkey=mp_manager_auth_key,
@@ -211,7 +204,6 @@ def run(
         manager.connect()
         queue = manager.get_queue()  # type: ignore
         progress_queue = manager.get_progress_queue()  # type: ignore
-        file_locks = manager.get_file_locks()  # type: ignore
 
     accelerator.wait_for_everyone()
 
@@ -262,7 +254,7 @@ def run(
             strict=True,
         ):
             # NOTE: CRITICAL REGION! Acquire a lock!
-            file_locks[video_id].acquire()
+            lock = FileLock(f"{video_id}.lock")
             # we combine the previously encoded frames with the new ones
             # and save the slices to save disk space.
             encoded_frames = encoded_frames.to(
@@ -291,7 +283,7 @@ def run(
             frames_file.parent.mkdir(parents=True, exist_ok=True)
             torch.save(encoded_frame_dict, frames_file)
             # NOTE: END OF CRITICAL REGION. Release the lock.
-            file_locks[video_id].release()
+            lock.release()
             progress_queue.put(1)
     success = (~torch.any(accelerator.gather(failure))).item()
     # signal the progress bar process to exit
