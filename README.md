@@ -216,6 +216,23 @@ WANDB_PROJECT=real-time-ego4d-goalstep-train torchrun --nnodes=1 --nproc_per_nod
 --output_dir outputs/ego4d-goalstep+real-time-model
 ```
 
+Or on Slurm
+
+```bash
+python slurm-scripts/submit_train_videollm_online_ego4d_goalstep.py \
+--job_name ego4d-goalstep+real-time-model \
+--account <account> \
+--partition <partition> \
+--time 01-00:00:00 \
+--num_gpus 4 \
+--mem_per_gpu 32G \
+--wandb_project real-time-ego4d-goalstep-train \
+--num_dataloader_workers 4 \
+--email <email> \
+--hf_home /path/to/hf/home \
+--train_args '{"live_version": "live1+", "videollm_online_variant": "real-time", "video_dir": "path/to/ego4d/v2/videos", "ann_file": "path/to/videollm-online-chat-ego4d-134k/goalstep_livechat_trainval_filtered_21k.json", "video_frame_dir": "path/to/Ego4DGoalStep/encoded-frames", "video_stats_file": "path/to/ego4d/video_stats.json", "pretrained_videollm_online": "chenjoya/videollm-online-8b-v1plus", "bf16": "true", "report_to": "wandb", "save_strategy": "epoch", "num_train_epochs": "2", "per_device_train_batch_size": "8", "gradient_accumulation_steps": "2", "gradient_checkpointing": "True", "learning_rate": "0.0001", "optim": "adamw_torch", "lr_scheduler_type": "cosine", "warmup_ratio": "0.05", "logging_steps": "10", "output_dir": "outputs/ego4d-goalstep+real-time-model"}'
+```
+
 ## Run Inference
 
 Below is an example for RealTimeSoccerNet on SoccerNet, but the script is designed to be able to handle all the models and datasets.
