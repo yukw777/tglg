@@ -184,6 +184,38 @@ WANDB_PROJECT=real-time-soccernet-train torchrun --nnodes=1 --nproc_per_node=4 -
 --output_dir outputs/real-time-soccernet
 ```
 
+## Fine-tune on Ego4D GoalStep
+
+### Real-Time Model
+
+Takes about a day on 4xL40S.
+
+```bash
+WANDB_PROJECT=real-time-ego4d-goalstep-train torchrun --nnodes=1 --nproc_per_node=4 --tee 3 --log-dir real-time-ego4d-goalstep-training-logs scripts/train_videollm_online_ego4d_goalstep.py \
+--live_version live1+ \
+--videollm_online_variant real-time \
+--video_dir path/to/ego4d/v2/videos \
+--ann_file path/to/videollm-online-chat-ego4d-134k/goalstep_livechat_trainval_filtered_21k.json \
+--video_frame_dir path/to/Ego4DGoalStep/encoded-frames \
+--video_stats_file path/to/ego4d/video_stats.json \
+--pretrained_videollm_online chenjoya/videollm-online-8b-v1plus \
+--bf16 true \
+--report_to wandb \
+--save_strategy epoch \
+--num_train_epochs 2 \
+--per_device_train_batch_size 8 \
+--gradient_accumulation_steps 2 \
+--gradient_checkpointing True \
+--learning_rate 0.0001 \
+--optim adamw_torch \
+--lr_scheduler_type cosine \
+--warmup_ratio 0.05 \
+--logging_steps 10 \
+--dataloader_num_workers 12 \
+--dataloader_prefetch_factor 4 \
+--output_dir outputs/ego4d-goalstep+real-time-model
+```
+
 ## Run Inference
 
 Below is an example for RealTimeSoccerNet on SoccerNet, but the script is designed to be able to handle all the models and datasets.
