@@ -248,7 +248,10 @@ def init_model_tokenizer_for_training(
     # which is only necessary for inference. Let's override it.
     tokenizer.padding_side = "right"
     model = PeftModel.from_pretrained(
-        model, train_args.pretrained_videollm_online, is_trainable=True
+        model,
+        train_args.pretrained_videollm_online,
+        is_trainable=True,
+        torch_device="cpu",
     )
     if train_args.set_vision_inside:
         model.set_vision_inside()
