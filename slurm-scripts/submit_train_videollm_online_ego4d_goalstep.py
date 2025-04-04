@@ -60,7 +60,7 @@ export DECORD_EOF_RETRY_MAX=20480
 export WANDB_NAME={job_name}
 export WANDB_PROJECT={wandb_project}
 {single_gpu if num_gpus < 2 else multi_gpu}
---num_dataloader_workers {num_dataloader_workers} \
+--dataloader_num_workers {num_dataloader_workers} \
 {args}
 """
     print(script)
