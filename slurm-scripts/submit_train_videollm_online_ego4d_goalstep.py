@@ -60,7 +60,7 @@ scripts/train_videollm_online_ego4d_goalstep.py \\"""
 #SBATCH --account={account}
 #SBATCH --nodes={nodes}
 #SBATCH --gpus-per-node={gpus_per_node}
-#SBATCH --cpus-per-node={num_dataloader_workers * gpus_per_node}
+#SBATCH --cpus-per-task={num_dataloader_workers * gpus_per_node}
 #SBATCH --mem-per-gpu={mem_per_gpu}
 #SBATCH --output=%x-%j.log
 
