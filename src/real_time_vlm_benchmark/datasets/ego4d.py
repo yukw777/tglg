@@ -16,7 +16,9 @@ def _convert_real_time_anns_to_datapoint(
 
     data: list[tuple[str, list[dict]]] = []
     for ann in anns:
-        conversation = ann["conversation"]
+        conversation = [
+            utter for utter in ann["conversation"] if utter["content"] != ""
+        ]
         curr_user_utter: dict | None = None
         for i, utter in enumerate(conversation):
             if utter["role"] == "user":
