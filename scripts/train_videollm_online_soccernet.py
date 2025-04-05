@@ -71,14 +71,14 @@ def train() -> None:
         video_stats=video_stats,
     )
     train_dataset = SoccerNetDataset(
-        data_args.soccernet_dir,
-        str(Path(data_args.soccernet_dir) / "real-time-eval-annotation_train.json"),
+        Path(data_args.soccernet_dir) / "real-time-eval-annotation_train.json",
+        video_dir_path=data_args.soccernet_dir,
         video_frame_dir_path=data_args.video_frame_dir,
         preprocessor=preprocessor,
     )
     val_dataset = SoccerNetDataset(
-        data_args.soccernet_dir,
-        str(Path(data_args.soccernet_dir) / "real-time-eval-annotation_val.json"),
+        Path(data_args.soccernet_dir) / "real-time-eval-annotation_val.json",
+        video_dir_path=data_args.soccernet_dir,
         video_frame_dir_path=data_args.video_frame_dir,
         preprocessor=preprocessor,
     )
