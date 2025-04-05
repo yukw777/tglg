@@ -1,6 +1,7 @@
 import json
 import multiprocessing as mp
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from multiprocessing.managers import BaseManager
 from pathlib import Path
 
@@ -122,25 +123,38 @@ def run(
     )
 
     # filter out finished frame indices
-    unchunked_filtered_frame_data = []
-    for i in tqdm(range(len(frame_data)), desc="Filter Finished Indices"):
-        datapoint = frame_data[i]
+    def get_unfinished_frame_idx(datapoint: dict) -> list[int]:
         frame_id_set = set(datapoint["frame_idx"].tolist())
         finished_id_set: set[int] = set()
         frames_file = results_dir / f"{datapoint['video_id']}.pt"
         if frames_file.exists():
             finished_frames_dict = torch.load(frames_file)
             finished_id_set.update(finished_frames_dict.keys())
-        frame_idx = sorted(frame_id_set - finished_id_set)
-        if len(frame_idx) == 0:
-            continue
-        unchunked_filtered_frame_data.append(
-            {
-                "video_id": datapoint["video_id"],
-                "video_path": datapoint["video_path"],
-                "frame_idx": frame_idx,
-            }
-        )
+        return sorted(frame_id_set - finished_id_set)
+
+    unchunked_filtered_frame_data = []
+    with ThreadPoolExecutor() as executor:
+        future_to_id = {
+            executor.submit(get_unfinished_frame_idx, datapoint): i
+            for i, datapoint in enumerate(frame_data)
+        }
+        for future in tqdm(
+            as_completed(future_to_id),
+            total=len(frame_data),
+            desc="Filter Finished Indices",
+        ):
+            frame_idx = future.result()
+            if len(frame_idx) == 0:
+                continue
+            idx = future_to_id[future]
+            datapoint = frame_data[idx]
+            unchunked_filtered_frame_data.append(
+                {
+                    "video_id": datapoint["video_id"],
+                    "video_path": datapoint["video_path"],
+                    "frame_idx": frame_idx,
+                }
+            )
 
     # chunk frames to avoid decoding a large number of frames at once
     filtered_frame_data = []
