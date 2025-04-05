@@ -103,8 +103,9 @@ class Ego4dGoalStepDataset(RealTimeDataset):
             video_id, dialogue = self.data[i]
             stats = video_stats[video_id]
             vid_duration = stats["num_frames"] / stats["fps"]
-            if dialogue[-1]["start"] > vid_duration:
-                # the dialogue goes beyond the video duration so delete
+            if dialogue[-1]["start"] >= vid_duration - 1:
+                # the dialogue goes beyond the video duration (minus 1 sec for good measure)
+                # so delete
                 del self.data[i]
             else:
                 i += 1
