@@ -1,4 +1,5 @@
 import subprocess
+from pathlib import Path
 
 from jsonargparse import auto_cli
 
@@ -13,6 +14,7 @@ def main(
     mem_per_gpu: str,
     wandb_project: str,
     num_dataloader_workers: int,
+    results_dir_root: Path,
     email: str | None = None,
     hf_home: str | None = None,
     dry_run: bool = False,
@@ -55,6 +57,7 @@ scripts/run_inference.py \\"""
     run_inference_args["wandb_run_name"] = job_name
     run_inference_args["mp_manager_ip_addr"] = "$MASTER_NODE"
     run_inference_args["mp_manager_port"] = "$MP_MANAGER_PORT"
+    run_inference_args["results_dir"] = str(results_dir_root / job_name)
     args = " \\\n".join(f"--{k} {v}" for k, v in run_inference_args.items())
     script = rf"""#!/bin/bash
 
