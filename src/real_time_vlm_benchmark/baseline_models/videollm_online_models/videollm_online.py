@@ -85,7 +85,7 @@ class VideoLLMOnlineModel(BaselineModel):
         dialogue = datapoint["dialogue"]
 
         vr: VideoReader | None = None
-        if self.video_stats is None:
+        if self.video_stats is None or datapoint["video_id"] not in self.video_stats:
             vr = VideoReader(str(datapoint["video_path"]))
             avg_fps = vr.get_avg_fps()
             total_num_frames = len(vr)
@@ -104,7 +104,10 @@ class VideoLLMOnlineModel(BaselineModel):
         frame_timestamps = frame_idx / avg_fps
         if self.set_vision_inside:
             decord.bridge.set_bridge("torch")
-            if self.video_stats is None:
+            if (
+                self.video_stats is None
+                or datapoint["video_id"] not in self.video_stats
+            ):
                 assert vr is not None
             else:
                 vr = VideoReader(str(datapoint["video_path"]))
