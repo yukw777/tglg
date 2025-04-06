@@ -11,6 +11,7 @@ def main(
     total_gpus: int,
     gpus_per_node: int,
     mem_per_gpu: str,
+    wandb_project: str,
     num_dataloader_workers: int,
     email: str | None = None,
     hf_home: str | None = None,
@@ -48,6 +49,8 @@ scripts/run_inference.py \\"""
 
     if run_inference_args is None:
         run_inference_args = {}
+    run_inference_args["wandb_project"] = wandb_project
+    run_inference_args["wandb_run_name"] = job_name
     args = " \\\n".join(f"--{k} {v}" for k, v in run_inference_args.items())
     script = rf"""#!/bin/bash
 
@@ -66,7 +69,6 @@ module load cuda gcc
 # https://github.com/dmlc/decord/issues/156
 export DECORD_EOF_RETRY_MAX=20480
 {hf_home}
-export WANDB_NAME={job_name}
 {single_gpu if total_gpus < 2 else multi_gpu}
 --num_dataloader_workers {num_dataloader_workers} \
 {args}
