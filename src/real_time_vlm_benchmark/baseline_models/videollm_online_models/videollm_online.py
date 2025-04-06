@@ -4,6 +4,7 @@ from dataclasses import asdict
 from typing import Callable
 
 import torch
+from peft import PeftModel
 from transformers import Cache, OffloadedCache
 from transformers.modeling_outputs import CausalLMOutputWithPast
 
@@ -62,6 +63,37 @@ class VideoLLMOnlineModel(BaselineModel):
             with open(video_stats_file) as f:
                 self.video_stats = json.load(f)
 
+        # HACK: PeftModel automatically infers which device the weights should be loaded,
+        # and this causes issues during the initialization process when Peft tries to load
+        # the weights from checkpoints or pretrained weights to the incorrect GPUs. We could
+        # get around this issue by explicitly setting torch_device="cpu", but VideoLLM-Online
+        # doesn't do that internally, so we monkeypatch as a workaround.
+        _original_load_adapter = PeftModel.load_adapter
+
+        def load_adapter_to_cpu(
+            self,
+            model_id: str,
+            adapter_name: str,
+            is_trainable: bool = False,
+            torch_device: str | None = None,
+            autocast_adapter_dtype: bool = True,
+            ephemeral_gpu_offload: bool = False,
+            low_cpu_mem_usage: bool = False,
+            **kwargs,
+        ):
+            return _original_load_adapter(
+                self,
+                model_id,
+                adapter_name,
+                is_trainable=is_trainable,
+                autocast_adapter_dtype=autocast_adapter_dtype,
+                ephemeral_gpu_offload=ephemeral_gpu_offload,
+                low_cpu_mem_usage=low_cpu_mem_usage,
+                torch_device="cpu",
+                **kwargs,
+            )
+
+        PeftModel.load_adapter = load_adapter_to_cpu  # type: ignore
         self.model, self.tokenizer = build_model_and_tokenizer(
             is_training=False, set_vision_inside=self.set_vision_inside, **asdict(args)
         )
