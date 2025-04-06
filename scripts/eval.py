@@ -117,7 +117,9 @@ def read_ground_truth(ground_truth_file: str) -> dict[str, list[dict]]:
 def preprocess_inference_results(results: pd.DataFrame) -> dict[str, list[dict]]:
     preprocessed = defaultdict(list)
     for _, row in results.iterrows():
-        preprocessed[row["video_id"]].append(
+        # NOTE: backward compatibility
+        video_id = row["video_id"] if "video_id" in row else row["video"]
+        preprocessed[video_id].append(
             {"content": row["content"], "start": float(row["start"])}
         )
     return preprocessed
