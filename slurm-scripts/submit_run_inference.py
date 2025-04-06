@@ -37,7 +37,8 @@ def main(
 
     multi_gpu = f"""RDZV_ID=$RANDOM
 MASTER_NODE=$(scontrol show hostname $SLURM_NODELIST | head -n 1)
-MASTER_PORT=$((1024 + RANDOM % 64512))
+MASTER_PORT=$((1024 + RANDOM % 64510))
+MP_MANAGER_PORT=$((MASTER_PORT + 1))
 srun uv run torchrun \\
 --nnodes={nodes} \\
 --nproc_per_node={gpus_per_node} \\
@@ -49,8 +50,11 @@ scripts/run_inference.py \\"""
 
     if run_inference_args is None:
         run_inference_args = {}
+    run_inference_args["num_dataloader_workers"] = str(num_dataloader_workers)
     run_inference_args["wandb_project"] = wandb_project
     run_inference_args["wandb_run_name"] = job_name
+    run_inference_args["mp_manager_ip_addr"] = "$MASTER_NODE"
+    run_inference_args["mp_manager_port"] = "$MP_MANAGER_PORT"
     args = " \\\n".join(f"--{k} {v}" for k, v in run_inference_args.items())
     script = rf"""#!/bin/bash
 
@@ -70,7 +74,6 @@ module load cuda gcc
 export DECORD_EOF_RETRY_MAX=20480
 {hf_home}
 {single_gpu if total_gpus < 2 else multi_gpu}
---num_dataloader_workers {num_dataloader_workers} \
 {args}
 """
     print(script)
