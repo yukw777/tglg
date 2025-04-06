@@ -4,7 +4,7 @@ from dataclasses import asdict
 from typing import Callable
 
 import torch
-from transformers import OffloadedCache
+from transformers import Cache, OffloadedCache
 from transformers.modeling_outputs import CausalLMOutputWithPast
 
 # decord must be imported after torch
@@ -335,6 +335,11 @@ class RealTimeModel(VideoLLMOnlineModel):
         # Assume 150 wpm and 1.3 tokens per word
         # for frame_fps of 2, the number of tokens per frame is 2
         self.num_tokens_per_frame = math.ceil(150 * 1.3 / 60 / self.frame_fps)
+        # we stop generation on eos_token or \n (the start of the stream generation prompt)
+        self.eos_token_id_list = [
+            self.tokenizer.eos_token_id,
+            self.tokenizer.encode("\n", add_special_tokens=False)[0],
+        ]
 
     def _tokenize_interleaved_dialogue(
         self,
@@ -354,6 +359,71 @@ class RealTimeModel(VideoLLMOnlineModel):
         )
         return input_ids, num_interleaved_frames
 
+    def _generate(
+        self,
+        attention_mask: torch.Tensor,
+        past_key_values: Cache,
+        input_ids: torch.Tensor | None = None,
+        inputs_embeds: torch.Tensor | None = None,
+        **gen_kwargs,
+    ) -> tuple[torch.Tensor, torch.Tensor, Cache]:
+        assert not (input_ids is not None and inputs_embeds is not None), (
+            "Only one of input_ids and inputs_embeds can be set"
+        )
+        args = {
+            "past_key_values": past_key_values,
+            "attention_mask": attention_mask,
+            "return_dict_in_generate": True,
+            # we generate up to num_tokens_per_frame
+            "max_new_tokens": self.num_tokens_per_frame,
+            # Set to suppress warning
+            "pad_token_id": self.tokenizer.pad_token_id,
+            "eos_token_id": self.eos_token_id_list,
+        }
+        if input_ids is not None:
+            outputs = self.model.generate(input_ids=input_ids, **args, **gen_kwargs)
+        else:
+            outputs = self.model.generate(
+                inputs_embeds=inputs_embeds, **args, **gen_kwargs
+            )
+        if input_ids is not None:
+            generated_input_ids = outputs.sequences[:, input_ids.size(1) :]
+        else:
+            generated_input_ids = outputs.sequences
+        if generated_input_ids[0, -1] not in self.eos_token_id_list:
+            # process the last token so that it's cached
+            attention_mask = torch.cat(
+                [
+                    attention_mask,
+                    torch.ones(
+                        attention_mask.size(0),
+                        generated_input_ids.size(1),
+                        device=self.model.device,
+                    ),
+                ],
+                dim=1,
+            )
+            outputs = self.model(
+                input_ids=generated_input_ids[:, -1:],
+                past_key_values=outputs.past_key_values,
+                attention_mask=attention_mask,
+            )
+        else:
+            # no need to process, just update the attention_mask without the eos token
+            attention_mask = torch.cat(
+                [
+                    attention_mask,
+                    torch.ones(
+                        attention_mask.size(0),
+                        generated_input_ids.size(1) - 1,
+                        device=self.model.device,
+                    ),
+                ],
+                dim=1,
+            )
+
+        return generated_input_ids, attention_mask, outputs.past_key_values
+
     @torch.inference_mode()
     def predict(
         self, batch: dict, use_offloaded_cache: bool = False, **gen_kwargs
@@ -362,6 +432,7 @@ class RealTimeModel(VideoLLMOnlineModel):
         max_new_tokens = gen_kwargs.pop("max_new_tokens", None)
 
         outputs = self._process_context(batch, use_offloaded_cache)
+        past_key_values = outputs.past_key_values
 
         index = batch["index"][0].item()
         results: dict[int, list] = {index: []}
@@ -374,7 +445,7 @@ class RealTimeModel(VideoLLMOnlineModel):
             range(eval_frames.size(0)), desc="Frames", disable=not self.show_progress
         ):
             # NOTE: this is an important invariant, so we check it every iteration to be safe.
-            assert attention_mask.size(1) == outputs.past_key_values.get_seq_length()
+            assert attention_mask.size(1) == past_key_values.get_seq_length()
 
             # encode the current frame
             inputs_embeds = self.model.visual_embed(eval_frames[i : i + 1]).unsqueeze(0)
@@ -397,6 +468,7 @@ class RealTimeModel(VideoLLMOnlineModel):
                     past_key_values=outputs.past_key_values,
                     attention_mask=attention_mask,
                 )
+                past_key_values = outputs.past_key_values
                 next_token_probs = outputs.logits[:, -1:].softmax(dim=-1)
                 next_token_id = next_token_probs.argmax(dim=-1)
                 if next_token_id == self.stream_generation_prompt_ids[:, 0]:
@@ -417,49 +489,14 @@ class RealTimeModel(VideoLLMOnlineModel):
                         ],
                         dim=1,
                     )
-                    outputs = self.model.generate(
-                        input_ids=input_ids,
-                        past_key_values=outputs.past_key_values,
-                        attention_mask=attention_mask,
-                        return_dict_in_generate=True,
-                        # we generate up to num_tokens_per_frame
-                        max_new_tokens=self.num_tokens_per_frame,
-                        # Set to suppress warning
-                        pad_token_id=self.tokenizer.pad_token_id,
-                        **gen_kwargs,
+                    generated_input_ids, attention_mask, past_key_values = (
+                        self._generate(
+                            attention_mask,
+                            past_key_values,
+                            input_ids=input_ids,
+                            **gen_kwargs,
+                        )
                     )
-                    generated_input_ids = outputs.sequences[:, input_ids.size(1) :]
-                    if generated_input_ids[0, -1] != self.tokenizer.eos_token_id:
-                        # process the last token so that it's cached
-                        attention_mask = torch.cat(
-                            [
-                                attention_mask,
-                                torch.ones(
-                                    attention_mask.size(0),
-                                    generated_input_ids.size(1),
-                                    device=self.model.device,
-                                ),
-                            ],
-                            dim=1,
-                        )
-                        outputs = self.model(
-                            input_ids=generated_input_ids[:, -1:],
-                            past_key_values=outputs.past_key_values,
-                            attention_mask=attention_mask,
-                        )
-                    else:
-                        # no need to process, just update the attention_mask without the eos token
-                        attention_mask = torch.cat(
-                            [
-                                attention_mask,
-                                torch.ones(
-                                    attention_mask.size(0),
-                                    generated_input_ids.size(1) - 1,
-                                    device=self.model.device,
-                                ),
-                            ],
-                            dim=1,
-                        )
                     response = self.tokenizer.decode(
                         generated_input_ids[0],
                         skip_special_tokens=True,
@@ -481,7 +518,7 @@ class RealTimeModel(VideoLLMOnlineModel):
                         # and KV cache. The padding is automatically stripped.
                         torch.zeros(
                             inputs_embeds.size(0),
-                            outputs.past_key_values.get_seq_length(),
+                            past_key_values.get_seq_length(),
                             inputs_embeds.size(2),
                             dtype=inputs_embeds.dtype,
                             device=inputs_embeds.device,
@@ -490,49 +527,12 @@ class RealTimeModel(VideoLLMOnlineModel):
                     ],
                     dim=1,
                 )
-                outputs = self.model.generate(
+                generated_input_ids, attention_mask, past_key_values = self._generate(
+                    attention_mask,
+                    past_key_values,
                     inputs_embeds=inputs_embeds,
-                    past_key_values=outputs.past_key_values,
-                    attention_mask=attention_mask,
-                    return_dict_in_generate=True,
-                    # we generate up to num_tokens_per_frame
-                    max_new_tokens=self.num_tokens_per_frame,
-                    # Set to suppress warning
-                    pad_token_id=self.tokenizer.pad_token_id,
                     **gen_kwargs,
                 )
-                generated_input_ids = outputs.sequences
-                if generated_input_ids[0, -1] != self.tokenizer.eos_token_id:
-                    # process the last token so that it's cached
-                    attention_mask = torch.cat(
-                        [
-                            attention_mask,
-                            torch.ones(
-                                attention_mask.size(0),
-                                generated_input_ids.size(1),
-                                device=self.model.device,
-                            ),
-                        ],
-                        dim=1,
-                    )
-                    outputs = self.model(
-                        input_ids=generated_input_ids[:, -1:],
-                        past_key_values=outputs.past_key_values,
-                        attention_mask=attention_mask,
-                    )
-                else:
-                    # no need to process, just update the attention_mask without the eos token
-                    attention_mask = torch.cat(
-                        [
-                            attention_mask,
-                            torch.ones(
-                                attention_mask.size(0),
-                                generated_input_ids.size(1) - 1,
-                                device=self.model.device,
-                            ),
-                        ],
-                        dim=1,
-                    )
                 response = self.tokenizer.decode(
                     generated_input_ids[0],
                     skip_special_tokens=True,
@@ -540,7 +540,7 @@ class RealTimeModel(VideoLLMOnlineModel):
                 curr_utter["content"] += response
                 if (
                     len(curr_utter["content"]) > max_new_tokens
-                    or generated_input_ids[0, -1] == self.tokenizer.eos_token_id
+                    or generated_input_ids[0, -1] in self.eos_token_id_list
                 ):
                     # done with this one, so append and start a new utterance
                     curr_utter["content"] = curr_utter["content"].strip()
