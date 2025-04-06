@@ -326,7 +326,7 @@ def test_convert_holo_assist(
                     {"role": "assistant", "content": "a2", "eval": True},
                 ]
             },
-            "video_frame_dir_path",
+            Path("video_frame_dir_path"),
             [
                 {
                     "index": 0,
@@ -456,14 +456,16 @@ def test_convert_holo_assist(
 def test_holo_assist_dataset_init(
     tmp_path: Path,
     original_anns: dict,
-    video_frame_dir_path: str | None,
+    video_frame_dir_path: Path | None,
     expected_items: list[dict],
 ) -> None:
     anns_file = tmp_path / "ann.json"
     anns_file.write_text(json.dumps(original_anns))
 
     dataset = HoloAssistDataset(
-        "video_dir", str(anns_file), video_frame_dir_path=video_frame_dir_path
+        anns_file,
+        video_dir_path=Path("video_dir"),
+        video_frame_dir_path=video_frame_dir_path,
     )
     assert list(iter(dataset)) == expected_items
 

@@ -108,16 +108,17 @@ def _convert_real_time_anns_to_datapoint(
 class HoloAssistDataset(RealTimeDataset):
     def __init__(
         self,
-        video_dir_path: str,
-        ann_file_path: str,
-        video_frame_dir_path: str | None = None,
+        ann_file_path: Path,
+        video_dir_path: Path | None = None,
+        video_frame_dir_path: Path | None = None,
         preprocessor: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
     ) -> None:
         super().__init__()
-        self.video_dir_path = Path(video_dir_path)
-        self.video_frame_dir_path = (
-            Path(video_frame_dir_path) if video_frame_dir_path is not None else None
+        assert not (video_dir_path is None and video_frame_dir_path is None), (
+            "One of video_dir_path and video_frame_dir_path must be set"
         )
+        self.video_dir_path = video_dir_path
+        self.video_frame_dir_path = video_frame_dir_path
         self._preprocessor = preprocessor
         with open(ann_file_path) as f:
             anns = json.load(f)
@@ -125,14 +126,11 @@ class HoloAssistDataset(RealTimeDataset):
 
     def __getitem__(self, index: int) -> dict:
         video_id, dialogue = self.data[index]
-        datapoint = {
-            "index": index,
-            "video_id": video_id,
-            "video_path": self.video_dir_path
-            / video_id
-            / "Export_py/Video_pitchshift.mp4",
-            "dialogue": dialogue,
-        }
+        datapoint = {"index": index, "video_id": video_id, "dialogue": dialogue}
+        if self.video_dir_path is not None:
+            datapoint["video_path"] = (
+                self.video_dir_path / video_id / "Export_py/Video_pitchshift.mp4"
+            )
         if self.video_frame_dir_path is not None:
             datapoint["encoded_frames_path"] = (
                 self.video_frame_dir_path / f"{video_id}.pt"
