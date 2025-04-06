@@ -30,23 +30,99 @@ def align_utterances(
     generated: list[dict],
     ground_truth: list[dict],
     similarity_matrix: np.ndarray,
-    tau_time: float = 3,
+    tau_time: float = 3.0,
+    time_window: float = 5.0,
+    max_swap_passes: int = 5,
 ) -> list[tuple[int, int]]:
     """
-    Aligns generated and ground-truth utterances using bi-partite matching.
-    time_window is in seconds
+    Two-Stage alignment of generated and ground-truth utterances.
+
+    In Stage 1, we perform time-based bi-partite matching. In Stage 2, we perform
+    local refinement by semantic similarity in onder to account for the fact that
+    some utterances may occur out of order within a local time window. Specifically,
+
+    STAGE 1 (Time-based bi-partite matching):
+      - cost_matrix = time_penalty only (no semantic similarity).
+      - row_ind, col_ind = linear_sum_assignment(...) => alignment_1
+
+    STAGE 2 (Local refinement by semantic similarity):
+      - For each matched pair (g_i, gt_j), check if there's a potential
+        local swap with another pair (g_i', gt_j') in the same time_window
+        that yields better overall semantic similarity.
+      - Perform these swaps if beneficial.
+      - Repeat up to `max_swap_passes` times to avoid infinite loops.
+
+    Returns:
+      list of (g_idx, gt_idx) pairs after refinement.
     """
     num_gen, num_gt = len(generated), len(ground_truth)
+    # -------------------------
+    # STAGE 1: TIME-BASED BI-PARTITE MATCHING
+    # -------------------------
+    # construct cost matrix using only time_penalty = exp(-time_diff / tau_time)
     cost_matrix = np.full((num_gen, num_gt), -np.inf)
 
     for i, gen in enumerate(generated):
         for j, gt in enumerate(ground_truth):
             time_diff = abs(gen["start"] - gt["start"])
             time_penalty = np.exp(-time_diff / tau_time)
-            cost_matrix[i, j] = similarity_matrix[i, j] * time_penalty
+            cost_matrix[i, j] = time_penalty
 
     row_ind, col_ind = linear_sum_assignment(cost_matrix, maximize=True)
-    return list(zip(row_ind, col_ind, strict=True))
+    alignment = {g_idx: gt_idx for g_idx, gt_idx in zip(row_ind, col_ind)}
+
+    # -------------------------
+    # STAGE 2: LOCAL REFINEMENT BY SEMANTIC SIMILARITY
+    # -------------------------
+    # we perform up to `max_swap_passes` passes where we try local improvements
+    # by swapping pairs if it increases the total local similarity.
+    def is_within_time_window(g_idx, gt_idx):
+        """Check if generated utterance i and GT utterance j are within time_window."""
+        return (
+            abs(generated[g_idx]["start"] - ground_truth[gt_idx]["start"])
+            <= time_window
+        )
+
+    improved = True
+    passes = 0
+    while improved and passes < max_swap_passes:
+        improved = False
+        passes += 1
+
+        # iterate over each matched pair
+        for g_i, gt_j in list(alignment.items()):
+            # The current semantic similarity
+            # current_sim = local_semantic_score(g_i, gt_j)
+
+            # look for possible local swaps among neighbors
+            # i.e. other gen utterances g_i' that are matched to gt_j'
+            # such that BOTH g_i, g_i' are within time_window to BOTH gt_j, gt_j'
+            for g_i_prime, gt_j_prime in list(alignment.items()):
+                if g_i_prime == g_i:
+                    continue  # same pair => skip
+
+                # Check if (g_i, gt_j_prime) and (g_i_prime, gt_j) are within the time_window
+                if is_within_time_window(g_i, gt_j_prime) and is_within_time_window(
+                    g_i_prime, gt_j
+                ):
+                    # Evaluate if swapping leads to better combined similarity
+                    sim_original = (
+                        similarity_matrix[g_i, gt_j]
+                        + similarity_matrix[g_i_prime, gt_j_prime]
+                    )
+                    sim_swapped = (
+                        similarity_matrix[g_i, gt_j_prime]
+                        + similarity_matrix[g_i_prime, gt_j]
+                    )
+
+                    # If swapped sum is better => do swap
+                    if sim_swapped > sim_original:
+                        # Swap the matches
+                        alignment[g_i] = gt_j_prime
+                        alignment[g_i_prime] = gt_j
+                        improved = True
+
+    return [(g_i, gt_j) for g_i, gt_j in alignment.items()]
 
 
 def compute_accuracy_scores(
