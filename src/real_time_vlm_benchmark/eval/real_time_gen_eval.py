@@ -146,7 +146,8 @@ def compute_accuracy_scores(
 ) -> np.ndarray:
     acc_scores = []
     for gen_id, gt_id in matched_pairs:
-        acc_scores.append(similarity_matrix[gen_id][gt_id])
+        # cosine similarity is [-1, 1], but we want [0, 1] (accuracy)
+        acc_scores.append((similarity_matrix[gen_id][gt_id] + 1) / 2)
     return np.array(acc_scores)
 
 
