@@ -35,7 +35,7 @@ def align_utterances(
     max_swap_passes: int = 5,
 ) -> list[tuple[int, int]]:
     """
-    Two-Stage alignment of generated and ground-truth utterances.
+    Three-Stage alignment of generated and ground-truth utterances.
 
     In Stage 1, we perform time-based bi-partite matching. In Stage 2, we perform
     local refinement by semantic similarity in onder to account for the fact that
@@ -51,6 +51,9 @@ def align_utterances(
         that yields better overall semantic similarity.
       - Perform these swaps if beneficial.
       - Repeat up to `max_swap_passes` times to avoid infinite loops.
+
+    STAGE 3: Final filtering => if a matched pair (g_i, gt_j) has time_diff > time_window,
+      we drop it from alignment.
 
     Returns:
       list of (g_idx, gt_idx) pairs after refinement.
@@ -122,7 +125,17 @@ def align_utterances(
                         alignment[g_i_prime] = gt_j
                         improved = True
 
-    return [(g_i, gt_j) for g_i, gt_j in alignment.items()]
+    # -------------------------
+    # STAGE 3: FINAL FILTER => DROP IMPROBABLE MATCHES
+    # -------------------------
+    final_matches = []
+    for g_i, gt_j in alignment.items():
+        time_diff = abs(generated[g_i]["start"] - ground_truth[gt_j]["start"])
+        if time_diff <= time_window:
+            final_matches.append((g_i, gt_j))
+        # else: we skip => unmatched
+
+    return final_matches
 
 
 def compute_accuracy_scores(
