@@ -205,12 +205,12 @@ def compute_final_score(
     f1_score: float,
     alpha: float = 0.5,
 ) -> dict[str, float]:
-    mean_acc = float(accuracy_scores.mean())
-    mean_timing = float(timing_scores.mean())
+    mean_acc = float(accuracy_scores.mean()) * f1_score
+    mean_timing = float(timing_scores.mean()) * f1_score
     return {
         "mean_acc": mean_acc,
         "mean_timing": mean_timing,
-        "final_score": (alpha * mean_acc + (1 - alpha) * mean_timing) * f1_score,
+        "final_score": alpha * mean_acc + (1 - alpha) * mean_timing,
     }
 
 
