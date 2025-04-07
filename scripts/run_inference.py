@@ -217,7 +217,10 @@ def run(
     # signal the progress bar process to exit
     if accelerator.is_main_process:
         progress_queue.put(None)
-    accelerator.end_training()
+    # NOTE: we should be calling this, but for some reason it causes issues on some clusters.
+    # Reported here: https://github.com/pytorch/pytorch/issues/148150
+    # Since we're exiting anyway, it doesn't matter that we don't call this besides the annoying warning.
+    # accelerator.end_training()
     return 0 if success else 1
 
 
