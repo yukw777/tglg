@@ -34,11 +34,15 @@ def convert_holo_assist(
                 "start": conv["start"],
                 "end": conv["end"],
             }
-            # if within 10 seconds of the last correction, we include for the evaluation
-            if last_correction_end == -1 or utter["start"] >= last_correction_end + 10:
-                utter["eval"] = False
-            else:
+            # if an assistant utterance is within 10 seconds of the last correction, we include for the evaluation
+            if (
+                utter["role"] == "assistant"
+                and last_correction_end != -1
+                and utter["start"] < last_correction_end + 10
+            ):
                 utter["eval"] = True
+            else:
+                utter["eval"] = False
 
             # look for a correction
             if conv["attributes"]["Conversation Purpose"].endswith(
