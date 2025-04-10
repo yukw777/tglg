@@ -574,9 +574,9 @@ class RealTimeModel(VideoLLMOnlineModel):
                 )
                 curr_utter["content"] += response
                 if (
-                    len(curr_utter["content"]) > max_new_tokens
-                    or generated_input_ids[0, -1] in self.eos_token_id_list
-                ):
+                    max_new_tokens is not None
+                    and len(curr_utter["content"]) > max_new_tokens
+                ) or generated_input_ids[0, -1] in self.eos_token_id_list:
                     # done with this one, so append and start a new utterance
                     curr_utter["content"] = curr_utter["content"].strip()
                     results[index].append(curr_utter)
