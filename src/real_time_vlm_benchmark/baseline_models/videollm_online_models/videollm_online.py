@@ -356,6 +356,10 @@ class VideoLLMOnlineModel(BaselineModel):
 
         return results
 
+    @property
+    def outputs_end_time(self) -> bool:
+        return False
+
 
 class RealTimeModel(VideoLLMOnlineModel):
     def __init__(self, **kwargs) -> None:
@@ -579,7 +583,14 @@ class RealTimeModel(VideoLLMOnlineModel):
                 ) or generated_input_ids[0, -1] in self.eos_token_id_list:
                     # done with this one, so append and start a new utterance
                     curr_utter["content"] = curr_utter["content"].strip()
+                    curr_utter["end"] = batch["frame_timestamps"][
+                        :, batch["context_frames"].size(0) + i
+                    ].item()
                     results[index].append(curr_utter)
                     curr_utter = None
 
         return results
+
+    @property
+    def outputs_end_time(self) -> bool:
+        return True

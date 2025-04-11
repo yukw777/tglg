@@ -20,3 +20,8 @@ class BaselineModel(nn.Module, abc.ABC):
         self, batch: dict, use_offloaded_cache: bool = False, **gen_kwargs
     ) -> dict[int, list]:
         pass
+
+    @property
+    @abc.abstractmethod
+    def outputs_end_time(self) -> bool:
+        pass

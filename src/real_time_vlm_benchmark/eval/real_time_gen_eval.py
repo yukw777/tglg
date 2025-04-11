@@ -165,11 +165,14 @@ def compute_timing_scores(
     gt_end_list: list[float] = []
     for gen_id, gt_id in matched_pairs:
         gen_start_list.append(generated[gen_id]["start"])
-        # assume 150 wpm for speech
-        gen_end_list.append(
-            generated[gen_id]["start"]
-            + len(generated[gen_id]["content"].split()) / (150 / 60)
-        )
+        if "end" in generated[gen_id]:
+            gen_end = generated[gen_id]["end"]
+        else:
+            # assume 150 wpm for speech
+            gen_end = generated[gen_id]["start"] + len(
+                generated[gen_id]["content"].split()
+            ) / (150 / 60)
+        gen_end_list.append(gen_end)
         gt_start_list.append(ground_truth[gt_id]["start"])
         gt_end_list.append(ground_truth[gt_id]["end"])
     gen_start = np.array(gen_start_list)

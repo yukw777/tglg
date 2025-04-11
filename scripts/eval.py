@@ -119,9 +119,10 @@ def preprocess_inference_results(results: pd.DataFrame) -> dict[str, list[dict]]
     for _, row in results.iterrows():
         # NOTE: backward compatibility
         video_id = row["video_id"] if "video_id" in row else row["video"]
-        preprocessed[video_id].append(
-            {"content": row["content"], "start": float(row["start"])}
-        )
+        result = {"content": row["content"], "start": float(row["start"])}
+        if "end" in row:
+            result["end"] = float(row["end"])
+        preprocessed[video_id].append(result)
     return preprocessed
 
 

@@ -65,6 +65,10 @@ def run(
         gen_config = {}
     model.eval()
     model.to(accelerator.device)
+    if model.outputs_end_time:
+        columns = ["video_id", "start", "end", "content"]
+    else:
+        columns = ["video_id", "start", "content"]
 
     # set up the preprocessor
     dataset.preprocessor = model.preprocess
@@ -180,22 +184,23 @@ def run(
             continue
         for index, utters in preds.items():
             with open(results_dir / f"{index}.csv", "w", newline="") as csvfile:
-                writer = csv.DictWriter(csvfile, ["video_id", "start", "content"])
+                writer = csv.DictWriter(csvfile, columns)
                 writer.writeheader()
                 for utter in utters:
-                    writer.writerow(
-                        {
-                            "video_id": utter["video_id"],
-                            "start": utter["start"],
-                            "content": utter["content"],
-                        }
-                    )
+                    row = {
+                        "video_id": utter["video_id"],
+                        "start": utter["start"],
+                        "content": utter["content"],
+                    }
+                    if model.outputs_end_time:
+                        row["end"] = utter["end"]
+                    writer.writerow(row)
         progress_queue.put(len(batch["video_id"]))
     success = (~torch.any(accelerator.gather(failure))).item()
 
     if success and accelerator.is_main_process and out_file_name is not None:
         with open(out_file_name, "w", newline="") as out_file:
-            writer = csv.DictWriter(out_file, ["video_id", "start", "content"])
+            writer = csv.DictWriter(out_file, columns)
             writer.writeheader()
             for f in sorted(results_dir.iterdir()):
                 with open(f, newline="") as in_file:
