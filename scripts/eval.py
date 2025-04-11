@@ -85,6 +85,7 @@ def eval(
                     "stop": float(stop),
                     "overlap": float(overlap),
                     "gen_start": gen_utters[matched_gen]["start"],
+                    "gen_end": gen_utters[matched_gen]["end"],
                     "gt_start": gt_utters[matched_gt]["start"],
                     "gt_end": gt_utters[matched_gt]["end"],
                     "gen_content": gen_utters[matched_gen]["content"],
@@ -94,11 +95,17 @@ def eval(
     f1_score = compute_f1_score(
         total_matched_pairs, total_generated, total_ground_truth
     )
+    mean_start_score = float(total_start_scores.mean())
+    mean_stop_score = float(total_stop_scores.mean())
+    mean_overlap_score = float(total_overlap_scores.mean())
     final_score = compute_final_score(
         total_accuracy_scores, total_timing_scores, f1_score["f1"]
     )
     return {
         "individual_eval_results": individual_eval_results,
+        "mean_start_score": mean_start_score,
+        "mean_stop_score": mean_stop_score,
+        "mean_overlap_score": mean_overlap_score,
         **final_score,
         **f1_score,
     }

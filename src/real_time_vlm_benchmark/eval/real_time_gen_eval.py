@@ -165,14 +165,12 @@ def compute_timing_scores(
     gt_end_list: list[float] = []
     for gen_id, gt_id in matched_pairs:
         gen_start_list.append(generated[gen_id]["start"])
-        if "end" in generated[gen_id]:
-            gen_end = generated[gen_id]["end"]
-        else:
+        if "end" not in generated[gen_id]:
             # assume 150 wpm for speech
-            gen_end = generated[gen_id]["start"] + len(
+            generated[gen_id]["end"] = generated[gen_id]["start"] + len(
                 generated[gen_id]["content"].split()
             ) / (150 / 60)
-        gen_end_list.append(gen_end)
+        gen_end_list.append(generated[gen_id]["end"])
         gt_start_list.append(ground_truth[gt_id]["start"])
         gt_end_list.append(ground_truth[gt_id]["end"])
     gen_start = np.array(gen_start_list)
@@ -222,12 +220,15 @@ def compute_final_score(
     f1_score: float,
     alpha: float = 0.5,
 ) -> dict[str, float]:
-    mean_acc = float(accuracy_scores.mean()) * f1_score
-    mean_timing = float(timing_scores.mean()) * f1_score
+    mean_acc = float(accuracy_scores.mean())
+    mean_timing = float(timing_scores.mean())
     return {
         "mean_acc": mean_acc,
+        "mean_acc_f1_adjusted": mean_acc * f1_score,
         "mean_timing": mean_timing,
-        "final_score": alpha * mean_acc + (1 - alpha) * mean_timing,
+        "mean_timing_f1_adjusted": mean_timing * f1_score,
+        "final_score": alpha * mean_acc * f1_score
+        + (1 - alpha) * mean_timing * f1_score,
     }
 
 
