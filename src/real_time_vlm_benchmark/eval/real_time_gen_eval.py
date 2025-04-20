@@ -93,35 +93,36 @@ def align_utterances(
         passes += 1
 
         # iterate over each matched pair
-        for g_i, gt_j in list(alignment.items()):
+        for g_i in alignment:
             # The current semantic similarity
             # current_sim = local_semantic_score(g_i, gt_j)
 
             # look for possible local swaps among neighbors
             # i.e. other gen utterances g_i' that are matched to gt_j'
             # such that BOTH g_i, g_i' are within time_window to BOTH gt_j, gt_j'
-            for g_i_prime, gt_j_prime in list(alignment.items()):
+            for g_i_prime in alignment:
                 if g_i_prime == g_i:
                     continue  # same pair => skip
 
                 # Check if (g_i, gt_j_prime) and (g_i_prime, gt_j) are within the time_window
-                if is_within_time_window(g_i, gt_j_prime) and is_within_time_window(
-                    g_i_prime, gt_j
-                ):
+                if is_within_time_window(
+                    g_i, alignment[g_i_prime]
+                ) and is_within_time_window(g_i_prime, alignment[g_i]):
                     # Evaluate if swapping leads to better combined similarity
                     sim_original = (
-                        similarity_matrix[g_i, gt_j]
-                        + similarity_matrix[g_i_prime, gt_j_prime]
+                        similarity_matrix[g_i, alignment[g_i]]
+                        + similarity_matrix[g_i_prime, alignment[g_i_prime]]
                     )
                     sim_swapped = (
-                        similarity_matrix[g_i, gt_j_prime]
-                        + similarity_matrix[g_i_prime, gt_j]
+                        similarity_matrix[g_i, alignment[g_i_prime]]
+                        + similarity_matrix[g_i_prime, alignment[g_i]]
                     )
 
                     # If swapped sum is better => do swap
                     if sim_swapped > sim_original:
                         # Swap the matches
-                        alignment[g_i] = gt_j_prime
+                        gt_j = alignment[g_i]
+                        alignment[g_i] = alignment[g_i_prime]
                         alignment[g_i_prime] = gt_j
                         improved = True
 
@@ -134,6 +135,10 @@ def align_utterances(
         if time_diff <= time_window:
             final_matches.append((g_i, gt_j))
         # else: we skip => unmatched
+
+    # sanity check: assert only one-to-one matching
+    assert len(final_matches) == len(set(g_i for g_i, _ in final_matches))
+    assert len(final_matches) == len(set(gt_j for _, gt_j in final_matches))
 
     return final_matches
 
