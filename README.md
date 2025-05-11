@@ -42,6 +42,9 @@ uv pip install flash-attn --no-build-isolation
 # Install the project
 uv sync --all-extras
 
+# Install pre-commit hooks
+pre-commit install
+
 # Workaround for https://github.com/OpenNMT/CTranslate2/issues/1826
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/.venv/lib/python3.10/site-packages/nvidia/cudnn/lib/
 ```
