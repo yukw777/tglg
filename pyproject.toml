@@ -24,7 +24,7 @@ dependencies = [
     "tqdm>=4.67.1",
     "types-pyyaml>=6.0.12.20241230",
     "video-reader-rs>=0.2.4",
-    "videollm-online",
+    "videollm-online @ git+https://github.com/yukw777/videollm-online.git@3be744ee9bda681a81c443dd7436c2f2826d0c78",
     "wandb>=0.19.7",
     "whisperx>=3.3.1",
     "xgboost>=2.1.4",
@@ -45,9 +45,6 @@ override-dependencies = [
     # To get around https://github.com/m-bain/whisperX/issues/967
     "ctranslate2>=4.5.0",
 ]
-
-[tool.uv.sources]
-videollm-online = { git = "https://github.com/yukw777/videollm-online.git", rev = "3be744ee9bda681a81c443dd7436c2f2826d0c78" }
 
 [dependency-groups]
 dev = [
@@ -71,3 +68,7 @@ lint.extend-select = ["I"]
 # which confuses isort, causing it to classify wandb
 # as a first-party library.
 known-third-party = ["wandb"]
+
+[tool.hatch.metadata]
+# See https://hatch.pypa.io/latest/config/metadata/#allowing-direct-references
+allow-direct-references = true
