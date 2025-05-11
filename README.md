@@ -1,4 +1,6 @@
-# real-time-vlm-benchmark
+# Temporally-Grounded Language Generation: A Benchmark for Real-Time Vision-Language Models
+
+Temporally-Grounded Language Generation (TGLG) is a benchmark for real-time vision-language models (VLMs) that focus on two key capabilities: perceptual updating and contingency awareness. This repository also contains code for a baseline real-time VLM for TGLG, Vision-Language Model with Time-Synchronized Interleaving (VLM-TSI).
 
 ## Installation
 
@@ -6,18 +8,20 @@
 # If Slurm, ensure you have the latest CUDA and GCC loaded
 module load cuda gcc
 
-# Create a virtual env, e.g., using uv, conda or venv, and activate it
+# Create a virtual env using uv
 uv venv
-source .venv/bin/activate
 
 # flash-attn build dependencies
-pip install torch setuptools psutil packaging ninja
+uv pip install torch setuptools psutil packaging ninja
 
 # Build flash-attn
-pip install flash-attn --no-build-isolation
+uv pip install flash-attn --no-build-isolation
 
 # Install the project
-pip install -e '.[flash-attn]'
+uv sync
+
+# NOTE: while we recommend using uv, regular pip also works.
+# pip install -e '.[flash-attn]'
 
 # Workaround for https://github.com/OpenNMT/CTranslate2/issues/1826
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/.venv/lib/python3.10/site-packages/nvidia/cudnn/lib/
@@ -42,16 +46,20 @@ uv sync --all-extras
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/.venv/lib/python3.10/site-packages/nvidia/cudnn/lib/
 ```
 
-## HoloAssist Real-Time Annotation Generation
+## HoloAssist TGLG Annotation Generation
+
+Download HoloAssist data from the official website: https://holoassist.github.io/
 
 ```bash
 python scripts/gen_anns_holo_assist.py \
 --holo_assist_video_dir /path/to/HoloAssist/video_pitch_shifted/ \
 --holo_assist_anns_file /path/to/HoloAssist/data-annotation-trainval-v1_1.json \
---output_file /path/to/HoloAssist/real-time-eval-annotation.json
+--output_file /path/to/HoloAssist/holo-assist-tglg-eval.json
 ```
 
-## SoccerNet Real-Time Annotation Generation
+## SoccerNet TGLG Annotation Generation
+
+Download SoccerNet data from the official website: https://www.soccer-net.org/
 
 ### Transcribe Commentaries
 
@@ -94,12 +102,13 @@ python scripts/soccernet_annotate_pbp.py \
 --output_dir path/to/SoccerNet-pbp
 ```
 
-### Generate Real-Time Annotations
+### Generate TGLG Annotations
 
 ```bash
 python scripts/gen_anns_soccernet.py \
 --pbp_annotated_dir path/to/SoccerNet-pbp \
---output_file path/to/SoccerNet/real-time-eval-annotation.json
+--output_file_prefix soccernet-tglg \
+--output_dir path/to/SoccerNet/
 ```
 
 ## Video Frame Pre-encoding
@@ -154,7 +163,7 @@ WANDB_PROJECT=videollm-online-soccernet-train torchrun --nnodes=1 --nproc_per_no
 --output_dir outputs/videollm-online-soccernet
 ```
 
-### Real-Time Model
+### VLM-TSI
 
 Takes about 2 1/2 hours on 4xL40S.
 
@@ -186,7 +195,7 @@ WANDB_PROJECT=real-time-soccernet-train torchrun --nnodes=1 --nproc_per_node=4 -
 
 ## Fine-tune on Ego4D GoalStep
 
-### Real-Time Model
+### VLM-TSI
 
 Takes about a day on 4xL40S.
 
@@ -235,7 +244,7 @@ python slurm-scripts/submit_train_videollm_online_ego4d_goalstep.py \
 
 ## Run Inference
 
-Below is an example for RealTimeSoccerNet on SoccerNet, but the script is designed to be able to handle all the models and datasets.
+Below is an example for VLM-TSI (RealTimeSoccerNet) on SoccerNet, but the script is designed to be able to handle all the models and datasets.
 
 ```bash
 torchrun --nnodes=1 --nproc_per_node=4 --tee 3 --log-dir path/to/log/dir scripts/run_inference.py \
