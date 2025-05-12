@@ -6,6 +6,12 @@ Temporally-Grounded Language Generation (TGLG) is a benchmark for real-time visi
 
 First, download HoloAssist data (https://holoassist.github.io/) and SoccerNet data (https://www.soccer-net.org/) from their official websites. The TGLG annotations can be downloaded here: https://huggingface.co/datasets/kpyu/tglg.
 
+## Released Models
+
+- [kpyu/soccernet-videollm-online](https://huggingface.co/kpyu/soccernet-videollm-online): VideoLLM-Online fine-tuned on SoccerNet
+- [kpyu/soccernet-vlm-tsi](https://huggingface.co/kpyu/soccernet-vlm-tsi): VLM-TSI fine-tuned on SoccerNet
+- [kpyu/ego4d-goalstep-vlm-tsi](https://huggingface.co/kpyu/ego4d-goalstep-vlm-tsi): VLM-TSI fine-tuned on streaming free-form Ego4D GoalStep conversation data
+
 ## Installation
 
 ```bash
