@@ -2,6 +2,10 @@
 
 Temporally-Grounded Language Generation (TGLG) is a benchmark for real-time vision-language models (VLMs) that focus on two key capabilities: perceptual updating and contingency awareness. This repository also contains code for a baseline real-time VLM for TGLG, Vision-Language Model with Time-Synchronized Interleaving (VLM-TSI).
 
+## Download TGLG Data
+
+First, download HoloAssist data (https://holoassist.github.io/) and SoccerNet data (https://www.soccer-net.org/) from their official websites. The TGLG annotations can be downloaded here: https://huggingface.co/datasets/kpyu/tglg.
+
 ## Installation
 
 ```bash
