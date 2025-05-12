@@ -267,3 +267,18 @@ torchrun --nnodes=1 --nproc_per_node=4 --tee 3 --log-dir path/to/log/dir scripts
 --results_dir path/to/inference-results/soccernet+real-time-model \
 --wandb_run_name soccernet+real-time-model
 ```
+
+To run inference with VideoLLM-Online, simply pass in the following options:
+
+```bash
+--model real_time_vlm_benchmark.baseline_models.videollm_online_models.VideoLLMOnlineHoloAssistModel \
+--model.video_stats_file path/to/SoccerNet/video_stats.json \
+```
+
+To run inference on HoloAssist, simply pass in the following options:
+
+```bash
+--dataset real_time_vlm_benchmark.datasets.HoloAssistDataset \
+--dataset.ann_file_path path/to/HoloAssist/holo-assist-tglg-eval.json \
+--dataset.video_dir_path path/to/HoloAssist/video_pitch_shifted/ \
+```
