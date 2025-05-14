@@ -134,7 +134,7 @@ We need to know the total number of frames and average frame rate for each video
 python scripts/calc_video_stats.py \
 --real_time_dataset real_time_vlm_benchmark.datasets.HoloAssistDataset \
 --real_time_dataset.video_dir_path /path/to/HoloAssist/HoloAssist/video_pitch_shifted/ \
---real_time_dataset.ann_file_path /path/to/HoloAssist/real-time-eval-annotation.json \
+--real_time_dataset.ann_file_path /path/to/HoloAssist/holo-assist-tglg-eval.json \
 --out_file /path/to/HoloAssist/video_stats.json
 ```
 
@@ -257,7 +257,7 @@ python slurm-scripts/submit_train_videollm_online_ego4d_goalstep.py \
 
 ## Run Inference
 
-Below is an example for VLM-TSI (RealTimeSoccerNet) on SoccerNet, but the script is designed to be able to handle all the models and datasets.
+Below is an example for VLM-TSI (RealTimeSoccerNet) on SoccerNet, but the script is designed to be able to handle all the models and datasets. The script is also designed to be run on a single GPU, which you can do by running the script with plain `python` instead of `torchrun`.
 
 ```bash
 torchrun --nnodes=1 --nproc_per_node=4 --tee 3 --log-dir path/to/log/dir scripts/run_inference.py \
@@ -266,7 +266,7 @@ torchrun --nnodes=1 --nproc_per_node=4 --tee 3 --log-dir path/to/log/dir scripts
 --model.video_stats_file path/to/SoccerNet/video_stats.json \
 --dataset real_time_vlm_benchmark.datasets.SoccerNetDataset \
 --dataset.video_dir_path path/to/SoccerNet/ \
---dataset.ann_file_path path/to/SoccerNet/real-time-eval-annotation_test.json \
+--dataset.ann_file_path path/to/SoccerNet/soccernet-tglg-test.json \
 --dataset.video_frame_dir_path path/to/SoccerNet/encoded-frames \
 --gen_config.max_new_tokens 128 \
 --wandb_project real-time-model-soccernet-inference \
@@ -288,3 +288,22 @@ To run inference on HoloAssist, simply pass in the following options:
 --dataset.ann_file_path path/to/HoloAssist/holo-assist-tglg-eval.json \
 --dataset.video_dir_path path/to/HoloAssist/video_pitch_shifted/ \
 ```
+
+## Run Evaluation
+
+You can run evaluations for inference results logged locally or on WandB and report the results locally or to WandB in a flexible manner.
+
+For example, to report SoccerNet evaluation results locally and to WandB based on inference results from the local filesystem or WandB:
+
+```bash
+python scripts/eval.py \
+--ground_truth_file path/to/SoccerNet/soccernet-tglg-test.json \
+--infer_local.files '[soccernet+vlm-tsi.csv]' \
+--infer_wandb.entity your-wandb-entity \
+--infer_wandb.project your-wandb-project \
+--infer_wandb.run_name_regex "videollm-online" \
+--eval_wandb.project your-wandb-eval-project \
+--eval_local.files_dir path/to/eval_results
+```
+
+For HoloLens, simply specify the path to `holo-assist-tglg-eval.json`.

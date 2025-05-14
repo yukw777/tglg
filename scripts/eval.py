@@ -1,7 +1,11 @@
+import itertools
 import json
 import re
 from collections import defaultdict
+from dataclasses import dataclass
+from pathlib import Path
 from pprint import pprint
+from typing import Iterator
 
 import numpy as np
 import pandas as pd
@@ -28,7 +32,7 @@ def eval(
     ground_truth: dict[str, list[dict]],
     replace_proper_nouns: bool = False,
     spacy_model: spacy.Language | None = None,
-) -> dict:
+) -> tuple[list[dict], dict]:
     individual_eval_results = []
     total_matched_pairs = []
     total_generated = []
@@ -101,8 +105,7 @@ def eval(
     final_score = compute_final_score(
         total_accuracy_scores, total_timing_scores, f1_score["f1"]
     )
-    return {
-        "individual_eval_results": individual_eval_results,
+    return individual_eval_results, {
         "mean_start_score": mean_start_score,
         "mean_stop_score": mean_stop_score,
         "mean_overlap_score": mean_overlap_score,
@@ -111,7 +114,7 @@ def eval(
     }
 
 
-def read_ground_truth(ground_truth_file: str) -> dict[str, list[dict]]:
+def read_ground_truth(ground_truth_file: Path) -> dict[str, list[dict]]:
     with open(ground_truth_file) as f:
         raw_gt = json.load(f)
     preprocessed = {}
@@ -133,30 +136,37 @@ def preprocess_inference_results(results: pd.DataFrame) -> dict[str, list[dict]]
     return preprocessed
 
 
-def main(
-    ground_truth_file: str,
-    inference_entity: str,
-    inference_project: str,
-    inference_run_name_regex: str,
-    eval_project: str,
-    eval_entity: str | None = None,
-    sent_sim_model_name: str = "all-mpnet-base-v2",
-    replace_proper_nouns: bool = False,
-    spacy_model_name: str = "en_core_web_lg",
-) -> None:
-    sent_sim_model = SentenceTransformer(sent_sim_model_name)
-    ground_truth = read_ground_truth(ground_truth_file)
-    spacy_model = None
-    if replace_proper_nouns:
-        spacy_model = spacy.load(spacy_model_name)
+@dataclass
+class InferenceWandB:
+    entity: str
+    project: str
+    run_name_regex: str
 
-    if eval_entity is None:
-        eval_entity = inference_entity
+
+@dataclass
+class InferenceLocal:
+    files: list[Path]
+
+
+@dataclass
+class EvalWandB:
+    project: str
+    entity: str | None = None
+
+
+@dataclass
+class EvalLocal:
+    files_dir: Path
+
+
+def get_dataframes_wandb(
+    infer_wandb: InferenceWandB,
+) -> Iterator[tuple[str, pd.DataFrame]]:
     wandb_api = wandb.Api()
-    pattern = re.compile(inference_run_name_regex)
+    pattern = re.compile(infer_wandb.run_name_regex)
     inference_runs = [
         run
-        for run in wandb_api.runs(f"{inference_entity}/{inference_project}")
+        for run in wandb_api.runs(f"{infer_wandb.entity}/{infer_wandb.project}")
         if pattern.search(run.name)
     ]
     print("Running evaluation for the following inference runs:")
@@ -165,23 +175,87 @@ def main(
     for inference_run in inference_runs:
         table = inference_run.logged_artifacts()[0]["inference"]
         df = table.get_dataframe()
+        yield inference_run.name, df
+
+
+def get_dataframes_local(
+    infer_local: InferenceLocal,
+) -> Iterator[tuple[str, pd.DataFrame]]:
+    print("Running evaluation for the following inference files:")
+    pprint([f.name for f in infer_local.files])
+    print("===========================================")
+    for infer_file in infer_local.files:
+        yield infer_file.stem, pd.read_csv(infer_file)
+
+
+def log_eval_wandb(
+    name: str,
+    individual_eval_results: list[dict],
+    eval_results: dict,
+    eval_wandb: EvalWandB,
+) -> None:
+    results_table = pd.DataFrame(individual_eval_results)
+    with wandb.init(
+        entity=eval_wandb.entity, project=eval_wandb.project, name=name
+    ) as eval_run:
+        eval_run.log({"eval": wandb.Table(dataframe=results_table), **eval_results})
+
+
+def log_eval_local(
+    name: str,
+    individual_eval_results: list[dict],
+    eval_results: dict,
+    eval_local: EvalLocal,
+) -> None:
+    eval_local.files_dir.mkdir(exist_ok=True)
+    results_table = pd.DataFrame(individual_eval_results)
+    results_table.to_csv(eval_local.files_dir / f"{name}.csv", index=False)
+    with open(eval_local.files_dir / f"{name}.json", "w") as f:
+        json.dump(eval_results, f)
+
+
+def main(
+    ground_truth_file: Path,
+    infer_wandb: InferenceWandB | None = None,
+    infer_local: InferenceLocal | None = None,
+    eval_wandb: EvalWandB | None = None,
+    eval_local: EvalLocal | None = None,
+    sent_sim_model_name: str = "all-mpnet-base-v2",
+    replace_proper_nouns: bool = False,
+    spacy_model_name: str = "en_core_web_lg",
+) -> None:
+    dfs: Iterator[tuple[str, pd.DataFrame]] = iter(())
+    if infer_wandb is not None:
+        dfs = itertools.chain(dfs, get_dataframes_wandb(infer_wandb))
+    if infer_local is not None:
+        dfs = itertools.chain(dfs, get_dataframes_local(infer_local))
+    if eval_wandb is not None and eval_wandb.entity is None:
+        assert infer_wandb is not None, (
+            "`eval_wandb.eval_entity` is None, but infer_wandb.inference_entity is also None."
+        )
+        eval_wandb.entity = infer_wandb.entity
+    sent_sim_model = SentenceTransformer(sent_sim_model_name)
+    ground_truth = read_ground_truth(ground_truth_file)
+    spacy_model = None
+    if replace_proper_nouns:
+        spacy_model = spacy.load(spacy_model_name)
+
+    for name, df in dfs:
         generated = preprocess_inference_results(df)
-        eval_results = eval(
+        individual_eval_results, eval_results = eval(
             sent_sim_model,
             generated,
             ground_truth,
             replace_proper_nouns=replace_proper_nouns,
             spacy_model=spacy_model,
         )
-        results_table = pd.DataFrame(eval_results.pop("individual_eval_results"))
-        print(f"==== Metrics for {inference_run.name} ====")
+        print(f"==== Metrics for {name} ====")
         pprint(eval_results)
         print("===========================================")
-        with wandb.init(
-            entity=eval_entity, project=eval_project, name=inference_run.name
-        ) as eval_run:
-            eval_results["eval"] = wandb.Table(dataframe=results_table)
-            eval_run.log(eval_results)
+        if eval_wandb is not None:
+            log_eval_wandb(name, individual_eval_results, eval_results, eval_wandb)
+        if eval_local is not None:
+            log_eval_local(name, individual_eval_results, eval_results, eval_local)
 
 
 if __name__ == "__main__":
