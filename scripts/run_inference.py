@@ -40,6 +40,7 @@ def run(
     mp_manager_ip_addr: str = "",
     mp_manager_port: int = 12345,
     mp_manager_auth_key: bytes = b"password",
+    measure_fps: bool = False,
 ) -> int:
     set_seed(random_seed)
 
@@ -157,6 +158,14 @@ def run(
         sampler=QueueSampler(queue),
     )
     failure = torch.tensor(False, device=accelerator.device)
+
+    if measure_fps:
+        torch.cuda.synchronize()
+        start_event = torch.cuda.Event(enable_timing=True)
+        end_event = torch.cuda.Event(enable_timing=True)
+        start_event.record()
+        num_frames = 0
+
     # Make sure everyone starts at the same time, otherwise
     # slow processes may not get any batches and just busy wait.
     accelerator.wait_for_everyone()
@@ -174,6 +183,10 @@ def run(
                         f"[rank {accelerator.process_index}] CUDA OOM raised for batch {batch['index'].tolist()}. Retrying with OffloadedCache."
                     )
                     preds = model.predict(batch, use_offloaded_cache=True, **gen_config)
+                if measure_fps:
+                    num_frames += batch["context_frames"].size(0) + batch[
+                        "eval_frames"
+                    ].size(0)
         except Exception as e:
             print(
                 f"[rank {accelerator.process_index}] Exception raised for batch {batch['index'].tolist()}. Skipping: {e}"
@@ -197,6 +210,15 @@ def run(
                     writer.writerow(row)
         progress_queue.put(len(batch["video_id"]))
     success = (~torch.any(accelerator.gather(failure))).item()
+
+    if measure_fps:
+        end_event.record()
+        torch.cuda.synchronize()
+        elapsed_ms = start_event.elapsed_time(end_event)
+        num_frames_tensor = torch.tensor(num_frames, device=accelerator.device)
+        num_frames_tensor = accelerator.gather(num_frames_tensor).sum()
+        fps = float(num_frames_tensor) / (elapsed_ms / 1000.0)
+        print(f"Throughput (FPS): {fps:.2f}")
 
     if success and accelerator.is_main_process and out_file_name is not None:
         with open(out_file_name, "w", newline="") as out_file:
