@@ -19,8 +19,8 @@ from real_time_vlm_benchmark.eval.real_time_gen_eval import (
     align_utterances,
     canonicalize,
     compute_accuracy_scores,
+    compute_aggregate_scores,
     compute_f1_score,
-    compute_final_score,
     compute_similarity_matrix,
     compute_timing_scores,
 )
@@ -30,6 +30,8 @@ def eval(
     model: SentenceTransformer,
     generated: dict[str, list[dict]],
     ground_truth: dict[str, list[dict]],
+    timing_score_weights: tuple[float, float, float],
+    alpha: float,
     replace_proper_nouns: bool = False,
     spacy_model: spacy.Language | None = None,
 ) -> tuple[list[dict], dict]:
@@ -38,7 +40,6 @@ def eval(
     total_generated = []
     total_ground_truth = []
     total_accuracy_scores = np.array([])
-    total_timing_scores = np.array([])
     total_start_scores = np.array([])
     total_stop_scores = np.array([])
     total_overlap_scores = np.array([])
@@ -60,9 +61,6 @@ def eval(
         )
         total_accuracy_scores = np.concat([total_accuracy_scores, accuracy_scores])
         timing_scores = compute_timing_scores(matched_pairs, gen_utters, gt_utters)
-        total_timing_scores = np.concat(
-            [total_timing_scores, timing_scores["timing_scores"]]
-        )
         total_start_scores = np.concat(
             [total_start_scores, timing_scores["start_scores"]]
         )
@@ -71,9 +69,8 @@ def eval(
             [total_overlap_scores, timing_scores["overlap_scores"]]
         )
 
-        for acc, timing, start, stop, overlap, (matched_gen, matched_gt) in zip(
+        for acc, start, stop, overlap, (matched_gen, matched_gt) in zip(
             accuracy_scores,
-            timing_scores["timing_scores"],
             timing_scores["start_scores"],
             timing_scores["stop_scores"],
             timing_scores["overlap_scores"],
@@ -84,7 +81,6 @@ def eval(
                 {
                     "video_id": video_id,
                     "accuracy": float(acc),
-                    "timing": float(timing),
                     "start": float(start),
                     "stop": float(stop),
                     "overlap": float(overlap),
@@ -99,17 +95,17 @@ def eval(
     f1_score = compute_f1_score(
         total_matched_pairs, total_generated, total_ground_truth
     )
-    mean_start_score = float(total_start_scores.mean())
-    mean_stop_score = float(total_stop_scores.mean())
-    mean_overlap_score = float(total_overlap_scores.mean())
-    final_score = compute_final_score(
-        total_accuracy_scores, total_timing_scores, f1_score["f1"]
+    aggregate_scores = compute_aggregate_scores(
+        total_accuracy_scores,
+        total_start_scores,
+        total_stop_scores,
+        total_overlap_scores,
+        f1_score["f1"],
+        timing_score_weights,
+        alpha,
     )
     return individual_eval_results, {
-        "mean_start_score": mean_start_score,
-        "mean_stop_score": mean_stop_score,
-        "mean_overlap_score": mean_overlap_score,
-        **final_score,
+        **aggregate_scores,
         **f1_score,
     }
 
@@ -223,6 +219,8 @@ def main(
     sent_sim_model_name: str = "all-mpnet-base-v2",
     replace_proper_nouns: bool = False,
     spacy_model_name: str = "en_core_web_lg",
+    timing_score_weights: tuple[float, float, float] = (0.4, 0.4, 0.2),
+    alpha: float = 0.5,
 ) -> None:
     dfs: Iterator[tuple[str, pd.DataFrame]] = iter(())
     if infer_wandb is not None:
@@ -246,6 +244,8 @@ def main(
             sent_sim_model,
             generated,
             ground_truth,
+            timing_score_weights,
+            alpha,
             replace_proper_nouns=replace_proper_nouns,
             spacy_model=spacy_model,
         )

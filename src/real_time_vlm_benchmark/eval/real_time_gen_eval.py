@@ -161,7 +161,6 @@ def compute_timing_scores(
     generated: list[dict],
     ground_truth: list[dict],
     tau: float = 1.0,
-    score_weights: tuple[float, float, float] = (0.4, 0.4, 0.2),
 ) -> dict[str, np.ndarray]:
     """Computes timing scores (start, stop, overlap) for matched utterances."""
     gen_start_list: list[float] = []
@@ -198,9 +197,6 @@ def compute_timing_scores(
 
     overlap_scores = np.exp(-overlap / tau)
     return {
-        "timing_scores": score_weights[0] * start_scores
-        + score_weights[1] * stop_scores
-        + score_weights[2] * overlap_scores,
         "start_scores": start_scores,
         "stop_scores": stop_scores,
         "overlap_scores": overlap_scores,
@@ -219,21 +215,53 @@ def compute_f1_score(
     return {"prec": prec, "recall": recall, "f1": f1}
 
 
-def compute_final_score(
-    accuracy_scores: np.ndarray,
-    timing_scores: np.ndarray,
+def compute_aggregate_scores(
+    accuracy_scores: np.ndarray | list[float],
+    start_scores: np.ndarray | list[float],
+    stop_scores: np.ndarray | list[float],
+    overlap_scores: np.ndarray | list[float],
     f1_score: float,
+    timing_score_weights: tuple[float, float, float] = (0.4, 0.4, 0.2),
     alpha: float = 0.5,
 ) -> dict[str, float]:
-    mean_acc = float(accuracy_scores.mean())
-    mean_timing = float(timing_scores.mean())
+    raw_start_score = np.asarray(start_scores, dtype=float).mean()
+    raw_stop_score = np.asarray(stop_scores, dtype=float).mean()
+    raw_overlap_score = np.asarray(overlap_scores, dtype=float).mean()
+
+    start_score = raw_start_score * f1_score
+    stop_score = raw_stop_score * f1_score
+    overlap_score = raw_overlap_score * f1_score
+    start_stop_overlap_scores = np.array([start_score, stop_score, overlap_score])
+
+    lin_comb_timing_score = np.sum(
+        np.array(timing_score_weights) * start_stop_overlap_scores
+    )
+    # Calculate in log space to prevent underflow.
+    geo_mean_timing_score = np.exp(np.log(start_stop_overlap_scores).mean())
+
+    raw_accuracy_score = np.asarray(accuracy_scores, dtype=float).mean()
+    accuracy_score = raw_accuracy_score * f1_score
+
+    lin_comb_final_score = np.sum(
+        np.array([alpha, 1 - alpha]) * np.array([accuracy_score, lin_comb_timing_score])
+    )
+    geo_mean_final_score = np.exp(
+        np.log([accuracy_score, geo_mean_timing_score]).mean()
+    )
+
     return {
-        "mean_acc": mean_acc,
-        "mean_acc_f1_adjusted": mean_acc * f1_score,
-        "mean_timing": mean_timing,
-        "mean_timing_f1_adjusted": mean_timing * f1_score,
-        "final_score": alpha * mean_acc * f1_score
-        + (1 - alpha) * mean_timing * f1_score,
+        "raw_start_score": float(raw_start_score),
+        "raw_stop_score": float(raw_stop_score),
+        "raw_overlap_score": float(raw_overlap_score),
+        "start_score": float(start_score),
+        "stop_score": float(stop_score),
+        "overlap_score": float(overlap_score),
+        "lin_comb_timing_score": float(lin_comb_timing_score),
+        "geo_mean_timing_score": float(geo_mean_timing_score),
+        "raw_accuracy_score": float(raw_accuracy_score),
+        "accuracy_score": float(accuracy_score),
+        "lin_comb_final_score": float(lin_comb_final_score),
+        "geo_mean_final_score": float(geo_mean_final_score),
     }
 
 

@@ -3,13 +3,12 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-import numpy as np
 import wandb
 from jsonargparse import auto_cli
 
 from real_time_vlm_benchmark.eval.real_time_gen_eval import (
+    compute_aggregate_scores,
     compute_f1_score,
-    compute_final_score,
 )
 
 
@@ -50,6 +49,8 @@ def main(
     eval_run_name: str,
     ground_truth_file: Path,
     out_file: Path,
+    timing_score_weights: tuple[float, float, float] = (0.4, 0.4, 0.2),
+    alpha: float = 0.5,
 ) -> None:
     video_to_task = get_video_to_task(original_annotation_file)
     generated_by_task = get_results_by_task(
@@ -77,14 +78,18 @@ def main(
             f,
             fieldnames=[
                 "task_type",
-                "final_score",
-                "mean_acc_f1_adjusted",
-                "mean_acc",
-                "mean_timing_f1_adjusted",
-                "mean_timing",
-                "mean_start_score",
-                "mean_stop_score",
-                "mean_overlap_score",
+                "raw_start_score",
+                "raw_stop_score",
+                "raw_overlap_score",
+                "start_score",
+                "stop_score",
+                "overlap_score",
+                "lin_comb_timing_score",
+                "geo_mean_timing_score",
+                "raw_accuracy_score",
+                "accuracy_score",
+                "lin_comb_final_score",
+                "geo_mean_final_score",
                 "f1",
                 "prec",
                 "recall",
@@ -98,27 +103,19 @@ def main(
                 generated_by_task[task_type],
                 ground_truth_by_task[task_type],
             )
-            mean_start_score = float(
-                np.array([result["start"] for result in eval_results]).mean()
-            )
-            mean_stop_score = float(
-                np.array([result["stop"] for result in eval_results]).mean()
-            )
-            mean_overlap_score = float(
-                np.array([result["overlap"] for result in eval_results]).mean()
-            )
-            final_score = compute_final_score(
-                np.array([result["accuracy"] for result in eval_results]),
-                np.array([result["timing"] for result in eval_results]),
+            aggregate_scores = compute_aggregate_scores(
+                [result["accuracy"] for result in eval_results],
+                [result["start"] for result in eval_results],
+                [result["stop"] for result in eval_results],
+                [result["overlap"] for result in eval_results],
                 f1_score["f1"],
+                timing_score_weights,
+                alpha,
             )
             writer.writerow(
                 {
                     "task_type": task_type,
-                    "mean_start_score": mean_start_score,
-                    "mean_stop_score": mean_stop_score,
-                    "mean_overlap_score": mean_overlap_score,
-                    **final_score,
+                    **aggregate_scores,
                     **f1_score,
                 }
             )
